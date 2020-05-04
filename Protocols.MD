@@ -1,0 +1,53 @@
+# Protocol of the meeting on 04.05
+
+## Todos for the meeting (Boris's email from 27.04) were handled in following manner:
+
+- overall plan
+    * Week 1: Research
+
+    * Week 2: More specific research into Visualisation Frameworks -> Define Milestones
+
+    * Week 3: Create First basic demo prototype using sample data
+
+    * Week 4: Implemting MNIST and anomaly detection
+
+    * Week 5: ... to follow
+
+- project management
+
+    * we have a WhatsApp group and a slack channel to communicate. WhatsApp is used for prompt messaging, while slack is used for file sharing e.t.c. We also had a jitsi meeting with all the members before the meeting with Boris. We want to continue this behaviour throughout the project
+
+- tools to be used
+
+    * Jupyter notebook
+
+    * Plotly Dash
+
+    * Apache Superset (Kenneth will explore the functionality first)
+
+- splitting up the requirements into tasks (at least the first ones)
+
+    * Research Superset as possible alternative: Kenneth
+    * Plotly Dash, IRIS Data preparation: Rocco
+    * Prepare sample of Plotly Dash: Uttam
+    * PCA into plotly dash: Alberto
+
+- assignment of exactly one person to each task
+    * see above
+
+## Points from the meeting
+
+- agreed  that it probably is best to mix plotly dash and apche superset, if possible
+
+- will need another week to have detailed project milestones
+
+- agreed to first test with small basic dataset and build on that
+
+- Boris explained how to create a anomaly datset out of labelled dataset, for e.g. for MNIST.
+
+       1. take all images with digit 0 as normal
+       2. take a random portion( at most 1%) of 1-9 and mark them as anomalies
+
+- Boris also mention publicly available dataset used mainly for anomaly detection i.e, "credit fraud dataset"
+
+- Also had some organisational talking about Qispos registration with the conclusion that it is better to directly talk to Tobias regarding the issue
