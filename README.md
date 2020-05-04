@@ -20,12 +20,13 @@ should be paid particular attention to.
 
 
 ### possible implementation
-- Jupyter Notebook
-- Plotly Dash
-- Web App using Flask
-- Apache Superset as base and vis, change to accept data files and run Algs
+- Jupyter Notebook  
+- Plotly Dash  
+- Web App using Flask  
+- Apache Superset as base and vis, change to accept data files and run Algs  
 
 
+  
 ## your project management 
 ### Tasks
 - Research Superset as possible alternative:  Kenneth
@@ -37,7 +38,7 @@ should be paid particular attention to.
 ## tools you will use
 - Jupyter
 - Plotly dash
-- Apache Superset
+- Apache Superset (https://superset.incubator.apache.org/)
 - matplot
 
 ## Data
@@ -49,8 +50,12 @@ should be paid particular attention to.
 ## assignment of exactly one person to each task
 
 Week 1: Research 
+
 Week 2: More specific research into Visualisation Frameworks -> Define Milestones
+
 Week 3: Create First demo prototype using sample data
+
 Week 4: Implemting MNIST and anomaly detection
+
 Week 5: ...
 
