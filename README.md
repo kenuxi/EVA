@@ -1,6 +1,7 @@
-# Dash_iris_demo
+# dash_iris_demo_flask
 This code shows how to create interactive plots using dash using iris dataset
-fetched from remote source.
+fetched from remote source. This time, plotly dash is hosted on a Flask app allowing
+to develop our app further.
 # Installing
 Create new python3 virtual environment:
 ```
@@ -16,5 +17,9 @@ pip install -r requirements.txt
 ```
 Run example:
 ```
-python iris_app.py
+python app.py
+```
+Iris example is at:
+```
+http://127.0.0.1:5000/iris_example/
 ```
