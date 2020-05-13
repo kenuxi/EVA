@@ -2,6 +2,10 @@
 This code shows how to create interactive plots using dash using iris dataset
 fetched from remote source. This time, plotly dash is hosted on a Flask app allowing
 to develop our app further.
+You can check the details here:
+```
+https://hackersandslackers.com/plotly-dash-with-flask/
+```
 # Installing
 Create new python3 virtual environment:
 ```
