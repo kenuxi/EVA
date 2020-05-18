@@ -21,11 +21,3 @@ for row in df.to_dict('records'):
         new_rows.append(row)
 
 pd.DataFrame(new_rows).to_csv(args.output)
-
-
-
-
-
-
-
-
