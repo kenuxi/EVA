@@ -19,31 +19,31 @@ visualizations techniques on user provided datasets. Time series datasets
 should be paid particular attention to.
 
 
-### possible implementation
-- Jupyter Notebook  
-- Plotly Dash  
-- Web App using Flask  
-- Apache Superset as base and vis, change to accept data files and run Algs  
+### implementation
+- Flask + Plotly Dash
+
+### Requirements firts Prototype 
+- Upload a CSV
+- Configuration Screen
+- Data preview
+- Run PCA & T-SNE
+- Visualise Plotly Dash
 
 
-  
 ## your project management 
 ### Tasks
-- Research Superset as possible alternative:  Kenneth
-- Plotly Dash, IRIS Data preparation:         Rocco
-- Prepare sample of Plotly Dash:              Uttam
-- PCA into plotly dash:                       Alberto
+- Generating Anomalines to CSV files      ->Rocco
+- Handling PCA application to Datasets    ->Alberto
+- Build Flask Backend and Homepage        ->Kenneth
+- Start implementing Docker               ->Rocco
+- Git & Team Management                   ->Uttam
+- T-SNE implementation                    ->Alberto
+- Plot from uploaded CSV                  ->Uttam
 
-
-## tools you will use
-- Jupyter
-- Plotly dash
-- Apache Superset (https://superset.incubator.apache.org/)
-- matplot
 
 ## Data
-- MNIST
-- IRIS
+- IRIS dataset changed to have anomaly
+- MNIST dataset changed to have anomaly
 
 ## splitting up the requirements into tasks (at least the first ones)
 
@@ -55,7 +55,5 @@ Week 2: More specific research into Visualisation Frameworks -> Define Milestone
 
 Week 3: Create First demo prototype using sample data
 
-Week 4: Implemting MNIST and anomaly detection
-
-Week 5: ...
+Week 4-5: Running first prototype, including Flask, applying at least T-SNE, PCA
 
