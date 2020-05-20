@@ -27,3 +27,13 @@ Iris example is at:
 ```
 http://127.0.0.1:5000/iris_example/
 ```
+
+# Docker
+Create docker image
+```
+docker build -t name:tag . (example: docker build -t iris-app:latest .)
+```
+Run the app
+```
+docker run -p 5000:port name:tag (example: docker run -p 5000:5000 iris-app:latest)
+```
