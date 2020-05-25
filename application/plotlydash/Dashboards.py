@@ -50,7 +50,7 @@ class IrisDashboard(RemoteCSVDashboard):
     def __init__(self, server, stylesheets=external_stylesheets, prefix='/iris_example/', location=iris_config['location']):
         super().__init__(server, stylesheets, prefix, location)
 
-        self.dash_app = dash.Dash(server=self.server,
+        self.dash_app = dash.Dash(__name__,server=self.server,
                                   routes_pathname_prefix=self.prefix,
                                   external_stylesheets=self.stylesheets)
 
@@ -84,8 +84,12 @@ class IrisDashboard(RemoteCSVDashboard):
 
     def create_dashboard(self, target_column=iris_config['target']):
         features = iris_config['features']  # Hardcoded
-        self.dash_app.layout = html.Div([
-            html.H1('IRIS Dataset'),
+
+
+        self.dash_app.layout = html.Div( children = [
+            html.Div([
+                html.H2(" IRIS Dataset - Anamoly Detection"),
+            ], className = "banner"),
             html.Div([iris_feature_selector(features[0], features, 'feat_1')],
                      style={'width': '48%', 'display': 'inline-block'}),
             html.Div([iris_feature_selector(features[1], features, 'feat_2')],
