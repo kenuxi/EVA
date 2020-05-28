@@ -1,23 +1,41 @@
 import argparse
 import pandas as pd
 import numpy as np
-# TODO currently hardcoded to iris, extend to other sources, extend options
-
 parser = argparse.ArgumentParser()
-parser.add_argument('--output', help='Name of the output csv file.',
+parser.add_argument('-o', '--output', help='Name of the output csv file.',
                     type=str, required=True)
+parser.add_argument('-s', '--source', help='Link to the csv file.',
+                    type=str, required=True)
+parser.add_argument('-t', '--target', help='Name of the target column.',
+                    type=str, required=True)
+parser.add_argument('-p', help='Probability of creating anomalies.',
+                    type=float, required=False)
 args = parser.parse_args()
-df = pd.read_csv('https://raw.githubusercontent.com/pandas-dev/pandas/master/pandas/tests/data/iris.csv')
-targets = df['Name'].unique().tolist()
+
+try:
+    df = pd.read_csv(args.source)
+except FileNotFoundError:
+    raise FileNotFoundError(f'Source ({args.source}) not found!')
+
+# TODO handle cases when columns are not named
+try:
+    targets = df[args.target].unique().tolist()
+except KeyError:
+    raise KeyError(f'Target column ({args.target}) not found!')
+
+p = 0.05 if not args.p else args.p
 not_anomaly = np.random.choice(targets)
-anomalies = targets.remove(not_anomaly)
+anomalies = np.copy(targets).tolist()
+anomalies.remove(not_anomaly)
 new_rows = []
-for row in df.to_dict('records'):
-    if row['Name'] == not_anomaly:
+
+df_dict = df.to_dict('records')  # This line make take a while
+
+for idx, row in enumerate(df_dict):
+    if row[args.target] == not_anomaly:
         row.update({'is_anomaly': False})
         new_rows.append(row)
     elif np.random.uniform() <= 0.1:
         row.update({'is_anomaly': True})
         new_rows.append(row)
-
 pd.DataFrame(new_rows).to_csv(args.output)
