@@ -35,7 +35,7 @@ for idx, row in enumerate(df_dict):
     if row[args.target] == not_anomaly:
         row.update({'is_anomaly': False})
         new_rows.append(row)
-    elif np.random.uniform() <= 0.1:
+    elif np.random.uniform() <= p:
         row.update({'is_anomaly': True})
         new_rows.append(row)
 pd.DataFrame(new_rows).to_csv(args.output)
