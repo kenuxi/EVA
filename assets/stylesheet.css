@@ -1,0 +1,61 @@
+
+.banner {
+    height: 80px;
+    margin: 0px -0px 70px;
+    background-color: rgba(0, 51, 101, 1);
+    border-radius: 3px;
+}
+
+.banner h1{
+    font-family: Verdana;
+}
+
+.banner h2{
+    color: white;
+    padding-top: 5px;
+    margin-left: 1%;
+    display: inline-block;
+    font-family: Verdana;
+}
+
+.filter h3{
+    display: inline-block;
+    margin-left: 1%;
+    margin-bottom: 1%;
+    width: 20%;
+    font-size: 0.9em;
+    font-family: Verdana;
+    float: left;
+}
+
+.filter1 h3{
+    display: inline-block;
+    margin-left: 1%;
+    margin-bottom: 1%;
+    width: 20%;
+    font-size: 0.9em;
+    font-family: Verdana;
+    float: right;
+}
+
+.filter h4{
+    display: inline-block;
+    margin-left: 7%;
+    margin-bottom: 1%;
+    width: 20%;
+    font-size: 0.9em;
+    font-family: Verdana;
+}
+
+.filter h5{
+    float: right;
+    margin-right: 20%;
+    font-size: 0.6em;
+    font-family: Aerial;
+}
+
+.modebar{
+    display: none !important;
+}
+
+
