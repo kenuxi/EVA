@@ -3,11 +3,11 @@ from flask import Flask, render_template, url_for, flash, redirect
 from forms import RegistrationForm, LoginForm, FileSelectForm
 
 
-@app.route("/", methods=['Get', 'POST'])
-@app.route("/home", methods=['Get', 'POST'])
+@app.route("/", methods=['GET', 'POST'])
+@app.route("/home", methods=['GET', 'POST'])
 def home():
     form = FileSelectForm()
-    return render_template('home.html', title='Home', form=form)
+    return render_template('home.html', title='Home', form=form, variable=None)
 
 
 @app.route("/about")

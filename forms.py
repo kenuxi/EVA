@@ -2,7 +2,7 @@ import os
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, SubmitField, BooleanField, SelectField
 from wtforms.validators import DataRequired, Length, Email, EqualTo
-
+from app import app
 
 class RegistrationForm(FlaskForm):
     username = StringField('Username',
@@ -24,7 +24,7 @@ class LoginForm(FlaskForm):
 
 
 class FileSelectForm(FlaskForm):
-    files = [file for file in os.listdir() if '.csv' in file]
+    files = [file for file in os.listdir(app.root_path + '/data') if '.csv' in file]
     select = SelectField(label='Select from ' + os.getcwd(), choices=files)
     submit = SubmitField(label='Submit')
 

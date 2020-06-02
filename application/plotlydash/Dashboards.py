@@ -6,6 +6,7 @@ import pandas as pd
 from dash.dependencies import Input, Output
 from config import iris_config, external_stylesheets
 from abc import abstractmethod, ABC
+from .assets.layout import html_layout
 
 
 class Dashboard(ABC):
@@ -85,11 +86,9 @@ class IrisDashboard(RemoteCSVDashboard):
     def create_dashboard(self, target_column=iris_config['target']):
         features = iris_config['features']  # Hardcoded
 
+        self.dash_app.index_string = html_layout
 
-        self.dash_app.layout = html.Div( children = [
-            html.Div([
-                html.H2(" IRIS Dataset - Anamoly Detection"),
-            ], className = "banner"),
+        self.dash_app.layout = html.Div(children=[
             html.Div([iris_feature_selector(features[0], features, 'feat_1')],
                      style={'width': '48%', 'display': 'inline-block'}),
             html.Div([iris_feature_selector(features[1], features, 'feat_2')],
