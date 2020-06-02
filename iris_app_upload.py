@@ -84,10 +84,12 @@ def update_output(contents):
 def display_graph(rows, selector, selector1):
     df = pd.DataFrame(rows)
 
+    print(df)
+
     return {'data': [
         dict(
-            x=df[df.iloc[:,0]  == name][selector],
-            y=df[df.iloc[:,0] == name][selector1],
+            x=df[df.iloc[:,-1]  == name][selector],
+            y=df[df.iloc[:,-1] == name][selector1],
             mode='markers',
             opacity=0.7,
             marker={
@@ -95,7 +97,7 @@ def display_graph(rows, selector, selector1):
                 'line': {'width': 0.5, 'color': 'white'}
             },
             name=name
-        ) for name in df.iloc[:,0].unique()
+        ) for name in df.iloc[:,-1].unique()
     ],
         'layout': dict(
             xaxis={'type': 'Linear', 'title': selector},
@@ -111,7 +113,7 @@ def display_graph(rows, selector, selector1):
 
 def parse_uploads(content):
     df = parse_contents(content)
-    return [{'label': i, 'value': i } for i in df.columns[:-1]]
+    return [{'label': i, 'value': i } for i in df.columns[1:-1]]
 
 
 
@@ -121,7 +123,7 @@ def parse_uploads(content):
 
 def parse_uploads1(content):
     df = parse_contents(content)
-    return [{'label': i, 'value': i } for i in df.columns[:-1]]
+    return [{'label': i, 'value': i } for i in df.columns[1:-1]]
 
 if __name__ == '__main__':
     app.run_server(debug=True)
