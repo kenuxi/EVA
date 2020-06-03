@@ -7,13 +7,12 @@ from forms import RegistrationForm, LoginForm, FileSelectForm
 @app.route("/home", methods=['GET', 'POST'])
 def home():
     form = FileSelectForm()
-    return render_template('home.html', title='Home', form=form, variable=None)
+    return render_template('home.html', title='Home', form=form)
 
 
 @app.route("/about")
 def about():
     return render_template('about.html', title='About')
-
 
 
 @app.route("/register", methods=['GET', 'POST'])
