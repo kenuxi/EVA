@@ -1,8 +1,18 @@
 import os
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, SubmitField, BooleanField, SelectField
-from wtforms.validators import DataRequired, Length, Email, EqualTo
-from app import app
+from wtforms import SubmitField, BooleanField, SelectField
+# from wtforms import StringField, PasswordField
+# from wtforms.validators import DataRequired, Length, Email, EqualTo
+
+class HomePageForm(FlaskForm):
+    files = [file for file in os.listdir() if '.csv' in file]
+    select = SelectField(label='Select from ' + os.getcwd(), choices=files)
+    pca = BooleanField('PCA')
+    tsne = BooleanField('T-SNE')
+    submit = SubmitField(label='Submit')
+
+'''
+These are not needed at the moment.
 
 class RegistrationForm(FlaskForm):
     username = StringField('Username',
@@ -28,3 +38,4 @@ class FileSelectForm(FlaskForm):
     select = SelectField(label='Select from ' + os.getcwd(), choices=files)
     submit = SubmitField(label='Submit')
 
+'''

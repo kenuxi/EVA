@@ -1,12 +1,13 @@
 from flask import current_app as app
 from flask import Flask, render_template, url_for, flash, redirect
-from forms import RegistrationForm, LoginForm, FileSelectForm
+from forms import HomePageForm
+#from forms import RegistrationForm, LoginForm, FileSelectForm
 
 
 @app.route("/", methods=['GET', 'POST'])
 @app.route("/home", methods=['GET', 'POST'])
 def home():
-    form = FileSelectForm()
+    form = HomePageForm()
     return render_template('home.html', title='Home', form=form)
 
 
@@ -14,6 +15,8 @@ def home():
 def about():
     return render_template('about.html', title='About')
 
+
+'''
 
 @app.route("/register", methods=['GET', 'POST'])
 def register():
@@ -34,4 +37,4 @@ def login():
     # flash('Login Unsuccessful. Pleas try again., 'danger')
     return render_template('login.html', title='Login', form=form)
 
-
+'''
