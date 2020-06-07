@@ -39,7 +39,7 @@ class EvaData():
         # Check data frame is in the correct .csv format
         if self.file_name.endswith('.csv'):
             # CSV File with the last columns = labels if there are any labels
-            self.pandas_data_frame = pd.read_csv('/Users/albertorodriguez/Desktop/Current Courses/InternenServLab/LAB_class_alb/' + self.file_name)
+            self.pandas_data_frame = pd.read_csv(self.file_name)
             X_all = self.pandas_data_frame.to_numpy()
             # Extract nxd data matrix and dimensions
             self.X = X_all[:, :-1].astype('float64')
