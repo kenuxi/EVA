@@ -73,7 +73,7 @@ class EvaData():
             fig = px.scatter(x=self.X[:, 0], y=self.X[:, 1], title='Original data')
             return fig
         elif self.d == 3:
-            fig = px.scatter(x=self.X[:, 0], y=self.X[:, 1], z=self.X[:, 2], title='Original data')
+            fig = px.scatter_3d(x=self.X[:, 0], y=self.X[:, 1], z=self.X[:, 2], title='Original data')
             return fig
         else:
             # If data is more then three dim just plot the first 2 dimensions
@@ -105,9 +105,17 @@ class EvaData():
         if self.d == 1:
             fig = px.scatter(x=self.X[:, 0], y=np.zeros(self.n), size=self.outl_scores, title='K-Ball-Index-Method for Outlier scores')
             return fig
-        else:
+        if self.d == 2:
             fig = px.scatter(x=self.X[:, 0], y=self.X[:, 1], size=self.outl_scores, title='K-Ball-Index-Method for Outlier scores')
             return fig
+        if self.d == 3:
+            fig = px.scatter_3d(x=self.X[:, 0], y=self.X[:, 1], z= self.X[:,2], size=self.outl_scores, title='K-Ball-Index-Method for Outlier scores')
+            return fig
+        else:
+            fig = px.scatter(x=self.X[:, 0], y=self.X[:, 1], size=self.outl_scores,
+                             title='K-Ball-Index-Method for Outlier scores')
+            return fig
+
 
 
     def gamma_index(self, k, scaling_factor):
@@ -137,6 +145,12 @@ class EvaData():
         # Plot part
         if self.d == 1:
             fig = px.scatter(x=self.X[:, 0], y=np.zeros(self.n), size=self.outl_scores, title='Gamma-Index-Method for Outlier scores')
+            return fig
+        if self.d == 2:
+            fig = px.scatter(x=self.X[:, 0], y=self.X[:, 1], size=self.outl_scores, title='Gamma-Index-Method for Outlier scores')
+            return fig
+        if self.d == 3:
+            fig = px.scatter_3d(x=self.X[:, 0], y=self.X[:, 1], z=self.X[:,2] ,size=self.outl_scores, title='Gamma-Index-Method for Outlier scores')
             return fig
         else:
             fig = px.scatter(x=self.X[:, 0], y=self.X[:, 1], size=self.outl_scores, title='Gamma-Index-Method for Outlier scores')
@@ -175,13 +189,20 @@ class EvaData():
             # Construct pandas data frame with inliers as one column and outliers as the other column
             dataset = pd.DataFrame({'x_1': x_all[:, 0],'x_2': np.zeros(self.n),'Classification': labels})
             fig = px.scatter(dataset, x="x_1", y="x_2", color="Classification",
-                 size=self.outl_scores, title='Outliers amd Inliers')
+                 size=self.outl_scores, title='Outliers and Inliers')
             return fig
-        else:
-            # Use just two dimensions
+        if self.d == 2:
+            # Use two dimensions
             dataset = pd.DataFrame({'x_1': x_all[:, 0], 'x_2': x_all[:, 1], 'Classification': labels})
             fig = px.scatter(dataset, x="x_1", y="x_2", color="Classification",
-                 size=self.outl_scores, title='Outliers amd Inliers')
+                 size=self.outl_scores, title='Outliers and Inliers')
+            return fig
+
+        else:
+            # Use just three dimensions
+            dataset = pd.DataFrame({'x_1': x_all[:, 0], 'x_2': x_all[:, 1], 'x_3': x_all[:, 2], 'Classification': labels})
+            fig = px.scatter_3d(dataset, x="x_1", y="x_2", z="x_3", color="Classification",
+                 size=self.outl_scores, title='Outliers and Inliers')
             return fig
 
 
