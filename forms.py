@@ -5,7 +5,7 @@ from wtforms import SubmitField, BooleanField, SelectField
 # from wtforms.validators import DataRequired, Length, Email, EqualTo
 
 class HomePageForm(FlaskForm):
-    files = [file for file in os.listdir() if '.csv' in file]
+    files = [file for file in os.listdir('application/data') if '.csv' in file]
     select = SelectField(label='Select from ' + os.getcwd(), choices=files)
     pca = BooleanField('PCA')
     tsne = BooleanField('T-SNE')
