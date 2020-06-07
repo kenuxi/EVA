@@ -20,6 +20,9 @@ flask = "==1.1.2"
 flask-wtf = "==0.14.3"
 flask-sqlalchemy = "*"
 email-validator = "*"
+dash-daq = "*"
+matplotlib = "*"
+sklearn = "*"
 
 [requires]
 python_version = "3.7"
