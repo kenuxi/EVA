@@ -1,15 +1,16 @@
+import os
 import numpy as np
 import dash
 import dash_core_components as dcc
 import dash_html_components as html
 import dash_daq as daq
-import matplotlib.pyplot as plt
 from sklearn.decomposition import PCA
 import plotly.express as px
 from mpl_toolkits.mplot3d import Axes3D
 from scipy.spatial.distance import cdist  # fast distance matrices
 import pandas as pd
 from dash.dependencies import Input, Output
+
 
 class EvaData():
     def __init__(self):
@@ -27,7 +28,6 @@ class EvaData():
         self.feature_names = None
         self.outl_scores = None
         self.remained_variance = None
-
 
     def load_data(self, file_name):
         ''' Loads a csv file into a numpy data X and labels y
@@ -109,14 +109,12 @@ class EvaData():
             fig = px.scatter(x=self.X[:, 0], y=self.X[:, 1], size=self.outl_scores, title='K-Ball-Index-Method for Outlier scores')
             return fig
         if self.d == 3:
-            fig = px.scatter_3d(x=self.X[:, 0], y=self.X[:, 1], z= self.X[:,2], size=self.outl_scores, title='K-Ball-Index-Method for Outlier scores')
+            fig = px.scatter_3d(x=self.X[:, 0], y=self.X[:, 1], z=self.X[:, 2], size=self.outl_scores, title='K-Ball-Index-Method for Outlier scores')
             return fig
         else:
             fig = px.scatter(x=self.X[:, 0], y=self.X[:, 1], size=self.outl_scores,
                              title='K-Ball-Index-Method for Outlier scores')
             return fig
-
-
 
     def gamma_index(self, k, scaling_factor):
         ''' Computes Gamma index for the Data matrix K by computing the distances to its k nearest neighbours
@@ -150,12 +148,11 @@ class EvaData():
             fig = px.scatter(x=self.X[:, 0], y=self.X[:, 1], size=self.outl_scores, title='Gamma-Index-Method for Outlier scores')
             return fig
         if self.d == 3:
-            fig = px.scatter_3d(x=self.X[:, 0], y=self.X[:, 1], z=self.X[:,2] ,size=self.outl_scores, title='Gamma-Index-Method for Outlier scores')
+            fig = px.scatter_3d(x=self.X[:, 0], y=self.X[:, 1], z=self.X[:, 2], size=self.outl_scores, title='Gamma-Index-Method for Outlier scores')
             return fig
         else:
             fig = px.scatter(x=self.X[:, 0], y=self.X[:, 1], size=self.outl_scores, title='Gamma-Index-Method for Outlier scores')
             return fig
-
 
     def visualize_outliers(self, threshold):
         '''
@@ -205,15 +202,12 @@ class EvaData():
                  size=self.outl_scores, title='Outliers and Inliers')
             return fig
 
-
-
     def apply_PCA(self, m):
         ''' Perform PCA analysis on X and reduce to an m dimensional subspace
         Definition:  apply_pca(X, m)
         Input:       X                  - NxD array of N data points with D features
                      m                  - int, dimension of the subspace to project
         '''
-
         self.pca = PCA(n_components=m)
         self.pca.fit(self.X)
         # Update X
@@ -224,12 +218,12 @@ class EvaData():
         # Update n,d
         self.n, self.d = self.X.shape
 
-
     def restore_original_data(self):
         ''' This method restoes X,n,d to the original data
         '''
         self.X = self.X_original
         self.n, self.d = self.X.shape
+
 
 app = dash.Dash()
 app.css.config.serve_locally = False
@@ -420,9 +414,9 @@ app.layout = html.Div(
             html.Div([
                 daq.NumericInput(
                     id='threshold_input_rdim',
-                    min=0,
-                    max=1000,
-                    size=120,
+                    min=0.0,
+                    max=1000.0,
+                    size=120.0,
                     label='threshold value',
                     labelPosition='bottom',
                     value=0),
@@ -509,21 +503,20 @@ def update_graph_dimred(selected_data_set, k_value,selected_dim_red_method, thre
         else:
             return dash.no_update
 
+
 @app.callback(
     dash.dependencies.Output('k_value', 'children'),
     [dash.dependencies.Input('k_input', 'value')])
-
 def update_output(value):
     pass
+
 
 @app.callback(
     [Output(component_id='red_dim_plot', component_property='figure'),
      Output(component_id='selected_reddim_method', component_property='data')],
     [Input(component_id='select red method', component_property='value'),
      Input(component_id='eva_object', component_property='data'),
-     dash.dependencies.Input('ndim_input', 'value')]
-)
-
+     dash.dependencies.Input('ndim_input', 'value')])
 def update_graph_reddim(selected_redim_method, selected_dataset, m):
     if selected_redim_method is not '':
         # Init class object
@@ -541,6 +534,7 @@ def update_graph_reddim(selected_redim_method, selected_dataset, m):
     else:
         return dash.no_update
 
+
 @app.callback(
     [Output(component_id='outliers_red_dim', component_property='figure')],
     [Input(component_id='selected_reddim_method', component_property='data'),
@@ -548,9 +542,7 @@ def update_graph_reddim(selected_redim_method, selected_dataset, m):
      dash.dependencies.Input('ndim_input', 'value'),
      dash.dependencies.Input('k_input_rdim', 'value'),
      Input(component_id='select outlier method reduced', component_property='value'),
-     dash.dependencies.Input('threshold_input_rdim', 'value')]
-)
-
+     dash.dependencies.Input('threshold_input_rdim', 'value')])
 def update_graph_reddim_outliers(selected_redim_method, selected_dataset, m, k, selected_outlier_method, threshold):
     if selected_redim_method is not '':
         if selected_outlier_method is not '':
@@ -583,6 +575,7 @@ def update_graph_reddim_outliers(selected_redim_method, selected_dataset, m, k, 
             return dash.no_update
     else:
         return dash.no_update
+
 
 if __name__ == '__main__':
     app.run_server(debug=True)
