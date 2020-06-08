@@ -11,6 +11,7 @@ from scipy.spatial.distance import cdist  # fast distance matrices
 import pandas as pd
 from dash.dependencies import Input, Output
 from sklearn.manifold import LocallyLinearEmbedding
+from utils import get_files_dict
 
 class EvaData():
     def __init__(self):
@@ -287,13 +288,7 @@ app.layout = html.Div(
             html.Div([
                 dcc.Store(id='eva_object', data=''),
                 dcc.Dropdown(id='select dataset',
-                             options=[
-                                 {"label": "Two Gaussians", "value": 'two_gaussians.csv'},
-                                 {"label": "Five Gaussians", "value": 'five_gaussians.csv'},
-                                 {"label": "Lab Three Dim", "value": 'lab_data.csv'},
-                                 {"label": "Fishbowl", "value": 'fishbowl.csv'},
-                                 {"label": "Fishbowl Outliers", "value": 'fishbowl_outl.csv'},
-                                 {"label": "Iris", "value": 'iris.csv'}],
+                             options=get_files_dict(),
                              multi=False,
                              value='',  # initial value
                              style={'width': '98%'},
@@ -477,7 +472,6 @@ app.layout = html.Div(
      Output(component_id='eva_object', component_property='data')],
     [Input(component_id='select dataset', component_property='value')]
 )
-
 def update_graph(selected_dataset):
     if selected_dataset is not '':
         # Init class object
