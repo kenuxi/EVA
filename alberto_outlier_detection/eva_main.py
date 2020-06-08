@@ -30,7 +30,8 @@ class EvaData():
         self.remained_variance = None
 
     def load_data(self, file_name):
-        ''' Loads a csv file into a numpy data X and labels y
+        '''
+        Loads a csv file into a numpy data X and labels y
         Definition:  load_data(self, file_name)
         Input:       fname   - string, file name ending in .csv
 
@@ -63,7 +64,8 @@ class EvaData():
             print('Error No CSV FILE') # here maybe some dash error widget-message
 
     def visualize_original_data(self):
-        ''' If the data is 2Dim or 3Dim, it displays the data in a 2D/3D Plot
+        '''
+        If the data is 2Dim or 3Dim, it displays the data in a 2D/3D Plot
         Definition:  visualize_original_data(self)
         '''
         if self.d == 1:
@@ -444,15 +446,14 @@ app.layout = html.Div(
     ], className='eleven columns offset-by-one')
 )
 
+
 # --------------------------------------------------------------
-# Callback to load the dataframe and display it
 # Callback to load the dataframe and display it
 @app.callback(
     [Output(component_id='my_scatter_plot', component_property='figure'),
      Output(component_id='eva_object', component_property='data')],
     [Input(component_id='select dataset', component_property='value')]
 )
-
 def update_graph(selected_dataset):
     if selected_dataset is not '':
         # Init class object
@@ -474,7 +475,7 @@ def update_graph(selected_dataset):
      Input(component_id='outlier detection method', component_property='value'),
      dash.dependencies.Input('threshold_input', 'value')]
 )
-def update_graph_dimred(selected_data_set, k_value,selected_dim_red_method, threshold):
+def update_graph_dimred(selected_data_set, k_value, selected_dim_red_method, threshold):
     # Load the data from a pandas dataframe to a numpy array
     if selected_data_set is '':
         return dash.no_update

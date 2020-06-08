@@ -38,7 +38,8 @@ class EvaData():
 
 
     def load_data(self, file_name):
-        ''' Loads a csv file into a numpy data X and labels y
+        '''
+        Loads a csv file into a numpy data X and labels y
         Definition:  load_data(self, file_name)
         Input:       fname   - string, file name ending in .csv
 
@@ -73,7 +74,8 @@ class EvaData():
             print('Error No CSV FILE') # here maybe some dash error widget-message
 
     def visualize_original_data(self):
-        ''' If the data is 2Dim or 3Dim, it displays the data in a 2D/3D Plot
+        '''
+        If the data is 2Dim or 3Dim, it displays the data in a 2D/3D Plot
         Definition:  visualize_original_data(self)
         '''
         if self.d == 1:
@@ -104,8 +106,9 @@ class EvaData():
             ax.set_ylabel(self.feature_names[1])
 
     def k_ball_index(self, k, scaling_factor):
-        ''' Computes k outlier score value for every data point. kðxÞ is the radius of the smallest ball centered at x
-           containing its k nearest neighbors, i.e. the distance between x and its kth nearest neighbor,
+        '''
+        Computes k outlier score value for every data point. kðxÞ is the radius of the smallest ball centered at x
+        containing its k nearest neighbors, i.e. the distance between x and its kth nearest neighbor,
         Definition:  calculate_gamma_index(self, k):
         Input:       k              - int, number of nearest neighbours the algorithm uses to compute the outlier score values
                      scaling_factor - int, factor by which the outlier scores are scaled in order to better recognize them
