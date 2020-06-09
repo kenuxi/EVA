@@ -11,7 +11,7 @@ from scipy.spatial.distance import cdist  # fast distance matrices
 import pandas as pd
 from dash.dependencies import Input, Output
 from sklearn.manifold import LocallyLinearEmbedding
-from utils import get_files_dict
+from .utils import get_files_dict
 
 class EvaData():
     def __init__(self):
