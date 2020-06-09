@@ -41,7 +41,7 @@ def get_app():
         to_reload = True
         with app.app_context():
             from application.plotlydash.Dashboards import IrisDashboard
-            app = IrisDashboard(app).create_dashboard()
+            app = IrisDashboard(app).create_dashboard(session['dashboard_config'])
         return session['dashboard_config']
 
     return app
