@@ -22,9 +22,6 @@
       <li class="nav-item">
         <a class="nav-link" href="/dashboard/">Dashboard</a>
       </li>
-        <li class="nav-item">
-            <a class="nav-link{{ ' active' if active_page == 'about' }}" href="{{ url_for('about') }}">About</a>
-        </li>
     </ul>
     <div class="container">
         {% with messages = get_flashed_messages(with_categories=true) %}
