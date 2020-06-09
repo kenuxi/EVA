@@ -8,6 +8,7 @@ from config import iris_config, external_stylesheets
 from abc import abstractmethod, ABC
 from .assets.layout import html_layout
 
+import dash_daq as daq
 import numpy as np
 import pandas as pd
 from sklearn.manifold import LocallyLinearEmbedding
@@ -64,21 +65,21 @@ class EvaData():
         '''
         if self.d == 1:
             fig = px.scatter(self.pandas_data_frame, x=self.dataset_columns[0], y=np.zeros(self.n),
-                             color='Classification')
+                             color='Classification', title='Not reduced data')
             return fig
 
         elif self.d == 2:
             fig = px.scatter(self.pandas_data_frame, x=self.dataset_columns[0], y=self.dataset_columns[1],
-                             color='Classification')
+                             color='Classification', title='Not reduced data')
             return fig
         elif self.d == 3:
             fig = px.scatter_3d(self.pandas_data_frame, x=self.dataset_columns[0], y=self.dataset_columns[1],
-                             z=self.dataset_columns[2], color='Classification')
+                             z=self.dataset_columns[2], color='Classification', title='Not reduced data')
             return fig
         else:
             # If data is more then three dim just plot the first 2 dimensions
             fig = px.scatter(self.pandas_data_frame, x=self.dataset_columns[0], y=self.dataset_columns[1],
-                             color='Classification')
+                             color='Classification', title='Not reduced data')
             return fig
 
 
@@ -90,21 +91,21 @@ class EvaData():
         columns_data = self.reduced_pandas_data.columns
         if self.d_red == 1:
             fig = px.scatter(self.reduced_pandas_data, x=columns_data[0], y=np.zeros(self.n),
-                             color='Classification')
+                             color='Classification', title='Reduced data with '+self.red_method)
             return fig
 
         elif self.d_red == 2:
             fig = px.scatter(self.reduced_pandas_data, x=columns_data[0], y=columns_data[1],
-                             color='Classification')
+                             color='Classification', title='Reduced data with '+self.red_method)
             return fig
         elif self.d_red == 3:
             fig = px.scatter_3d(self.reduced_pandas_data, x=columns_data[0], y=columns_data[1],
-                             z=columns_data[2], color='Classification')
+                             z=columns_data[2], color='Classification', title='Reduced data with '+self.red_method)
             return fig
         else:
             # If data is more then three dim just plot the first 2 dimensions
             fig = px.scatter(self.reduced_pandas_data, x=columns_data[0], y=columns_data[1],
-                             color='Classification')
+                             color='Classification', title='Reduced data with '+self.red_method)
             return fig
 
     def apply_PCA(self, m):
@@ -135,7 +136,7 @@ class EvaData():
         Input:       X                  - NxD array of N data points with D features
                      m                  - int, dimension of the subspace to project
         '''
-        embedding = LocallyLinearEmbedding(n_components=m, n_neighbors=neighbours, neighbors_algorithm='kd_tree')
+        embedding = LocallyLinearEmbedding(n_components=m, n_neighbors=neighbours, max_iter=100)
         # Update X
         self.X_red = embedding.fit_transform(self.X)
         # Update n,d
@@ -226,18 +227,150 @@ class IrisDashboard(RemoteCSVDashboard):
         main_data = EvaData()
         main_data.config = data_dict
         main_data.load_data(file_name=data_file_name)
-
+        fig_original = main_data.visualize_original_data()
+        '''
         if dim_red_method == 'PCA':
             main_data.apply_PCA(m=2)
+        elif dim_red_method == 'T-SNE':
+            main_data.apply_TSNE(m=2, perplexity=30)
+
+        elif dim_red_method == 'LLE':
+            main_data.apply_LLE(m=2, neighbours=5)
 
         fig_original = main_data.visualize_original_data()
         fig_reduced = main_data.visualize_reduced_data()
+        '''
 
+        self.dash_app.css.config.serve_locally = False
+        # Boostrap CSS.
+        self.dash_app.css.append_css({'external_url': 'https://codepen.io/amyoshino/pen/jzXypZ.css'})  # noqa: E501
         self.dash_app.index_string = html_layout
 
-        self.dash_app.layout = html.Div(children=[
-            dcc.Graph(id='outliers_red_dim', figure=fig_original),
-            dcc.Graph(id='my_scatter_plot', figure=fig_reduced)
-        ])
+        self.dash_app.layout = html.Div(
+            html.Div([
+        html.Div(
+            [
+                html.H1(children='EVA',
+                        className='nine columns',
+                        style={
+                            'color': '#111',
+                            'font-family': 'sans-serif',
+                            'font-size': 70,
+                            'font-weight': 200,
+                            'line-height': 58,
+                             'margin': 0,
+                             'backgroundColor': '#DCDCDC'
+                              },
+                        ),
+                html.Img(
+                    src="https://creativeoverflow.net/wp-content/uploads/2012/03/17-farmhouse.jpg",
+                    className='three columns',
+                    style={
+                        'height': '6%',
+                        'width': '6%',
+                        'float': 'right',
+                        'position': 'right',
+                        'margin-top': 0,
+                        'margin-right': 10,
+                    },
+                ),
+                html.Div(children='''
+                        A visualisation tool to detect outliers
+                        ''',
+                         style={
+                             'color': '#111',
+                             'font-family': 'sans-serif',
+                             'font-size': 20,
+                             'margin': 0,
+                             'backgroundColor':'#DCDCDC'
+                         },
+                        className='nine columns'
+                )
+            ], className="row"
+        ),
+
+        html.Br(),
+
+        html.Div([
+            html.Div([
+                daq.NumericInput(
+                    id='ndim_input',
+                    min=1,
+                    max=1000,
+                    size=120,
+                    label='subspace dimension',
+                    labelPosition='bottom',
+                    value=2),
+                html.Div(id='ndim_value')
+            ], className='two columns'),
+
+
+            html.Div([
+                daq.NumericInput(
+                    id='tsne_perplexity',
+                    min=5,
+                    max=100,
+                    size=120,
+                    label='TSNE-perplexity, 5-50 recommended',
+                    labelPosition='bottom',
+                    value=30),
+                html.Div(id='k_value_rdim')
+            ], className='two columns'),
+
+            html.Div([
+                daq.NumericInput(
+                    id='lle_neighbours',
+                    min=0,
+                    max=10000,
+                    size=120,
+                    label='LLE-neighbours',
+                    labelPosition='bottom',
+                    value=5),
+            ], className='two columns')
+
+        ],
+            style={'width': '68%', 'display': 'inline-block'},
+            className="row"
+        ),
+
+        html.Div(
+            [
+            html.Div([
+                dcc.Graph(id='original_data_plot', figure=fig_original),
+                ], className= 'five columns'
+                ),
+
+                html.Div([
+                dcc.Graph(id='reduced_data_plot', figure={})
+                ], className= 'five columns'
+                )
+            ], className="row"
+        ),
+
+            ], className='twelve columns offset-by-one')
+        )
+
+        @self.dash_app.callback(
+            [Output(component_id='reduced_data_plot', component_property='figure')],
+            [dash.dependencies.Input('ndim_input', 'value'),
+             dash.dependencies.Input('lle_neighbours', 'value'),
+             dash.dependencies.Input('tsne_perplexity', 'value'),
+             ]
+        )
+        def update_graph(m, lle_neighburs, tsne_perpl):
+            if dim_red_method == 'PCA':
+                main_data.apply_PCA(m=m)
+            elif dim_red_method == 'LLE':
+                main_data.apply_LLE(m=m, neighbours=lle_neighburs)
+
+            elif dim_red_method == 'T-SNE':
+                main_data.apply_TSNE(m=m, perplexity=tsne_perpl)
+
+            fig = main_data.visualize_reduced_data()
+
+            return [fig]
+
+
 
         return self.dash_app.server
+
