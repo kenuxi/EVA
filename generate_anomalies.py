@@ -38,4 +38,4 @@ for idx, row in enumerate(df_dict):
     elif np.random.uniform() <= p:
         row.update({'is_anomaly': True})
         new_rows.append(row)
-pd.DataFrame(new_rows).to_csv(args.output)
+pd.DataFrame(new_rows).to_csv(args.output, index= False)
