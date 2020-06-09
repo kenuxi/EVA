@@ -221,13 +221,13 @@ class IrisDashboard(RemoteCSVDashboard):
     def create_dashboard(self, data_dict):
 
         data_file_name = data_dict['location']# '/Users/albertorodriguez/Desktop/Current Courses/InternenServLab/EVA-merge_flask_dash/application/data/fishbowl_outl.csv'
-        dim_red_method = 'pca'
+        dim_red_method = data_dict['algorithm']
 
         main_data = EvaData()
         main_data.config = data_dict
         main_data.load_data(file_name=data_file_name)
 
-        if dim_red_method == 'pca':
+        if dim_red_method == 'PCA':
             main_data.apply_PCA(m=2)
 
         fig_original = main_data.visualize_original_data()

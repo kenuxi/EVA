@@ -8,17 +8,14 @@
             <fieldset class="form-group">
                 <legend class="border-bottom mb-4">Select a CSV File</legend>
                 <div class="form-group">
-                    {{ form.select.label(class="form-control-label") }}
-                    {{ form.select(class="form-control form-control-lg") }}
+                    {{ form.file.label(class="form-control-label") }}
+                    {{ form.file(class="form-control form-control-lg") }}
 
                     {{ form.target.label(class="form-control-label") }}
                     {{ form.target(class="form-control form-control-lg") }}
 
-                    {{ form.pca.label(class="form-control-label") }}
-                    {{ form.pca(class="form-control form-control-lg") }}
-
-                    {{ form.tsne.label(class="form-control-label") }}
-                    {{ form.tsne(class="form-control form-control-lg") }}
+                    {{ form.algorithm.label(class="form-control-label") }}
+                    {{ form.algorithm(class="form-control form-control-lg") }}
 
                 </div>
             </fieldset>

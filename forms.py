@@ -1,16 +1,15 @@
 import os
 from flask_wtf import FlaskForm
-from wtforms import SubmitField, BooleanField, SelectField, StringField
+from wtforms import SubmitField, SelectField, StringField
 from wtforms.validators import DataRequired
 # from wtforms import PasswordField
 # from wtforms.validators import Length, Email, EqualTo
 
 class HomePageForm(FlaskForm):
     files = ['application/data/' + file for file in os.listdir('application/data') if '.csv' in file]
-    select = SelectField(label='Select from ' + os.getcwd(), choices=files)
+    file = SelectField(label='Select from ' + os.getcwd(), choices=files)
     target = StringField(validators=[DataRequired()])
-    pca = BooleanField('PCA')
-    tsne = BooleanField('T-SNE')
+    algorithm = SelectField(label='D-reduction', choices=['PCA', 'T-SNE', 'LLE'])
     submit = SubmitField(label='Submit')
 
 '''

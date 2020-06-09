@@ -17,10 +17,9 @@ def get_app():
         form = HomePageForm()
         if request.method == 'POST':
             dashboard_config = {
-                'location': form.select.data,
+                'location': form.file.data,
                 'target': form.target.data,
-                'pca': form.pca.data,
-                'tsne': form.tsne.data
+                'algorithm': form.algorithm.data
             }
             session['dashboard_config'] = dashboard_config
             return redirect(url_for('reload'))
@@ -34,7 +33,7 @@ def get_app():
     def reload():
         global to_reload
         to_reload = True
-        return session['dashboard_config']
+        return redirect('/dashboard')
 
     if to_reload:
         with app.app_context():
