@@ -33,9 +33,9 @@ df_dict = df.to_dict('records')  # This line make take a while
 
 for idx, row in enumerate(df_dict):
     if row[args.target] == not_anomaly:
-        row.update({'is_anomaly': False})
+        row.update({'Classification': False})
         new_rows.append(row)
     elif np.random.uniform() <= p:
-        row.update({'is_anomaly': True})
+        row.update({'Classification': True})
         new_rows.append(row)
 pd.DataFrame(new_rows).to_csv(args.output, index= False)
