@@ -6,7 +6,7 @@ from wtforms.validators import DataRequired
 # from wtforms.validators import Length, Email, EqualTo
 
 class HomePageForm(FlaskForm):
-    files = [file for file in os.listdir('application/data') if '.csv' in file]
+    files = ['application/data/' + file for file in os.listdir('application/data') if '.csv' in file]
     select = SelectField(label='Select from ' + os.getcwd(), choices=files)
     target = StringField(validators=[DataRequired()])
     pca = BooleanField('PCA')

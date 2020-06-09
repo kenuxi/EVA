@@ -15,6 +15,7 @@ from sklearn.manifold import TSNE
 from sklearn.decomposition import PCA
 import plotly.express as px
 
+
 class EvaData():
     def __init__(self):
         self.dataset = ''
@@ -53,7 +54,7 @@ class EvaData():
             self.feature_names = self.pandas_data_frame.keys()
             # Now we've got the nxd data array X and its corresponding labels Y (if NO labels exist,
             #  this is indicated by the self.labels bool instance)
-
+            print(self.pandas_data_frame.head())
         else:
             print('Error No CSV FILE') # here maybe some dash error widget-message
 
@@ -169,6 +170,7 @@ class EvaData():
         '''
         self.X = self.X_original
         self.n, self.d = self.X.shape
+
 class Dashboard(ABC):
     def __init__(self, server: flask.Flask, stylesheets: list, prefix='/dash'):
         self.server = server
@@ -219,9 +221,10 @@ class IrisDashboard(RemoteCSVDashboard):
     def create_dashboard(self, data_dict):
 
         data_file_name = data_dict['location']# '/Users/albertorodriguez/Desktop/Current Courses/InternenServLab/EVA-merge_flask_dash/application/data/fishbowl_outl.csv'
-        dim_red_method = data_dict['target']
+        dim_red_method = 'pca'
 
         main_data = EvaData()
+        main_data.config = data_dict
         main_data.load_data(file_name=data_file_name)
 
         if dim_red_method == 'pca':

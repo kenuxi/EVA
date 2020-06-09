@@ -1,7 +1,7 @@
 from werkzeug.serving import run_simple
-from flask import Flask, render_template, url_for, redirect, request, session
+from flask import Flask, render_template, url_for, redirect, request
 from forms import HomePageForm
-from config import app_secret_key
+from config import app_secret_key, session
 to_reload = False
 
 
@@ -17,7 +17,7 @@ def get_app():
         form = HomePageForm()
         if request.method == 'POST':
             dashboard_config = {
-                'data': form.select.data,
+                'location': form.select.data,
                 'target': form.target.data,
                 'pca': form.pca.data,
                 'tsne': form.tsne.data
@@ -39,7 +39,7 @@ def get_app():
     if to_reload:
         with app.app_context():
             from application.plotlydash.Dashboards import IrisDashboard
-            app = IrisDashboard(app).create_dashboard()
+            app = IrisDashboard(app).create_dashboard(session['dashboard_config'])
 
     return app
 
