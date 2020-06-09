@@ -2,23 +2,20 @@ from werkzeug.serving import run_simple
 from flask import Flask, render_template, url_for, redirect, request, session
 from forms import HomePageForm
 from config import app_secret_key
-
 to_reload = False
-app = None
 
 
 def get_app():
     # this need to be cleaner
-    global app
     app = Flask(__name__, instance_relative_config=False,
                 template_folder='application/templates')
     app.config['SECRET_KEY'] = app_secret_key
 
     @app.route('/', methods=['GET', 'POST'])
+    @app.route('/home', methods=['GET', 'POST'])
     def home():
-        form = HomePageForm(request.form)
+        form = HomePageForm()
         if request.method == 'POST':
-            # Use this place arguments to create dashboards in reload()
             dashboard_config = {
                 'data': form.select.data,
                 'target': form.target.data,
@@ -27,8 +24,7 @@ def get_app():
             }
             session['dashboard_config'] = dashboard_config
             return redirect(url_for('reload'))
-        return render_template('home.html', title='Home',
-                               form=form)
+        return render_template('home.html', title='Home', form=form)
 
     @app.route("/about")
     def about():
@@ -37,12 +33,13 @@ def get_app():
     @app.route('/reload')
     def reload():
         global to_reload
-        global app
         to_reload = True
+        return session['dashboard_config']
+
+    if to_reload:
         with app.app_context():
             from application.plotlydash.Dashboards import IrisDashboard
-            app = IrisDashboard(app).create_dashboard(session['dashboard_config'])
-        return session['dashboard_config']
+            app = IrisDashboard(app).create_dashboard()
 
     return app
 
@@ -68,3 +65,4 @@ application = AppReloader(get_app)
 if __name__ == "__main__":
     run_simple(hostname='localhost', port=5000, application=application,
                use_reloader=True, use_debugger=True, use_evalex=True)
+
