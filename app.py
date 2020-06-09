@@ -14,6 +14,7 @@ def get_app():
     app.config['SECRET_KEY'] = app_secret_key
 
     @app.route('/', methods=['GET', 'POST'])
+    @app.route('/home', methods=['GET', 'POST'])
     def home():
         form = HomePageForm()
         if request.method == 'POST':
@@ -66,3 +67,4 @@ application = AppReloader(get_app)
 if __name__ == "__main__":
     run_simple(hostname='localhost', port=5000, application=application,
                use_reloader=True, use_debugger=True, use_evalex=True)
+
