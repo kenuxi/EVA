@@ -48,7 +48,7 @@ def iris_feature_selector(default_value, features, component_id):
 
 
 class IrisDashboard(RemoteCSVDashboard):
-    def __init__(self, server, stylesheets=external_stylesheets, prefix='/iris_example/', location=iris_config['location']):
+    def __init__(self, server, stylesheets=external_stylesheets, prefix='/dashboard/', location=iris_config['location']):
         super().__init__(server, stylesheets, prefix, location)
 
         self.dash_app = dash.Dash(__name__, server=self.server,
