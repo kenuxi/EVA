@@ -55,7 +55,7 @@ class EvaData():
             self.feature_names = self.pandas_data_frame.keys()
             # Now we've got the nxd data array X and its corresponding labels Y (if NO labels exist,
             #  this is indicated by the self.labels bool instance)
-            print(self.pandas_data_frame.head())
+            #print(self.pandas_data_frame.head())
         else:
             print('Error No CSV FILE') # here maybe some dash error widget-message
 
@@ -83,30 +83,59 @@ class EvaData():
             return fig
 
 
-    def visualize_reduced_data(self):
+    def visualize_reduced_data(self, only_outliers = False):
         ''' If the data is 1DIM, 2Dim or 3Dim, it displays the data in a 1D/2D/3D Plot
         Definition:  visualize_reduced_data(self)
         '''
         # read columns
         columns_data = self.reduced_pandas_data.columns
         if self.d_red == 1:
-            fig = px.scatter(self.reduced_pandas_data, x=columns_data[0], y=np.zeros(self.n),
-                             color='Classification', title='Reduced data with '+self.red_method)
-            return fig
+            if only_outliers:
+                outl_data_frame = self.reduced_pandas_data[self.reduced_pandas_data['Classification']=='Outlier']
+                fig = px.scatter(outl_data_frame, x=columns_data[0], y=np.zeros(outl_data_frame.shape[0]),
+                                 color='Classification', title='Reduced data with ' + self.red_method)
+            else:
+                fig = px.scatter(self.reduced_pandas_data, x=columns_data[0], y=np.zeros(self.n),
+                                 color='Classification', title='Reduced data with ' + self.red_method)
+
 
         elif self.d_red == 2:
-            fig = px.scatter(self.reduced_pandas_data, x=columns_data[0], y=columns_data[1],
+            if only_outliers:
+                outl_data_frame = self.reduced_pandas_data[self.reduced_pandas_data['Classification']=='Outlier']
+
+                fig = px.scatter(outl_data_frame, x=columns_data[0], y=columns_data[1],
+                                 color='Classification', title='Reduced data with ' + self.red_method)
+            else:
+                fig = px.scatter(self.reduced_pandas_data, x=columns_data[0], y=columns_data[1],
                              color='Classification', title='Reduced data with '+self.red_method)
-            return fig
+
+
         elif self.d_red == 3:
-            fig = px.scatter_3d(self.reduced_pandas_data, x=columns_data[0], y=columns_data[1],
+            if only_outliers:
+                outl_data_frame = self.reduced_pandas_data[self.reduced_pandas_data['Classification']=='Outlier']
+                fig = px.scatter_3d(outl_data_frame, x=columns_data[0], y=columns_data[1],
+                                    z=columns_data[2], color='Classification',
+                                    title='Reduced data with ' + self.red_method)
+            else:
+                fig = px.scatter_3d(self.reduced_pandas_data, x=columns_data[0], y=columns_data[1],
                              z=columns_data[2], color='Classification', title='Reduced data with '+self.red_method)
-            return fig
+
         else:
-            # If data is more then three dim just plot the first 2 dimensions
-            fig = px.scatter(self.reduced_pandas_data, x=columns_data[0], y=columns_data[1],
+            if only_outliers:
+                outl_data_frame = self.reduced_pandas_data[self.reduced_pandas_data['Classification']=='Outlier']
+                print(outl_data_frame)
+                fig = px.scatter(outl_data_frame, x=columns_data[0], y=columns_data[1],
+                                 color='Classification', title='Reduced data with ' + self.red_method)
+            else:
+                # If data is more then three dim just plot the first 2 dimensions
+                fig = px.scatter(self.reduced_pandas_data, x=columns_data[0], y=columns_data[1],
                              color='Classification', title='Reduced data with '+self.red_method)
-            return fig
+        return fig
+    def visualize_box_plot_outliers(self, dim):
+        columns_data = self.reduced_pandas_data.columns
+        fig = px.box(self.reduced_pandas_data, x="Classification", y=columns_data[dim], points="all")
+
+        return fig
 
     def apply_PCA(self, m):
         ''' Perform PCA analysis on X and reduce to an m dimensional subspace
@@ -120,7 +149,7 @@ class EvaData():
         # Update X
         self.X_red = self.pca.transform(self.X)
         variance_components = self.pca.explained_variance_ratio_
-        self.remained_variance = np.sum(variance_components[:m]) * 100
+        self.remained_variance = np.round(np.sum(variance_components[:m]) * 100, decimals=3)
 
         # Update n,d
         self.d_red = m
@@ -228,6 +257,10 @@ class IrisDashboard(RemoteCSVDashboard):
         main_data.config = data_dict
         main_data.load_data(file_name=data_file_name)
         fig_original = main_data.visualize_original_data()
+
+        fig_percentage_info = px.pie(main_data.pandas_data_frame, values=main_data.dataset_columns[0],
+                                     names='Classification', title='Outlier-Percentage Information')
+
         '''
         if dim_red_method == 'PCA':
             main_data.apply_PCA(m=2)
@@ -291,6 +324,33 @@ class IrisDashboard(RemoteCSVDashboard):
 
         html.Br(),
 
+        html.Div(
+            [
+            html.Div([
+                dcc.Graph(id='original_data_plot', figure=fig_original),
+                ], className= 'five columns'
+                ),
+            html.Div([
+                    dcc.Graph(id='percentage_outliers', figure=fig_percentage_info),
+                ], className='five columns'
+                ),
+            ], className="row"
+        ),
+
+        html.Div(
+            [
+            html.Div([
+                    dcc.Graph(id='reduced_data_plot', figure={})
+                ], className='five columns'
+                ),
+            html.Div([
+                    dcc.Graph(id='box_outliers_plot', figure={})
+                ], className='five columns'
+                )
+            ], className="row"
+        ),
+
+
         html.Div([
             html.Div([
                 daq.NumericInput(
@@ -304,29 +364,26 @@ class IrisDashboard(RemoteCSVDashboard):
                 html.Div(id='ndim_value')
             ], className='two columns'),
 
-
             html.Div([
-                daq.NumericInput(
-                    id='tsne_perplexity',
-                    min=5,
-                    max=100,
-                    size=120,
-                    label='TSNE-perplexity, 5-50 recommended',
-                    labelPosition='bottom',
-                    value=30),
-                html.Div(id='k_value_rdim')
+                dcc.Checklist(
+                    id='outlier_only_options',
+                    options=[
+                        {'label': 'Only show Outliers', 'value': 'yes'}
+                    ],
+                ),
             ], className='two columns'),
 
             html.Div([
                 daq.NumericInput(
-                    id='lle_neighbours',
+                    id='box_dim_input',
                     min=0,
-                    max=10000,
+                    max=100,
                     size=120,
-                    label='LLE-neighbours',
+                    label='box dim',
                     labelPosition='bottom',
-                    value=5),
-            ], className='two columns')
+                    value=0),
+            ], className='two columns'),
+
 
         ],
             style={'width': '68%', 'display': 'inline-block'},
@@ -335,40 +392,165 @@ class IrisDashboard(RemoteCSVDashboard):
 
         html.Div(
             [
-            html.Div([
-                dcc.Graph(id='original_data_plot', figure=fig_original),
-                ], className= 'five columns'
-                ),
-
-                html.Div([
-                dcc.Graph(id='reduced_data_plot', figure={})
-                ], className= 'five columns'
+                html.Div(children='''
+                        Data and PCA Information
+                        ''',
+                         style={
+                             'color': '#111',
+                             'font-family': 'sans-serif',
+                             'font-size': 30,
+                             'margin': 0
+                         },
+                        className='nine columns'
                 )
             ], className="row"
         ),
+
+        html.Br(),
+
+        html.Div(
+            [
+                html.Div(children='''
+                        Data samples N: ''',
+                         style={
+                             'color': '#111',
+                             'font-family': 'sans-serif',
+                             'font-size': 17,
+                             'margin': 0,
+                             'backgroundColor':'#DCDCDC'
+                         },
+                        className='one column'
+                ),
+
+                html.Div([
+                    dcc.Input(
+                        id="data_samples",
+                        type='value',
+                        value=main_data.n,
+                        placeholder="N%",
+                        readOnly=True,
+                        size=10,
+                        style={
+                            'color': '#111',
+                            'font-family': 'sans-serif',
+                            'font-size': 17,
+                            'margin': 0,
+                            'backgroundColor': '#DCDCDC'
+                        },
+                    )
+
+                ], className='one column'),
+
+            ], className="row"
+        ),
+
+        html.Div(
+            [
+                html.Div(children='''
+                        Number of features d: ''',
+                         style={
+                             'color': '#111',
+                             'font-family': 'sans-serif',
+                             'font-size': 17,
+                             'margin': 0,
+                             'backgroundColor':'#DCDCDC'
+                         },
+                        className='one column'
+                ),
+
+                html.Div([
+                    dcc.Input(
+                        id="data_features",
+                        type='value',
+                        value=main_data.d,
+                        placeholder="N%",
+                        readOnly=True,
+                        size=10,
+                        style={
+                            'color': '#111',
+                            'font-family': 'sans-serif',
+                            'font-size': 17,
+                            'margin': 0,
+                            'backgroundColor': '#DCDCDC'
+                        },
+                    )
+
+                ], className='one column'),
+
+            ], className="row"
+        )
+
+        ,
+        html.Div(
+            [
+                html.Div(children='''
+                        Remained Variance %: ''',
+                         style={
+                             'color': '#111',
+                             'font-family': 'sans-serif',
+                             'font-size': 17,
+                             'margin': 0,
+                             'backgroundColor':'#DCDCDC'
+                         },
+                        className='one column'
+                ),
+
+                html.Div([
+                    dcc.Input(
+                        id="remained_pca_variance",
+                        type='value',
+                        placeholder="Remained Variance %",
+                        readOnly=True,
+                        size=10,
+                        style={
+                            'color': '#111',
+                            'font-family': 'sans-serif',
+                            'font-size': 17,
+                            'margin': 0,
+                            'backgroundColor': '#DCDCDC'
+                        },
+                    )
+
+                ], className='one column'),
+
+            ], className="row"
+        ),
+
+
+
+
 
             ], className='twelve columns offset-by-one')
         )
 
         @self.dash_app.callback(
-            [Output(component_id='reduced_data_plot', component_property='figure')],
+            [Output(component_id='reduced_data_plot', component_property='figure'),
+             dash.dependencies.Output('remained_pca_variance', 'value'),
+             Output(component_id='box_outliers_plot', component_property='figure')],
             [dash.dependencies.Input('ndim_input', 'value'),
-             dash.dependencies.Input('lle_neighbours', 'value'),
-             dash.dependencies.Input('tsne_perplexity', 'value'),
-             ]
+             Input('outlier_only_options', 'value'),
+             dash.dependencies.Input('box_dim_input', 'value'),]
         )
-        def update_graph(m, lle_neighburs, tsne_perpl):
+        def update_graph(m, outl_display_option, box_dim):
+            print(outl_display_option)
             if dim_red_method == 'PCA':
                 main_data.apply_PCA(m=m)
+
             elif dim_red_method == 'LLE':
-                main_data.apply_LLE(m=m, neighbours=lle_neighburs)
+                main_data.apply_LLE(m=m, neighbours=30)
 
             elif dim_red_method == 'T-SNE':
-                main_data.apply_TSNE(m=m, perplexity=tsne_perpl)
+                main_data.apply_TSNE(m=m, perplexity=30)
 
-            fig = main_data.visualize_reduced_data()
 
-            return [fig]
+            if outl_display_option == ['yes']:
+                fig = main_data.visualize_reduced_data(only_outliers=True)
+            else:
+                fig = main_data.visualize_reduced_data(only_outliers=False)
+
+            box_fig = main_data.visualize_box_plot_outliers(dim=box_dim)
+
+            return [fig, main_data.remained_variance, box_fig]
 
 
 
