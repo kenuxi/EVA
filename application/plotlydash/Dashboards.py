@@ -15,7 +15,10 @@ from sklearn.manifold import LocallyLinearEmbedding
 from sklearn.manifold import TSNE
 from sklearn.decomposition import PCA
 import plotly.express as px
-
+from sklearn.neighbors import NearestNeighbors
+import networkx as nx
+from sklearn.neighbors import kneighbors_graph
+import plotly.graph_objects as go
 
 class EvaData():
     def __init__(self):
@@ -133,7 +136,8 @@ class EvaData():
         return fig
     def visualize_box_plot_outliers(self, dim):
         columns_data = self.reduced_pandas_data.columns
-        fig = px.box(self.reduced_pandas_data, x="Classification", y=columns_data[dim], points="all")
+        fig = px.box(self.reduced_pandas_data, x="Classification", y=columns_data[dim], points="all",
+                     title='Statistical Information for a dimension')
 
         return fig
 
@@ -194,6 +198,125 @@ class EvaData():
         self.reduced_pandas_data = pd.DataFrame(data=self.X_red)
         self.reduced_pandas_data['Classification'] = self.pandas_data_frame['Classification']
         self.red_method = 'TSNE'
+
+
+    def knearest_neighbours(self, n_neighbors, data_name):
+        if data_name == 'original':
+            # Add one to n_neighbours cause the function takes the point itself as a neighbours resulting in 0 distance
+            nbrs = NearestNeighbors(n_neighbors=n_neighbors+1, algorithm='ball_tree').fit(self.X_original)
+            distances, indices = nbrs.kneighbors(self.X_original)
+            # Sum distances
+            distances_summed = np.sum(distances, axis=1)/n_neighbors
+        elif data_name == 'reduced':
+            # Add one to n_neighbours cause the function takes the point itself as a neighbours resulting in 0 distance
+            nbrs = NearestNeighbors(n_neighbors=n_neighbors+1, algorithm='ball_tree').fit(self.X_red)
+            distances, indices = nbrs.kneighbors(self.X_red)
+            # Sum distances
+            distances_summed = np.sum(distances, axis=1)/n_neighbors
+
+        # Build pandas data frame
+        outlier_indexes = np.argwhere(self.pandas_data_frame['Classification']== 'Outlier').squeeze()
+        inlier_indexes = np.argwhere(self.pandas_data_frame['Classification'] == 'Inlier').squeeze()
+        distances_inliers = distances_summed[inlier_indexes]
+        distances_outliers = distances_summed[outlier_indexes]
+        sorted_distances = np.append(distances_inliers, distances_outliers)
+        distances_panda = pd.DataFrame(data=sorted_distances)
+        distances_panda['Classification'] = self.pandas_data_frame['Classification']
+
+        fig = px.histogram(distances_panda, x=0, color="Classification", title='k-nearest neigbours average distances',
+                           nbins=30, marginal="rug", opacity=0.7)
+
+
+        # Now we create the connection graph as in
+        # https://scikit-learn.org/stable/modules/generated/sklearn.neighbors.kneighbors_graph.html
+
+        #
+        indices = kneighbors_graph(self.X_red, n_neighbors=n_neighbors, mode='connectivity', include_self=False)
+        indices_array = indices.toarray()
+        graph = nx.Graph()
+        connections = []
+        for point in range(self.n):
+            all_connections = np.argwhere(indices_array[point, :] == 1)
+            for i in all_connections:
+                connections.append((point, int(i)))
+
+        nodes_list = [(x, y) for x, y in self.X_red]
+        graph.add_edges_from(connections)
+        edge_x = []
+        edge_y = []
+
+        for edge in graph.edges():
+            x0, y0 = nodes_list[edge[0]]
+            x1, y1 = nodes_list[edge[1]]
+            edge_x.append(x0)
+            edge_x.append(x1)
+            edge_x.append(None)
+            edge_y.append(y0)
+            edge_y.append(y1)
+            edge_y.append(None)
+
+        edge_trace = go.Scatter(
+            x=edge_x, y=edge_y,
+            line=dict(width=0.5, color='#888'),
+            hoverinfo='none',
+            mode='lines')
+
+        node_x = []
+        node_y = []
+        for node in nodes_list:
+            x, y = node
+            node_x.append(x)
+            node_y.append(y)
+
+        node_trace = go.Scatter(
+            x=node_x, y=node_y,
+            mode='markers',
+            hoverinfo='text',
+            marker=dict(
+                showscale=True,
+                # colorscale options
+                # 'Greys' | 'YlGnBu' | 'Greens' | 'YlOrRd' | 'Bluered' | 'RdBu' |
+                # 'Reds' | 'Blues' | 'Picnic' | 'Rainbow' | 'Portland' | 'Jet' |
+                # 'Hot' | 'Blackbody' | 'Earth' | 'Electric' | 'Viridis' |
+                colorscale='YlGnBu',
+                reversescale=True,
+                color=[],
+                size=10,
+                colorbar=dict(
+                    thickness=15,
+                    title='Node Connections',
+                    xanchor='left',
+                    titleside='right'
+                ),
+                line_width=2))
+
+        node_adjacencies = []
+        node_text = []
+        for node, adjacencies in enumerate(graph.adjacency()):
+            node_adjacencies.append(len(adjacencies[1]))
+            node_text.append('# of connections: ' + str(len(adjacencies[1])))
+
+        node_trace.marker.color = node_adjacencies
+        node_trace.text = node_text
+
+        fig_graph = go.Figure(data=[edge_trace, node_trace],
+                        layout=go.Layout(
+                            title='<br>Network graph',
+                            titlefont_size=16,
+                            showlegend=False,
+                            hovermode='closest',
+                            margin=dict(b=20, l=5, r=5, t=40),
+                            annotations=[dict(
+                                text="Python code: <a href='https://plotly.com/ipython-notebooks/network-graphs/'> https://plotly.com/ipython-notebooks/network-graphs/</a>",
+                                showarrow=False,
+                                xref="paper", yref="paper",
+                                x=0.005, y=-0.002)],
+                            xaxis=dict(showgrid=False, zeroline=False, showticklabels=False),
+                            yaxis=dict(showgrid=False, zeroline=False, showticklabels=False))
+                        )
+
+
+        return fig, fig_graph
 
     def restore_original_data(self):
         ''' This method restoes X,n,d to the original data
@@ -516,6 +639,53 @@ class IrisDashboard(RemoteCSVDashboard):
             ], className="row"
         ),
 
+        html.Br(),
+        html.Div(
+            [
+                html.Div(children='''
+                        Nearest Neighbours
+                        ''',
+                         style={
+                             'color': '#111',
+                             'font-family': 'sans-serif',
+                             'font-size': 30,
+                             'margin': 0
+                         },
+                        className='nine columns'
+                )
+            ], className="row"
+        ),
+
+        html.Div(
+            [
+            html.Div([
+                dcc.Graph(id='neighbours_plot', figure={}),
+                ], className= 'five columns'
+                ),
+            html.Div([
+                    dcc.Graph(id='connected_graph_figure', figure={}),
+                ], className='five columns'
+                ),
+            ], className="row"
+        ),
+
+        html.Div([
+            html.Div([
+                daq.NumericInput(
+                    id='neighbours_input',
+                    min=1,
+                    max=1000,
+                    size=120,
+                    label='k-neighbours',
+                    labelPosition='bottom',
+                    value=2),
+            ], className='two columns'),
+
+        ],
+            style={'width': '68%', 'display': 'inline-block'},
+            className="row"
+        ),
+
 
 
 
@@ -526,12 +696,15 @@ class IrisDashboard(RemoteCSVDashboard):
         @self.dash_app.callback(
             [Output(component_id='reduced_data_plot', component_property='figure'),
              dash.dependencies.Output('remained_pca_variance', 'value'),
-             Output(component_id='box_outliers_plot', component_property='figure')],
+             Output(component_id='box_outliers_plot', component_property='figure'),
+             Output(component_id='neighbours_plot', component_property='figure'),
+             Output(component_id='connected_graph_figure', component_property='figure')],
             [dash.dependencies.Input('ndim_input', 'value'),
              Input('outlier_only_options', 'value'),
-             dash.dependencies.Input('box_dim_input', 'value'),]
+             dash.dependencies.Input('box_dim_input', 'value'),
+             dash.dependencies.Input('neighbours_input', 'value')]
         )
-        def update_graph(m, outl_display_option, box_dim):
+        def update_graph(m, outl_display_option, box_dim, k_neighbours):
             print(outl_display_option)
             if dim_red_method == 'PCA':
                 main_data.apply_PCA(m=m)
@@ -548,9 +721,13 @@ class IrisDashboard(RemoteCSVDashboard):
             else:
                 fig = main_data.visualize_reduced_data(only_outliers=False)
 
+            # Box plot for the input dimension
             box_fig = main_data.visualize_box_plot_outliers(dim=box_dim)
 
-            return [fig, main_data.remained_variance, box_fig]
+            # K nearest neighbours distance histogram on the reduced/lower dimensional dataset
+            kn_histogram_fig, graph_figure = main_data.knearest_neighbours(n_neighbors=k_neighbours, data_name='reduced')
+
+            return [fig, main_data.remained_variance, box_fig, kn_histogram_fig, graph_figure]
 
 
 
