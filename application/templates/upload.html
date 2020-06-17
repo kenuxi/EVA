@@ -1,0 +1,30 @@
+{% extends "layouts.html" %}
+{% set active_page = 'home' %}
+{% block content %}
+    <h1>Home Page</h1>
+    <div class="content-section">
+        <form method="POST" action="">
+            {{ form.hidden_tag() }}
+            <fieldset class="form-group">
+                <legend class="border-bottom mb-4">Select a CSV File</legend>
+                <div class="form-group">
+                    {{ form.file.label(class="form-control-label") }}
+                    {{ form.file(class="form-control form-control-lg") }}
+
+                    {{ form.target.label(class="form-control-label") }}
+                    {{ form.target(class="form-control form-control-lg") }}
+
+                    {{ form.algorithm.label(class="form-control-label") }}
+                    {{ form.algorithm(class="form-control form-control-lg") }}
+
+                </div>
+            </fieldset>
+            <div class="form-group">
+                {{ form.submit(class="btn btn-outline-info") }}
+            </div>
+        </form>
+    </div>
+    {% if variable %}
+    <p>{{ variable }}</p>
+    {% endif %}
+{% endblock content %}
