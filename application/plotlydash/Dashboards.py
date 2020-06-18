@@ -59,6 +59,7 @@ class EvaData():
             # Now we've got the nxd data array X and its corresponding labels Y (if NO labels exist,
             #  this is indicated by the self.labels bool instance)
             #print(self.pandas_data_frame.head())
+
         else:
             print('Error No CSV FILE') # here maybe some dash error widget-message
 
@@ -134,6 +135,7 @@ class EvaData():
                 fig = px.scatter(self.reduced_pandas_data, x=columns_data[0], y=columns_data[1],
                              color='Classification', title='Reduced data with '+self.red_method)
         return fig
+
     def visualize_box_plot_outliers(self, dim):
         columns_data = self.reduced_pandas_data.columns
         fig = px.box(self.reduced_pandas_data, x="Classification", y=columns_data[dim], points="all",
@@ -226,12 +228,10 @@ class EvaData():
         fig = px.histogram(distances_panda, x=0, color="Classification", title='k-nearest neigbours average distances',
                            nbins=30, marginal="rug", opacity=0.7)
 
+        return fig
 
-        # Now we create the connection graph as in
-        # https://scikit-learn.org/stable/modules/generated/sklearn.neighbors.kneighbors_graph.html
-
-        #
-        indices = kneighbors_graph(self.X_red, n_neighbors=n_neighbors, mode='connectivity', include_self=False)
+    def two_dim_graph(self, n_neighbours):
+        indices = kneighbors_graph(self.X_red, n_neighbors=n_neighbours, mode='connectivity', include_self=False)
         indices_array = indices.toarray()
         graph = nx.Graph()
         connections = []
@@ -314,10 +314,99 @@ class EvaData():
                             xaxis=dict(showgrid=False, zeroline=False, showticklabels=False),
                             yaxis=dict(showgrid=False, zeroline=False, showticklabels=False))
                         )
+        return fig_graph
 
+    def three_dim_graph(self, n_neighbors):
+        N = self.n
+        indices = kneighbors_graph(self.X_red, n_neighbors=n_neighbors, mode='connectivity', include_self=False)
+        indices_array = indices.toarray()
+        graph = nx.Graph()
+        connections = []
+        for point in range(self.n):
+            all_connections = np.argwhere(indices_array[point, :] == 1)
+            for i in all_connections:
+                connections.append((point, int(i)))
 
-        return fig, fig_graph
+        nodes_list = [(x, y, z) for x, y, z in self.X_red]
+        graph.add_edges_from(connections)
 
+        Edges = graph.edges
+
+        Xn = [self.X_red[k, 0] for k in range(N)]  # x-coordinates of nodes
+        Yn = [self.X_red[k, 1] for k in range(N)]  # y-coordinates
+        Zn = [self.X_red[k, 2] for k in range(N)]  # z-coordinates
+        Xe = []
+        Ye = []
+        Ze = []
+        for e in Edges:
+            Xe += [self.X_red[e[0], 0], self.X_red[e[1], 0], None]  # x-coordinates of edge ends
+            Ye += [self.X_red[e[0], 1], self.X_red[e[1], 1], None]  # y-coordinates of edge ends
+            Ze += [self.X_red[e[0], 2], self.X_red[e[1], 2], None]  # z-coordinates of edge ends
+
+        trace1 = go.Scatter3d(x=Xe,
+                              y=Ye,
+                              z=Ze,
+                              mode='lines',
+                              line=dict(color='rgb(125,125,125)', width=1),
+                              hoverinfo='none'
+                              )
+
+        trace2 = go.Scatter3d(x=Xn,
+                              y=Yn,
+                              z=Zn,
+                              mode='markers',
+                              name='actors',
+                              marker=dict(symbol='circle',
+                                          size=6,
+                                          colorscale='Viridis',
+                                          line=dict(color='rgb(50,50,50)', width=0.5)
+                                          ),
+
+                              hoverinfo='text'
+                              )
+
+        axis = dict(showbackground=False,
+                    showline=False,
+                    zeroline=False,
+                    showgrid=False,
+                    showticklabels=False,
+                    title=''
+                    )
+
+        layout = go.Layout(
+            title="Network of coappearances of characters in Victor Hugo's novel<br> Les Miserables (3D visualization)",
+            width=800,
+            height=400,
+            showlegend=False,
+            scene=dict(
+                xaxis=dict(axis),
+                yaxis=dict(axis),
+                zaxis=dict(axis),
+            ),
+            margin=dict(
+                t=100
+            ),
+            hovermode='closest',
+            annotations=[
+                dict(
+                    showarrow=False,
+                    text="Data source: <a href='http://bost.ocks.org/mike/miserables/miserables.json'>[1] miserables.json</a>",
+                    xref='paper',
+                    yref='paper',
+                    x=0,
+                    y=0.1,
+                    xanchor='left',
+                    yanchor='bottom',
+                    font=dict(
+                        size=14
+                    )
+                )
+            ], )
+
+        data = [trace1, trace2]
+        fig = go.Figure(data=data, layout=layout)
+
+        return fig
     def restore_original_data(self):
         ''' This method restoes X,n,d to the original data
         '''
@@ -449,87 +538,20 @@ class IrisDashboard(RemoteCSVDashboard):
 
         html.Div(
             [
-            html.Div([
-                dcc.Graph(id='original_data_plot', figure=fig_original),
-                ], className= 'five columns'
-                ),
-            html.Div([
-                    dcc.Graph(id='percentage_outliers', figure=fig_percentage_info),
-                ], className='five columns'
-                ),
-            ], className="row"
-        ),
 
-        html.Div(
-            [
-            html.Div([
-                    dcc.Graph(id='reduced_data_plot', figure={})
-                ], className='five columns'
-                ),
-            html.Div([
-                    dcc.Graph(id='box_outliers_plot', figure={})
-                ], className='five columns'
-                )
-            ], className="row"
-        ),
-
-
-        html.Div([
-            html.Div([
-                daq.NumericInput(
-                    id='ndim_input',
-                    min=1,
-                    max=1000,
-                    size=120,
-                    label='subspace dimension',
-                    labelPosition='bottom',
-                    value=2),
-                html.Div(id='ndim_value')
-            ], className='two columns'),
-
-            html.Div([
-                dcc.Checklist(
-                    id='outlier_only_options',
-                    options=[
-                        {'label': 'Only show Outliers', 'value': 'yes'}
-                    ],
-                ),
-            ], className='two columns'),
-
-            html.Div([
-                daq.NumericInput(
-                    id='box_dim_input',
-                    min=0,
-                    max=100,
-                    size=120,
-                    label='box dim',
-                    labelPosition='bottom',
-                    value=0),
-            ], className='two columns'),
-
-
-        ],
-            style={'width': '68%', 'display': 'inline-block'},
-            className="row"
-        ),
-
-        html.Div(
-            [
-                html.Div(children='''
-                        Data and PCA Information
-                        ''',
-                         style={
-                             'color': '#111',
-                             'font-family': 'sans-serif',
-                             'font-size': 30,
-                             'margin': 0
+            html.Div(children='''
+                Data and PCA Information
+                ''',
+                    style={
+                      'color': '#111',
+                      'font-family': 'sans-serif',
+                      'font-size': 30,
+                      'margin': 0
                          },
-                        className='nine columns'
-                )
+                         className='three columns'
+                         ),
             ], className="row"
         ),
-
-        html.Br(),
 
         html.Div(
             [
@@ -639,6 +661,68 @@ class IrisDashboard(RemoteCSVDashboard):
             ], className="row"
         ),
 
+        html.Div(
+            [
+                html.Div([
+                    dcc.Graph(id='percentage_outliers', figure=fig_percentage_info),
+                ], className='two columns'
+                ),
+            ], className="row"
+        ),
+
+
+        html.Div(
+            [
+            html.Div([
+                    dcc.Graph(id='reduced_data_plot', figure={})
+                ], className='five columns'
+                ),
+            html.Div([
+                    dcc.Graph(id='box_outliers_plot', figure={})
+                ], className='five columns'
+                )
+            ], className="row"
+        ),
+
+
+        html.Div([
+            html.Div([
+                daq.NumericInput(
+                    id='ndim_input',
+                    min=1,
+                    max=1000,
+                    size=120,
+                    label='subspace dimension',
+                    labelPosition='bottom',
+                    value=2),
+                html.Div(id='ndim_value')
+            ], className='two columns'),
+
+            html.Div([
+                dcc.Checklist(
+                    id='outlier_only_options',
+                    options=[
+                        {'label': 'Only show Outliers', 'value': 'yes'}
+                    ],
+                ),
+            ], className='two columns'),
+
+            html.Div([
+                daq.NumericInput(
+                    id='box_dim_input',
+                    min=0,
+                    max=100,
+                    size=120,
+                    label='box dim',
+                    labelPosition='bottom',
+                    value=0),
+            ], className='two columns'),
+
+
+        ],
+            style={'width': '68%', 'display': 'inline-block'},
+            className="row"
+        ),
         html.Br(),
         html.Div(
             [
@@ -686,10 +770,6 @@ class IrisDashboard(RemoteCSVDashboard):
             className="row"
         ),
 
-
-
-
-
             ], className='twelve columns offset-by-one')
         )
 
@@ -725,7 +805,16 @@ class IrisDashboard(RemoteCSVDashboard):
             box_fig = main_data.visualize_box_plot_outliers(dim=box_dim)
 
             # K nearest neighbours distance histogram on the reduced/lower dimensional dataset
-            kn_histogram_fig, graph_figure = main_data.knearest_neighbours(n_neighbors=k_neighbours, data_name='reduced')
+            kn_histogram_fig = main_data.knearest_neighbours(n_neighbors=k_neighbours, data_name='reduced')
+
+            if m == 2:
+                graph_figure = main_data.two_dim_graph(n_neighbours=k_neighbours)
+
+            elif m == 3:
+                graph_figure = main_data.three_dim_graph(n_neighbors=k_neighbours)
+
+            else:
+                graph_figure = {}
 
             return [fig, main_data.remained_variance, box_fig, kn_histogram_fig, graph_figure]
 
