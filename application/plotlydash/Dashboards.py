@@ -428,7 +428,6 @@ class Dashboard(ABC):
     def init_callbacks(self, target_column):
         pass
 
-
 class RemoteCSVDashboard(Dashboard):
     def __init__(self, server, stylesheets, prefix, location):
         super().__init__(server, stylesheets, prefix)
