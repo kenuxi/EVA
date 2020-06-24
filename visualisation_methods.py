@@ -1,5 +1,6 @@
 import numpy as np
 import plotly.express as px
+import plotly.graph_objects as go
 
 class VisualizationPlotly():
     ''' This class gives the user the possibility to make different plotly plots to visualize
@@ -199,6 +200,13 @@ class VisualizationPlotly():
 
         return fig
 
+    def pie_plot_percentages(self):
+        ''' Returns a pie plot chart figure showing how many datapoints % are outliers and how many datapoints are i
+        inliers
+        '''
+        fig = px.pie(self.pd_data_frame, values=self.features[0],
+                                     names='Classification', title='Outlier-Percentage Information')
+        return fig
 
 
 

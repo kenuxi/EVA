@@ -13,6 +13,9 @@ class DataStatistics():
         self.classifications = None
         self.reduced_pandas_dataframe = None
         self.features = None
+        self.d_red = None
+        self.d = None
+        self.n = None
 
     def load_data(self, file_name):
         ''' Load dataset from an input filename (.csv) as a numpy array and as a pandas dataframe. The input csv data
@@ -35,6 +38,9 @@ class DataStatistics():
 
         # Pandas Dataframe  without labels in order to perform pca/lle/tsne etc.  on it
         self.pandas_data_frame_nolabels = self.pandas_data_frame[self.features]
+
+        # Read data information (number of features and samples)
+        self.n, self.d = self.pandas_data_frame_nolabels.shape
 
     def apply_pca(self, m):
         ''' Apply PCA to the previously loaded pandas data frame in order to reduce the dimensionality of the data
@@ -122,7 +128,7 @@ class DataStatistics():
         indices = kneighbors_graph(X, n_neighbors=n_neighbours, mode='connectivity', include_self=False).toarray()
         # Compute the edges and nodes of the graph
         self.edges = []
-        for point in range(self.n):
+        for point in range(X.shape[0]):
             all_connections = np.argwhere(indices[point, :] == 1)
             for i in all_connections:
                 self.edges.append((point, int(i)))
