@@ -5,16 +5,18 @@ from sklearn.manifold import TSNE
 from sklearn.decomposition import PCA, KernelPCA
 from sklearn.neighbors import kneighbors_graph
 
-class DataStatistics():
-    def __init__(self):
-        self.file_name = None
-        self.pandas_dataset = None
+
+class DataStats:
+    def __init__(self, file_name):
+        self.file_name = file_name
+        self.DF = None
+        self.DF_nolabels = None
         self.X = None
         self.classifications = None
         self.reduced_pandas_dataframe = None
         self.features = None
 
-    def load_data(self, file_name):
+    def load_data(self):
         ''' Load dataset from an input filename (.csv) as a numpy array and as a pandas dataframe. The input csv data
             should have one column named "Classification" with the outliers/inliers labeled. The rest of the columns are
             assumed to be numerical data of the cooresponding dimensions.
@@ -23,18 +25,17 @@ class DataStatistics():
 
         Input:       fname   - string, file path name ending in .csv
         '''
-        self.file_name = file_name
         # Read CSV file as a pandas data frame
-        self.pandas_data_frame = pd.read_csv(file_name)
+        self.DF = pd.read_csv(self.file_name)
         # Store Classification labels (outliers or inlier)
-        self.classifications = self.pandas_data_frame['Classification']
+        self.classifications = self.DF['Classification']
 
         # Read features
-        self.features = self.pandas_data_frame.keys().tolist()
+        self.features = self.DF.keys().tolist()
         self.features.remove('Classification')
 
         # Pandas Dataframe  without labels in order to perform pca/lle/tsne etc.  on it
-        self.pandas_data_frame_nolabels = self.pandas_data_frame[self.features]
+        self.DF_nolabels = self.DF[self.features]
 
     def apply_pca(self, m):
         ''' Apply PCA to the previously loaded pandas data frame in order to reduce the dimensionality of the data
@@ -46,8 +47,8 @@ class DataStatistics():
         self.d_red = m
         # Apply PCA on the unlabeled pandas data frame
         pca = PCA(n_components=m)
-        pca.fit(self.pandas_data_frame_nolabels)
-        pca_red_data = pca.transform(self.pandas_data_frame_nolabels)  # This is a numpy array
+        pca.fit(self.DF_nolabels)
+        pca_red_data = pca.transform(self.DF_nolabels)  # This is a numpy array
         principalDf = pd.DataFrame(data=pca_red_data)
 
         # Concadenate the unlabeled pca dataframe with the classifications
@@ -67,7 +68,7 @@ class DataStatistics():
         self.d_red = m
         embedding = LocallyLinearEmbedding(n_components=m, n_neighbors=k, max_iter=100)
         # Update X
-        lle_red_data = embedding.fit_transform(self.pandas_data_frame_nolabels)
+        lle_red_data = embedding.fit_transform(self.DF_nolabels)
         lleDf = pd.DataFrame(data=lle_red_data)
         # Concadenate the unlabeled pca dataframe with the classifications
         self.reduced_pandas_dataframe = pd.concat([lleDf, self.classifications], axis=1)
@@ -86,7 +87,7 @@ class DataStatistics():
         self.d_red = m
         embedding = TSNE(n_components=m, perplexity=perplexity)
         # Update X
-        tsne_red_data = embedding.fit_transform(self.pandas_data_frame_nolabels)
+        tsne_red_data = embedding.fit_transform(self.DF_nolabels)
         tsneDf = pd.DataFrame(data=tsne_red_data)
         # Concadenate the unlabeled pca dataframe with the classifications
         self.reduced_pandas_dataframe = pd.concat([tsneDf, self.classifications], axis=1)
@@ -100,8 +101,8 @@ class DataStatistics():
                      kernel_type    - str, type of kernel : “linear” | “poly” | “rbf” | “sigmoid” | “cosine”
         '''
         pcakern = KernelPCA(n_components=m, kernel=kernel_type)
-        pcakern.fit(self.pandas_data_frame_nolabels)
-        pcak_red_data = pcakern.transform(self.pandas_data_frame_nolabels)
+        pcakern.fit(self.DF_nolabels)
+        pcak_red_data = pcakern.transform(self.DF_nolabels)
         pcak_Df = pd.DataFrame(data=pcak_red_data)
         # Concadenate the unlabeled kernel pca dataframe with the classifications
         self.reduced_pandas_dataframe = pd.concat([pcak_Df, self.classifications], axis=1)

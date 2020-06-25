@@ -3,8 +3,7 @@ from flask import Flask, render_template, url_for, redirect, request, flash
 from flask_uploads import configure_uploads, UploadSet
 from forms import SelectFileForm, ALgorithmForm, UploadForm
 from config import app_secret_key, session
-import pandas as pd
-
+from stats import DataStats
 
 to_reload = False
 
@@ -22,11 +21,11 @@ def get_app():
         file_form = SelectFileForm()
         alg_form = ALgorithmForm()
         if request.method == 'POST':
-            print(file_form.file.data)
-            df = pd.read_csv(file_form.file.data)
-            print(df.shape)
-            shape = df.shape
-            return render_template('home.html', title='Home', shape=shape, df=df,
+            ds = DataStats(file_form.file.data)
+            ds.load_data()
+            session['location'] = ds.file_name
+            shape = ds.DF.shape     # This is now the pd.dataframe.shape...
+            return render_template('home.html', title='Home', shape=shape, df=ds.DF,
                                    file_form=file_form,
                                    alg_form=alg_form)
 
