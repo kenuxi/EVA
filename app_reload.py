@@ -1,33 +1,60 @@
 from werkzeug.serving import run_simple
-from flask import Flask, render_template, url_for, redirect, request
-from forms import HomePageForm
+from flask import Flask, render_template, url_for, redirect, request, flash
+from flask_uploads import configure_uploads, UploadSet
+from forms import SelectFileForm, ALgorithmForm, UploadForm
 from config import app_secret_key, session
+import pandas as pd
+
+
 to_reload = False
 
 
 def get_app():
-    # this need to be cleaner
     app = Flask(__name__, instance_relative_config=False,
                 template_folder='application/templates')
     app.config['SECRET_KEY'] = app_secret_key
+    csv_files = UploadSet('data', ('csv',), default_dest=lambda x: 'data')
+    configure_uploads(app, csv_files)
 
     @app.route('/', methods=['GET', 'POST'])
     @app.route('/home', methods=['GET', 'POST'])
     def home():
-        form = HomePageForm()
+        file_form = SelectFileForm()
+        alg_form = ALgorithmForm()
         if request.method == 'POST':
+            print(file_form.file.data)
+            df = pd.read_csv(file_form.file.data)
+            print(df.shape)
+            shape = df.shape
+            return render_template('home.html', title='Home', shape=shape, df=df,
+                                   file_form=file_form,
+                                   alg_form=alg_form)
+
+        elif alg_form.submit.data and alg_form.validate_on_submit():
             dashboard_config = {
-                'location': form.file.data,
-                'target': form.target.data,
-                'algorithm': form.algorithm.data
-            }
+                'target': alg_form.target.data,
+                'algorithm': alg_form.algorithm.data
+                }
+
             session['dashboard_config'] = dashboard_config
             return redirect(url_for('reload'))
-        return render_template('home.html', title='Home', form=form)
+        return render_template('home.html', title='Home', file_form=file_form)
 
-    @app.route("/about")
-    def about():
-        return render_template('about.html', title='About')
+    @app.route('/upload', methods=['GET', 'POST'])
+    def upload():
+        form = UploadForm()
+        if form.validate_on_submit():
+            csv_data = form.csv_file.data
+            print(csv_data)
+            print(form.csv_file.name)
+            filename = csv_files.save(csv_data)
+            flash('Your file has been Added!', 'success')
+            return redirect(url_for('home'))
+            # return f'Filename: {filename}'
+            # flash('file added')
+            # df = pd.read_csv(form.csv_file.data)
+            # return render_template('upload.html', shape=csv_data, form=form)
+        return render_template('upload.html', title='Upload', form=form)
 
     @app.route('/reload')
     def reload():
