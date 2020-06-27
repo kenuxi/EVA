@@ -1,6 +1,6 @@
 from werkzeug.serving import run_simple
 from flask import Flask, render_template, url_for, redirect, request
-from forms import HomePageForm
+from forms import HomePageForm, BooleanField
 from config import app_secret_key, session
 
 to_reload = False
@@ -17,11 +17,19 @@ def get_app():
     def home():
         form = HomePageForm()
         if request.method == 'POST':
+
+            algorithms = {
+                'PCA': form.PCA.data,
+                'TSNE': form.TSNE.data,
+                'LLE': form.LLE.data
+            }
+
             dashboard_config = {
                 'location': form.file.data,
                 'target': form.target.data,
-                'algorithm': form.algorithm.data
+                'algorithms': algorithms
             }
+
             session['dashboard_config'] = dashboard_config
             return redirect(url_for('reload'))
         return render_template('home.html', title='Home', form=form)
