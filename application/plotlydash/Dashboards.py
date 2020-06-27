@@ -63,7 +63,7 @@ class IrisDashboard(RemoteCSVDashboard):
     def create_dashboard(self, data_dict):
 
         data_file_name = data_dict['location']# '/Users/albertorodriguez/Desktop/Current Courses/InternenServLab/EVA-merge_flask_dash/application/data/fishbowl_outl.csv'
-        dim_red_method = data_dict['algorithm']
+        dim_red_method = data_dict['algorithms']
 
         stats = DataStatistics()
         stats.load_data(file_name=data_file_name)
