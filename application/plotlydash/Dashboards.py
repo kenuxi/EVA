@@ -125,155 +125,6 @@ class IrisDashboard(RemoteCSVDashboard):
 
         html.Br(),
 
-        html.Div(
-            [
-
-            html.Div(children='''
-                Data and PCA Information
-                ''',
-                    style={
-                      'color': '#111',
-                      'font-family': 'sans-serif',
-                      'font-size': 30,
-                      'margin': 0
-                         },
-                         className='three columns'
-                         ),
-            ], className="row"
-        ),
-
-        html.Div(
-            [
-                html.Div(children='''
-                        Data samples N: ''',
-                         style={
-                             'color': '#111',
-                             'font-family': 'sans-serif',
-                             'font-size': 17,
-                             'margin': 0,
-                             'backgroundColor':'#DCDCDC'
-                         },
-                        className='one column'
-                ),
-
-                html.Div([
-                    dcc.Input(
-                        id="data_samples",
-                        type='value',
-                        value=stats.n,
-                        placeholder="N%",
-                        readOnly=True,
-                        size=10,
-                        style={
-                            'color': '#111',
-                            'font-family': 'sans-serif',
-                            'font-size': 17,
-                            'margin': 0,
-                            'backgroundColor': '#DCDCDC'
-                        },
-                    )
-
-                ], className='one column', style={"margin-right": "27%"}),
-
-
-
-                html.Div([
-                    dcc.Dropdown(
-                        id='histogram-dropdown',
-                        placeholder="Select a feature",
-                        options=[{'label': name, 'value': name} for name in list(stats.features)],
-                        value= ''
-                    ),
-                ], style={'width': '15%'},className='three columns'),
-
-
-            ], className="row"
-        ),
-
-        html.Div(
-            [
-                html.Div(children='''
-                        Number of features d: ''',
-                         style={
-                             'color': '#111',
-                             'font-family': 'sans-serif',
-                             'font-size': 17,
-                             'margin': 0,
-                             'backgroundColor':'#DCDCDC'
-                         },
-                        className='one column'
-                ),
-
-                html.Div([
-                    dcc.Input(
-                        id="data_features",
-                        type='value',
-                        value=stats.d,
-                        placeholder="N%",
-                        readOnly=True,
-                        size=10,
-                        style={
-                            'color': '#111',
-                            'font-family': 'sans-serif',
-                            'font-size': 17,
-                            'margin': 0,
-                            'backgroundColor': '#DCDCDC'
-                        },
-                    )
-
-                ], className='one column'),
-
-            ], className="row"
-        )
-
-        ,
-        html.Div(
-            [
-                html.Div(children='''
-                        Remained Variance %: ''',
-                         style={
-                             'color': '#111',
-                             'font-family': 'sans-serif',
-                             'font-size': 17,
-                             'margin': 0,
-                             'backgroundColor':'#DCDCDC'
-                         },
-                        className='one column'
-                ),
-
-                html.Div([
-                    dcc.Input(
-                        id="remained_pca_variance",
-                        type='value',
-                        placeholder="Remained Variance %",
-                        readOnly=True,
-                        size=10,
-                        style={
-                            'color': '#111',
-                            'font-family': 'sans-serif',
-                            'font-size': 17,
-                            'margin': 0,
-                            'backgroundColor': '#DCDCDC'
-                        },
-                    )
-
-                ], className='one column'),
-
-            ], className="row"
-        ),
-
-        html.Div(
-            [
-                html.Div([
-                    dcc.Graph(id='percentage_outliers', figure=fig_percentage_info),
-                ], className='five columns'
-                ),
-                html.Div([
-                    dcc.Graph(id='neighbours_plot', figure={}),
-                ], className='five columns'
-                ),
-            ], className="row"
-        ),
 
 
         html.Div(
@@ -288,7 +139,6 @@ class IrisDashboard(RemoteCSVDashboard):
                 )
             ], className="row"
         ),
-
 
         html.Div([
             html.Div([
@@ -316,7 +166,7 @@ class IrisDashboard(RemoteCSVDashboard):
                 daq.NumericInput(
                     id='box_dim_input',
                     min=0,
-                    max=100,
+                    max=2,
                     size=120,
                     label='box dim',
                     labelPosition='bottom',
@@ -329,64 +179,18 @@ class IrisDashboard(RemoteCSVDashboard):
             className="row"
         ),
         html.Br(),
-        html.Div(
-            [
-                html.Div(children='''
-                        Nearest Neighbours
-                        ''',
-                         style={
-                             'color': '#111',
-                             'font-family': 'sans-serif',
-                             'font-size': 30,
-                             'margin': 0
-                         },
-                        className='nine columns'
-                )
-            ], className="row"
-        ),
-
-        html.Div(
-            [
-            html.Div([
-                    dcc.Graph(id='connected_graph_figure', figure={}),
-                ], className='five columns'
-                ),
-            ], className="row"
-        ),
-
-        html.Div([
-            html.Div([
-                daq.NumericInput(
-                    id='neighbours_input',
-                    min=1,
-                    max=1000,
-                    size=120,
-                    label='k-neighbours',
-                    labelPosition='bottom',
-                    value=2),
-            ], className='two columns'),
-
-        ],
-            style={'width': '68%', 'display': 'inline-block'},
-            className="row"
-        ),
 
             ], className='twelve columns offset-by-one')
         )
 
         @self.dash_app.callback(
             [Output(component_id='reduced_data_plot', component_property='figure'),
-             dash.dependencies.Output('remained_pca_variance', 'value'),
-             Output(component_id='box_outliers_plot', component_property='figure'),
-             Output(component_id='neighbours_plot', component_property='figure'),
-             Output(component_id='connected_graph_figure', component_property='figure')],
+             Output(component_id='box_outliers_plot', component_property='figure')],
             [dash.dependencies.Input('ndim_input', 'value'),
              Input('outlier_only_options', 'value'),
-             dash.dependencies.Input('box_dim_input', 'value'),
-             dash.dependencies.Input('neighbours_input', 'value'),
-             Input('histogram-dropdown', 'value')]
+             dash.dependencies.Input('box_dim_input', 'value')]
         )
-        def update_graph(m, outl_display_option, box_dim, k_neighbours, histogram_feature):
+        def update_graph(m, outl_display_option, box_dim):
             # Statistical Calculation load data
             # Apply PCA to the data
             stats.apply_pca(m=m)
@@ -402,16 +206,8 @@ class IrisDashboard(RemoteCSVDashboard):
             # Box plot for the input dimension
             box_fig = visualization.box_plot_classifications(dim=box_dim)
 
-            # K nearest neighbours distance histogram on the reduced/lower dimensional dataset
-            if histogram_feature is not '':
-                visual_original = VisualizationPlotly(stats.pa)
-                kn_histogram_fig = visual_original.histogram_data(feature=histogram_feature)
-            else:
-                kn_histogram_fig = []
-            #
-            stats.graph_neighbours(n_neighbours=k_neighbours)
-            graph_figure = visualization.graph_neighbours(edges=stats.edges, nodes=stats.nodes)
-            return [fig, stats.remained_variance, box_fig, kn_histogram_fig, graph_figure]
+
+            return [fig, box_fig]
 
         return self.dash_app.server
 
