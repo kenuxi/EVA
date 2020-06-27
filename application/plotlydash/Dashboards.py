@@ -173,7 +173,19 @@ class IrisDashboard(RemoteCSVDashboard):
                         },
                     )
 
-                ], className='one column'),
+                ], className='one column', style={"margin-right": "27%"}),
+
+
+
+                html.Div([
+                    dcc.Dropdown(
+                        id='histogram-dropdown',
+                        placeholder="Select a feature",
+                        options=[{'label': name, 'value': name} for name in list(stats.features)],
+                        value= ''
+                    ),
+                ], style={'width': '15%'},className='three columns'),
+
 
             ], className="row"
         ),
@@ -254,7 +266,11 @@ class IrisDashboard(RemoteCSVDashboard):
             [
                 html.Div([
                     dcc.Graph(id='percentage_outliers', figure=fig_percentage_info),
-                ], className='two columns'
+                ], className='five columns'
+                ),
+                html.Div([
+                    dcc.Graph(id='neighbours_plot', figure={}),
+                ], className='five columns'
                 ),
             ], className="row"
         ),
@@ -332,10 +348,6 @@ class IrisDashboard(RemoteCSVDashboard):
         html.Div(
             [
             html.Div([
-                dcc.Graph(id='neighbours_plot', figure={}),
-                ], className= 'five columns'
-                ),
-            html.Div([
                     dcc.Graph(id='connected_graph_figure', figure={}),
                 ], className='five columns'
                 ),
@@ -371,36 +383,35 @@ class IrisDashboard(RemoteCSVDashboard):
             [dash.dependencies.Input('ndim_input', 'value'),
              Input('outlier_only_options', 'value'),
              dash.dependencies.Input('box_dim_input', 'value'),
-             dash.dependencies.Input('neighbours_input', 'value')]
+             dash.dependencies.Input('neighbours_input', 'value'),
+             Input('histogram-dropdown', 'value')]
         )
-        def update_graph(m, outl_display_option, box_dim, k_neighbours):
-            print(outl_display_option)
+        def update_graph(m, outl_display_option, box_dim, k_neighbours, histogram_feature):
             # Statistical Calculation load data
-
             # Apply PCA to the data
             stats.apply_pca(m=m)
             # Create fig to display pca data
             visualization = VisualizationPlotly(stats.reduced_pandas_dataframe)
-            fig = visualization.plot_data()
 
-            #if outl_display_option == ['yes']:
-            #    fig = main_data.visualize_reduced_data(only_outliers=True)
-            #else:
-            #    fig = main_data.visualize_reduced_data(only_outliers=False)
+            if outl_display_option == ['yes']:
+                outl_pd = stats.reduced_pandas_dataframe[stats.reduced_pandas_dataframe.Classification.eq('Outlier')]
+                fig = VisualizationPlotly(outl_pd).plot_data()
+            else:
+                fig = visualization.plot_data()
 
             # Box plot for the input dimension
             box_fig = visualization.box_plot_classifications(dim=box_dim)
 
             # K nearest neighbours distance histogram on the reduced/lower dimensional dataset
-            kn_histogram_fig = visualization.histogram_data(dim=box_dim)
-
+            if histogram_feature is not '':
+                visual_original = VisualizationPlotly(stats.pandas_data_frame)
+                kn_histogram_fig = visual_original.histogram_data(feature=histogram_feature)
+            else:
+                kn_histogram_fig = []
             #
             stats.graph_neighbours(n_neighbours=k_neighbours)
             graph_figure = visualization.graph_neighbours(edges=stats.edges, nodes=stats.nodes)
-
             return [fig, stats.remained_variance, box_fig, kn_histogram_fig, graph_figure]
-
-
 
         return self.dash_app.server
 

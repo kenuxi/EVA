@@ -1,6 +1,8 @@
 import numpy as np
 import plotly.express as px
 import plotly.graph_objects as go
+from statistics_methods import DataStatistics
+
 
 class VisualizationPlotly():
     ''' This class gives the user the possibility to make different plotly plots to visualize
@@ -56,6 +58,7 @@ class VisualizationPlotly():
 
         return fig
 
+
     def box_plot_classifications(self, dim):
         ''' This method is only to be used if the pandas dataframe is labeled. It displays the statistical information
         in a boxplot for an input feature (e.g if 2dim data how the inliers/outliers are distributed along the 1 dimension)
@@ -69,7 +72,7 @@ class VisualizationPlotly():
             print('Error: Data is not Labeled')
         return fig
 
-    def histogram_data(self, dim):
+    def histogram_data(self, feature):
         ''' Plot an histogram for an given dim/feature of the pandas data frame. If the data is labeled, there is one
             histogram for each class, otherwise not.
 
@@ -77,10 +80,10 @@ class VisualizationPlotly():
         '''
 
         if self.classification:
-            fig = px.histogram(self.pd_data_frame, x=self.features[dim], color="Classification", title='Histogram',
+            fig = px.histogram(self.pd_data_frame, x=feature, color="Classification", title='Histogram Original Data',
                                nbins=30, marginal="rug", opacity=0.7)
         else:
-            fig = px.histogram(self.pd_data_frame, x=self.features[dim], title='Histogram', nbins=30, marginal="rug",
+            fig = px.histogram(self.pd_data_frame, x=feature, title='Histogram Original Data', nbins=30, marginal="rug",
                                opacity=0.7)
 
         return fig
@@ -131,7 +134,6 @@ class VisualizationPlotly():
                     color=[],
                     size=10,
                     line_width=2))
-
 
         elif graph_dim == 3:
             edge_x = []
@@ -208,5 +210,26 @@ class VisualizationPlotly():
                                      names='Classification', title='Outlier-Percentage Information')
         return fig
 
+'''
+exa = DataStatistics()
+exa.load_data(file_name='/Users/albertorodriguez/Desktop/Current Courses/EVA/application/data/mnist_outl_zero_one.csv')
+#exa.apply_tsne(m=3, perplexity=50)
+exa.apply_pca(m=25)
+
+print(exa.remained_variance)
+print(exa.d)
+print(exa.n)
+
+exa_pca = DataStatistics()
+exa_pca.pandas_data_frame = exa.reduced_pandas_dataframe
+
+exa_pca.load_data(file_name='')
+exa_pca.apply_tsne(m=3, perplexity=50)
 
 
+
+vis = VisualizationPlotly(pd_data_frame=exa_pca.reduced_pandas_dataframe)
+fig = vis.plot_data()
+fig.show()
+
+'''

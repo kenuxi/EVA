@@ -4,6 +4,9 @@ from sklearn.manifold import LocallyLinearEmbedding
 from sklearn.manifold import TSNE
 from sklearn.decomposition import PCA, KernelPCA
 from sklearn.neighbors import kneighbors_graph
+#from MulticoreTSNE import MulticoreTSNE as TSNE
+
+
 
 class DataStatistics():
     def __init__(self):
@@ -12,6 +15,7 @@ class DataStatistics():
         self.X = None
         self.classifications = None
         self.reduced_pandas_dataframe = None
+        self.pandas_data_frame = None
         self.features = None
         self.d_red = None
         self.d = None
@@ -26,9 +30,11 @@ class DataStatistics():
 
         Input:       fname   - string, file path name ending in .csv
         '''
-        self.file_name = file_name
-        # Read CSV file as a pandas data frame
-        self.pandas_data_frame = pd.read_csv(file_name)
+
+        if self.pandas_data_frame is None:
+            self.file_name = file_name
+            # Read CSV file as a pandas data frame
+            self.pandas_data_frame = pd.read_csv(file_name)
         # Store Classification labels (outliers or inlier)
         self.classifications = self.pandas_data_frame['Classification']
 
@@ -90,6 +96,7 @@ class DataStatistics():
 
         '''
         self.d_red = m
+        print('ss')
         embedding = TSNE(n_components=m, perplexity=perplexity)
         # Update X
         tsne_red_data = embedding.fit_transform(self.pandas_data_frame_nolabels)
@@ -140,3 +147,5 @@ class DataStatistics():
 
         else:
             print('ERROR DIM to High')
+
+
