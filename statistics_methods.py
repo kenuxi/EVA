@@ -11,7 +11,10 @@ class DataStatistics():
         self.pandas_dataset = None
         self.X = None
         self.classifications = None
-        self.reduced_pandas_dataframe = None
+        self.reduced_pandas_dataframe_pca = None
+        self.reduced_pandas_dataframe_lle = None
+        self.reduced_pandas_dataframe_tsne = None
+        self.reduced_pandas_dataframe_kernelpca = None
         self.features = None
         self.d_red = None
         self.d = None
@@ -42,7 +45,7 @@ class DataStatistics():
         # Read data information (number of features and samples)
         self.n, self.d = self.pandas_data_frame_nolabels.shape
 
-    def apply_pca(self, m):
+    def apply_pca(self, m=2):
         ''' Apply PCA to the previously loaded pandas data frame in order to reduce the dimensionality of the data
         Definition:  apply_pca(self, m)
 
@@ -57,13 +60,13 @@ class DataStatistics():
         principalDf = pd.DataFrame(data=pca_red_data)
 
         # Concadenate the unlabeled pca dataframe with the classifications
-        self.reduced_pandas_dataframe = pd.concat([principalDf, self.classifications], axis = 1)
+        self.reduced_pandas_dataframe_pca = pd.concat([principalDf, self.classifications], axis = 1)
 
         # Compute how much % of the variance remains (best case 100%)
         variance_components = pca.explained_variance_ratio_
         self.remained_variance = np.round(np.sum(variance_components[:m]) * 100, decimals=3)
 
-    def apply_lle(self, m, k):
+    def apply_lle(self, m=2, k=5):
         ''' Perform LLE Locally Linear Embedding  on the dataframe and reduce to an m dimensional subspace
         Definition:  apply_LLE(X, m)
         Input:       m                  - int, dimension of the subspace to project
@@ -76,9 +79,9 @@ class DataStatistics():
         lle_red_data = embedding.fit_transform(self.pandas_data_frame_nolabels)
         lleDf = pd.DataFrame(data=lle_red_data)
         # Concadenate the unlabeled pca dataframe with the classifications
-        self.reduced_pandas_dataframe = pd.concat([lleDf, self.classifications], axis=1)
+        self.reduced_pandas_dataframe_lle = pd.concat([lleDf, self.classifications], axis=1)
 
-    def apply_tsne(self, m , perplexity):
+    def apply_tsne(self, m=2 , perplexity=30):
         ''' Perform TSNE t-distributed Stochastic Neighbor Embedding on the dataframe and reduce to an m dimensional s
         subspace
         Definition:  apply_tsne(X, m)
@@ -95,7 +98,7 @@ class DataStatistics():
         tsne_red_data = embedding.fit_transform(self.pandas_data_frame_nolabels)
         tsneDf = pd.DataFrame(data=tsne_red_data)
         # Concadenate the unlabeled pca dataframe with the classifications
-        self.reduced_pandas_dataframe = pd.concat([tsneDf, self.classifications], axis=1)
+        self.reduced_pandas_dataframe_tsne = pd.concat([tsneDf, self.classifications], axis=1)
 
 
     def apply_kernelPca(self, m, kernel_type='linear'):
@@ -110,18 +113,29 @@ class DataStatistics():
         pcak_red_data = pcakern.transform(self.pandas_data_frame_nolabels)
         pcak_Df = pd.DataFrame(data=pcak_red_data)
         # Concadenate the unlabeled kernel pca dataframe with the classifications
-        self.reduced_pandas_dataframe = pd.concat([pcak_Df, self.classifications], axis=1)
+        self.reduced_pandas_dataframe_kernelpca = pd.concat([pcak_Df, self.classifications], axis=1)
 
 
-    def graph_neighbours(self, n_neighbours):
+    def graph_neighbours(self, n_neighbours, algorithm):
         ''' This method computes the edges and nodes for a given number of neighbours by using the k nearest neighbours,
             the graph is computed for the reduces data -> in 2dim or 3dim
 
         Input:       n_neighbours    - int, number of neighbours to consider for the knearest algorithm
+                     algorithm       - str, refers to the pandas red data frame used to compute the graph nodes+edges
+                                       'pca', 'lle', 'tsne' or 'kernel_pca'
         '''
 
         # Construct X
-        X = self.reduced_pandas_dataframe
+        if algorithm == 'pca':
+            X = self.reduced_pandas_dataframe_pca
+        elif algorithm == 'lle':
+            X = self.reduced_pandas_dataframe_lle
+        elif algorithm == 'tsne':
+            X = self.reduced_pandas_dataframe_tsne
+        elif algorithm == 'kernel_pca':
+            X = self.reduced_pandas_dataframe_kernelpca
+
+
         del X['Classification']
         X = X.to_numpy()
 

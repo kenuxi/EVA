@@ -56,7 +56,7 @@ class VisualizationPlotly():
 
         return fig
 
-    def box_plot_classifications(self, dim):
+    def box_plot_classifications(self, dim=0):
         ''' This method is only to be used if the pandas dataframe is labeled. It displays the statistical information
         in a boxplot for an input feature (e.g if 2dim data how the inliers/outliers are distributed along the 1 dimension)
 

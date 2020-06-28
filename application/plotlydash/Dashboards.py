@@ -41,15 +41,40 @@ class RemoteCSVDashboard(Dashboard):
         pass
 
 
-# Just for the example purpose!
 
-def iris_feature_selector(default_value, features, component_id):
-    return dcc.Dropdown(
-            id=component_id,
-            options=[{'label': feat, 'value': feat} for feat in features],
-            value=default_value  # default value
-            )
+class DashBoard_DIMRED():
 
+    def __init__(self, method, pandas_df_reduced_data):
+        self.method = method
+        self.pandas_df_reduced_data = pandas_df_reduced_data
+
+    def build_dashboard(self):
+        # Reduce data scatter plot
+        vis = VisualizationPlotly(pd_data_frame=self.pandas_df_reduced_data)
+
+        scatter_fig = vis.plot_data()
+
+def dash_board_part(method, pandas_df_reduced_data):
+    vis = VisualizationPlotly(pd_data_frame=pandas_df_reduced_data)
+
+    scatter_fig = vis.plot_data()
+    box_fig = vis.box_plot_classifications()
+    dashboard = 1
+
+    dashboard = html.Div([
+                      html.Div([
+                         dcc.Graph(id='reduced_data_plot_'+str(method), figure=scatter_fig)
+                    ], className='five columns'
+                    ),
+                      html.Div([
+                        dcc.Graph(id='box_outliers_plot_'+str(method), figure=box_fig)
+                     ], className='five columns'
+                     )
+                   ], className="row"
+               )
+
+
+    return dashboard
 
 class IrisDashboard(RemoteCSVDashboard):
     def __init__(self, server, stylesheets=external_stylesheets, prefix='/dashboard/', location=iris_config['location']):
@@ -59,26 +84,41 @@ class IrisDashboard(RemoteCSVDashboard):
                                   routes_pathname_prefix=self.prefix,
                                   external_stylesheets=self.stylesheets)
 
-
     def create_dashboard(self, data_dict):
 
         data_file_name = data_dict['location']# '/Users/albertorodriguez/Desktop/Current Courses/InternenServLab/EVA-merge_flask_dash/application/data/fishbowl_outl.csv'
         dim_red_method = data_dict['algorithms']
 
-        stats = DataStatistics()
-        stats.load_data(file_name=data_file_name)
-        stats.apply_pca(m=2)
+        #----------------- Build dashboard -----------------
+        # Init list containing the dashboards
+        dashboards_fig = []
+        # Compute statistical methods, PCA,TSNE etc. according to the user's choice
 
-        visualization_fest = VisualizationPlotly(stats.reduced_pandas_dataframe)
+        main_stats = DataStatistics()
+        main_stats.load_data(file_name=data_file_name)
 
+        # PCA , LLE etc initially computed for 2 dimensions, we may change that
+        if dim_red_method['PCA']:
+            main_stats.apply_pca()
+            dashboards_fig.append(dash_board_part(method='pca',
+                                                  pandas_df_reduced_data=main_stats.reduced_pandas_dataframe_pca))
 
-        fig_percentage_info = visualization_fest.pie_plot_percentages()
+        if dim_red_method['TSNE']:
+            main_stats.apply_tsne()
+            dashboards_fig.append(
+                dash_board_part(method='tsne', pandas_df_reduced_data=main_stats.reduced_pandas_dataframe_tsne))
 
+        if dim_red_method['LLE']:
+            main_stats.apply_lle()
+
+        #
 
         self.dash_app.css.config.serve_locally = False
         # Boostrap CSS.
         self.dash_app.css.append_css({'external_url': 'https://codepen.io/amyoshino/pen/jzXypZ.css'})  # noqa: E501
         self.dash_app.index_string = html_layout
+
+
 
         self.dash_app.layout = html.Div(
             html.Div([
@@ -127,87 +167,9 @@ class IrisDashboard(RemoteCSVDashboard):
 
 
 
-        html.Div(
-            [
-            html.Div([
-                    dcc.Graph(id='reduced_data_plot', figure={})
-                ], className='five columns'
-                ),
-            html.Div([
-                    dcc.Graph(id='box_outliers_plot', figure={})
-                ], className='five columns'
-                )
-            ], className="row"
-        ),
-
-        html.Div([
-            html.Div([
-                daq.NumericInput(
-                    id='ndim_input',
-                    min=1,
-                    max=stats.d,
-                    size=120,
-                    label='subspace dimension',
-                    labelPosition='bottom',
-                    value=2),
-                html.Div(id='ndim_value')
-            ], className='two columns'),
-
-            html.Div([
-                dcc.Checklist(
-                    id='outlier_only_options',
-                    options=[
-                        {'label': 'Only show Outliers', 'value': 'yes'}
-                    ],
-                ),
-            ], className='two columns'),
-
-            html.Div([
-                daq.NumericInput(
-                    id='box_dim_input',
-                    min=0,
-                    max=2,
-                    size=120,
-                    label='box dim',
-                    labelPosition='bottom',
-                    value=0),
-            ], className='two columns'),
-
-
-        ],
-            style={'width': '68%', 'display': 'inline-block'},
-            className="row"
-        ),
-        html.Br(),
-
             ], className='twelve columns offset-by-one')
         )
 
-        @self.dash_app.callback(
-            [Output(component_id='reduced_data_plot', component_property='figure'),
-             Output(component_id='box_outliers_plot', component_property='figure')],
-            [dash.dependencies.Input('ndim_input', 'value'),
-             Input('outlier_only_options', 'value'),
-             dash.dependencies.Input('box_dim_input', 'value')]
-        )
-        def update_graph(m, outl_display_option, box_dim):
-            # Statistical Calculation load data
-            # Apply PCA to the data
-            stats.apply_pca(m=m)
-            # Create fig to display pca data
-            visualization = VisualizationPlotly(stats.reduced_pandas_dataframe)
-
-            if outl_display_option == ['yes']:
-                outl_pd = stats.reduced_pandas_dataframe[stats.reduced_pandas_dataframe.Classification.eq('Outlier')]
-                fig = VisualizationPlotly(outl_pd).plot_data()
-            else:
-                fig = visualization.plot_data()
-
-            # Box plot for the input dimension
-            box_fig = visualization.box_plot_classifications(dim=box_dim)
-
-
-            return [fig, box_fig]
 
         return self.dash_app.server
 

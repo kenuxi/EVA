@@ -46,8 +46,10 @@ def get_app():
 
     if to_reload:
         with app.app_context():
-            from application.plotlydash.Dashboards import IrisDashboard
-            app = IrisDashboard(app).create_dashboard(session['dashboard_config'])
+            #from application.plotlydash.Dashboards import IrisDashboard
+            #app = IrisDashboard(app).create_dashboard(session['dashboard_config'])
+            from application.plotlydash.Dashboard_new import FileDashboard
+            app = FileDashboard(app).create_dashboard(session['dashboard_config'])
 
     return app
 
