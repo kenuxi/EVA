@@ -32,6 +32,10 @@ class DimRedDash():
             scatter_fig = visualisation.plot_data()
             box_fig = visualisation.box_plot_classifications()
 
+            # if pca_graph option
+            self.stats.graph_neighbours(n_neighbours=4, algorithm='pca') # this should be done somewhere else
+            pca_graph = visualisation.graph_neighbours(self.stats.edges, self.stats.nodes)
+
             dashboard = html.Div([
                 html.Div([
                     dcc.Graph(id='reduced_data_plot_pca', figure=scatter_fig)
@@ -40,16 +44,23 @@ class DimRedDash():
                 html.Div([
                     dcc.Graph(id='box_outliers_plot_pca', figure=box_fig)
                 ], className='five columns'
-                )
-            ], className="row"
+                ),
+                html.Div([
+                    dcc.Graph(id='connected_graph_figure_pca', figure=pca_graph),
+                ], className='five columns'
+                ),
+            ], className="row")
 
-            )
 
         # LLE CASE HERE, right now just 2 plots (scatter and boxplot)
         if self.method == 'LLE':
             visualisation = VisualizationPlotly(pd_data_frame=self.stats.reduced_pandas_dataframe_lle)
             scatter_fig_lle = visualisation.plot_data()
             box_fig_lle = visualisation.box_plot_classifications()
+
+            # if pca_graph option
+            self.stats.graph_neighbours(n_neighbours=4, algorithm='lle') # this should be done somewhere else
+            lle_graph = visualisation.graph_neighbours(self.stats.edges, self.stats.nodes)
 
             dashboard = html.Div([
                 html.Div([
@@ -58,6 +69,10 @@ class DimRedDash():
                 ),
                 html.Div([
                     dcc.Graph(id='box_outliers_plot_lle', figure=box_fig_lle)
+                ], className='five columns'
+                ),
+                html.Div([
+                    dcc.Graph(id='connected_graph_figure_lle', figure=lle_graph),
                 ], className='five columns'
                 )
             ], className="row"
@@ -71,18 +86,29 @@ class DimRedDash():
             scatter_fig_tsne = visualisation.plot_data()
             box_fig_tsne = visualisation.box_plot_classifications()
 
-            dashboard = html.Div([
-                html.Div([
-                    dcc.Graph(id='reduced_data_plot_tsne', figure=scatter_fig_tsne)
-                ], className='five columns'
-                ),
-                html.Div([
-                    dcc.Graph(id='box_outliers_plot_tsne', figure=box_fig_tsne)
-                ], className='five columns'
-                )
-            ], className="row"
+            # if pca_graph option
+            self.stats.graph_neighbours(n_neighbours=4, algorithm='tsne') # this should be done somewhere else
+            tsne_graph = visualisation.graph_neighbours(self.stats.edges, self.stats.nodes)
 
-            )
+            tsne_board = []
+
+            # Build subboard according to the user specifications # still to be implemented
+            tsne_board.append(html.Div([
+                dcc.Graph(id='reduced_data_plot_tsne', figure=scatter_fig_tsne)
+            ], className='five columns'
+            ),)
+
+            tsne_board.append(html.Div([
+                dcc.Graph(id='box_outliers_plot_tsne', figure=box_fig_tsne)
+            ], className='five columns'
+            ),)
+
+            tsne_board.append(html.Div([
+                dcc.Graph(id='connected_graph_figure_tsne', figure=tsne_graph)
+            ], className='five columns'
+            ),)
+            # Init List corresponding to the PCA Dashboardb PLOTS
+            dashboard = html.Div(children=tsne_board, className="row")
 
 
         return dashboard
@@ -108,8 +134,17 @@ class DimRedDash():
                     ],  className='two columns'),
 
                     html.Div([
+                        dcc.Checklist(
+                            id='outlier_only_options_pca',
+                            options=[
+                                {'label': 'Only show Outliers', 'value': 'yes'}
+                            ],
+                        ),
+                    ], className='one column'),
+
+                    html.Div([
                         daq.NumericInput(
-                            id='red_dim_input',
+                            id='red_dim_input_pca',
                             min=1,
                             max=self.stats.d_red,
                             size=120,
@@ -120,7 +155,7 @@ class DimRedDash():
 
                     html.Div([
                         daq.NumericInput(
-                            id='box_red_dim',
+                            id='box_red_dim_pca',
                             min=1,
                             max=self.stats.d_red,
                             size=120,
@@ -132,17 +167,103 @@ class DimRedDash():
                 ], className="row"
             )
 
+        # TSNE OPTIONS HERE
+        if self.method == 'TSNE':
+            dashboard = html.Div(
+                [
+                    html.Div([
+                        daq.NumericInput(
+                            id='red_dim_input_tsne',
+                            min=1,
+                            max=self.stats.d_red,
+                            size=120,
+                            label='subspace dimension',
+                            labelPosition='bottom',
+                            value=2),
+                    ],className='two columns'),
 
+                    html.Div([
+                        dcc.Checklist(
+                            id='outlier_only_options_tsne',
+                            options=[
+                                {'label': 'Only show Outliers', 'value': 'yes'}
+                            ],
+                        ),
+                    ], className='one column'),
 
+                    html.Div([
+                        daq.NumericInput(
+                            id='perplexity_tsne',
+                            min=1,
+                            max=100,
+                            size=120,
+                            label='Perplexity',
+                            labelPosition='bottom',
+                            value=30),
+                    ], className='two columns'),
+
+                    html.Div([
+                        daq.NumericInput(
+                            id='box_red_dim_tsne',
+                            min=1,
+                            max=self.stats.d_red,
+                            size=120,
+                            label='Boxplot dimension',
+                            labelPosition='bottom',
+                            value=2)
+                    ], className='two columns'),
+
+                ], className="row"
+            )
 
         # LLE DROPDOWNS HERE
         if self.method == 'LLE':
-            dashboard = []
+            dashboard = html.Div(
+                [
+                    html.Div([
+                        daq.NumericInput(
+                            id='red_dim_input_lle',
+                            min=1,
+                            max=self.stats.d_red,
+                            size=120,
+                            label='subspace dimension',
+                            labelPosition='bottom',
+                            value=2),
+                    ],className='two columns'),
 
+                    html.Div([
+                        dcc.Checklist(
+                            id='outlier_only_options_lle',
+                            options=[
+                                {'label': 'Only show Outliers', 'value': 'yes'}
+                            ],
+                        ),
+                    ], className='one column'),
 
-        # TSNE DROPDOWNS HERE
-        if self.method == 'TSNE':
-            dashboard = []
+                    html.Div([
+                        daq.NumericInput(
+                            id='nieghbours_lle',
+                            min=1,
+                            max=self.stats.n-1,
+                            size=120,
+                            label='K-Neighbours',
+                            labelPosition='bottom',
+                            value=5),
+                    ], className='two columns'),
+
+                    html.Div([
+                        daq.NumericInput(
+                            id='box_red_dim_lle',
+                            min=1,
+                            max=self.stats.d_red,
+                            size=120,
+                            label='Boxplot dimension',
+                            labelPosition='bottom',
+                            value=2)
+                    ], className='two columns'),
+
+                ], className="row"
+            )
 
         return dashboard
 

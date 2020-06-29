@@ -109,6 +109,7 @@ class FileDashboard(RemoteCSVDashboard):
             dashboard = DimRedDash(stats=main_stats, method='TSNE')
 
             dashboards_merged.append(dashboard.title)
+            dashboards_merged.append(dashboard.dropdowns)
             dashboards_merged.append(dashboard.graph)
 
 
@@ -117,6 +118,7 @@ class FileDashboard(RemoteCSVDashboard):
            dashboard = DimRedDash(stats=main_stats, method='LLE')
 
            dashboards_merged.append(dashboard.title)
+           dashboards_merged.append(dashboard.dropdowns)
            dashboards_merged.append(dashboard.graph)
 
         # Merge
