@@ -8,20 +8,22 @@ from wtforms.validators import DataRequired
 
 
 class SelectFileForm(FlaskForm):
-    files = ['data/' + file for file in os.listdir('data') if '.csv' in file]
+    files = [('data/' + file, file) for file in os.listdir('data') if '.csv' in file]
     file = SelectField(label='.csv in data/', choices=files)
-    submit = SubmitField(label='Submit')
+    file_submit = SubmitField(label='Submit')
 
 
-class ALgorithmForm(FlaskForm):
+class AlgorithmForm(FlaskForm):
     target = StringField(validators=[DataRequired()])
-    algorithm = SelectField(label='D-reduction', choices=['PCA', 'T-SNE', 'LLE'])
+    algorithm = SelectField(label='D-reduction', choices=[('PCA', 'PCA'), ('T-SNE', 'T-SNE'), ('LLE', 'LLE')])
     submit = SubmitField(label='Submit')
 
 
 class UploadForm(FlaskForm):
-    csv_file = FileField(label='CSV', validators=[FileAllowed(['csv'], )])
+    csv_file = FileField(label='CSV', validators=[DataRequired(), FileAllowed(['csv'], 'Wrong file format!')])
     csv_submit = SubmitField(label='Upload')
+
+
 '''
 These are not needed at the moment.
 

@@ -10,27 +10,39 @@
       <div class="form-group">
         {{ file_form.file.label(class="form-control-label") }}
         {{ file_form.file(class="form-control form-control-lg") }}
+        {% for error in file_form.file.errors %}
+            <span style="color: red;">[{{ error }}]</span>
+          {% endfor %}
       </div>
     </fieldset>
     <div class="form-group">
-      {{ file_form.submit(class="btn btn-outline-info") }}
+      {{ file_form.file_submit(class="btn btn-outline-info") }}
     </div>
   </form>
 </div>
-{% if shape %}
-  {{ shape | safe }}
-  {{ df.head().to_html() | safe }}
+
+{% if alg_form %}
+  <p>{{ df.shape | safe }}</p>
+  <p>{{ df.head().to_html() | safe }}</p>
   <div class="content-section">
     <form method="POST" action="">
       {{ alg_form.hidden_tag() }}
       <fieldset class="form-group">
         <legend class="border-bottom mb-4">Select a File</legend>
         <div class="form-group">
+
           {{ alg_form.target.label(class="form-control-label") }}
           {{ alg_form.target(class="form-control-label") }}
+          {% for error in alg_form.target.errors %}
+            <span style="color: red;">[{{ error }}]</span>
+          {% endfor %}
 
-          {{ alg_form.algorithm.label(class="form-control form-control-lg") }}
+          {{ alg_form.algorithm.label(class="form-control-label") }}
           {{ alg_form.algorithm(class="form-control form-control-lg") }}
+          {% for error in alg_form.algorithm.errors %}
+            <span style="color: red;">[{{ error }}]</span>
+          {% endfor %}
+
         </div>
       </fieldset>
       <div class="form-group">
@@ -38,6 +50,7 @@
       </div>
     </form>
   </div>
-{% endif %}
+
+{% endif%}
 
 {% endblock content %}

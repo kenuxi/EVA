@@ -12,11 +12,10 @@
         {{ form.csv_file.label(class="form-control-label") }}
         {{ form.csv_file(class="form-control form-control-lg") }}
 
-        {% if form.csv_file.errors %}
-          {% for error in form.csv_file.errors %}
-            <span class="text-danger">{{ errors }}</span>
-          {% endfor %}
-        {% endif %}
+        {% for error in form.csv_file.errors %}
+          <span class="text-danger">{{ errors }}</span>
+        {% endfor %}
+
       </div>
     </fieldset>
 
@@ -26,8 +25,5 @@
 
   </form>
 </div>
-{% if shape %}
-  Shape is: {{ shape }}
-{% endif %}
 
 {% endblock content %}
