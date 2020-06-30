@@ -1,6 +1,9 @@
 {% extends "layouts.html" %}
 {% set active_page = 'home' %}
 {% block content %}
+
+
+
 <h1>Home Page</h1>
 <div class="content-section">
   <form method="POST" action="">
@@ -23,7 +26,26 @@
 
 {% if alg_form %}
   <p>{{ df.shape | safe }}</p>
-  <p>{{ df.head().to_html() | safe }}</p>
+  <table id="table_id" class="display">
+    <thead>
+        <tr>
+          <th>Columns: </th>
+          {% for column in df.columns %}
+            <th>{{ column }}</th>
+          {% endfor %}
+        </tr>
+    </thead>
+    <tbody>
+      {% for row in df.head().itertuples() %}
+        <tr>
+          {% for column in row %}
+            <td>{{ column }}</td>
+          {% endfor %}
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
   <div class="content-section">
     <form method="POST" action="">
       {{ alg_form.hidden_tag() }}
@@ -52,5 +74,6 @@
   </div>
 
 {% endif%}
+
 
 {% endblock content %}
