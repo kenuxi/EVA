@@ -1,7 +1,7 @@
 import os
 from flask_wtf import FlaskForm
 from flask_wtf.file import FileField, FileAllowed
-from wtforms import SubmitField, SelectField, StringField
+from wtforms import SubmitField, SelectField, StringField, SelectMultipleField
 from wtforms.validators import DataRequired
 # from wtforms import PasswordField
 # from wtforms.validators import Length, Email, EqualTo
@@ -15,7 +15,7 @@ class SelectFileForm(FlaskForm):
 
 class AlgorithmForm(FlaskForm):
     target = StringField(validators=[DataRequired()])
-    algorithm = SelectField(label='D-reduction', choices=[('PCA', 'PCA'), ('T-SNE', 'T-SNE'), ('LLE', 'LLE')])
+    algorithm = SelectMultipleField(label='Algorithm', choices=[('PCA', 'PCA'), ('T-SNE', 'T-SNE'), ('LLE', 'LLE')])
     submit = SubmitField(label='Submit')
 
 
