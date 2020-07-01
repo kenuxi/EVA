@@ -1,5 +1,6 @@
 import numpy as np
 import plotly.express as px
+import plotly.graph_objects as go
 
 class VisualizationPlotly():
     ''' This class gives the user the possibility to make different plotly plots to visualize
@@ -55,7 +56,7 @@ class VisualizationPlotly():
 
         return fig
 
-    def box_plot_classifications(self, dim):
+    def box_plot_classifications(self, dim=0):
         ''' This method is only to be used if the pandas dataframe is labeled. It displays the statistical information
         in a boxplot for an input feature (e.g if 2dim data how the inliers/outliers are distributed along the 1 dimension)
 
@@ -199,6 +200,13 @@ class VisualizationPlotly():
 
         return fig
 
+    def pie_plot_percentages(self):
+        ''' Returns a pie plot chart figure showing how many datapoints % are outliers and how many datapoints are i
+        inliers
+        '''
+        fig = px.pie(self.pd_data_frame, values=self.features[0],
+                                     names='Classification', title='Outlier-Percentage Information')
+        return fig
 
 
 

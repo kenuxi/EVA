@@ -28,7 +28,7 @@ def get_app():
         if file_form.file_submit.data and file_form.validate_on_submit():
             df = pd.read_csv(file_form.file.data)
             # app.config['session']['df'] = df
-            session['file'] = file_form.file.data
+            session['filename'] = file_form.file.data
             session['DF'] = df
             return render_template('home.html', title='Home',
                                    df=df,
@@ -47,9 +47,13 @@ def get_app():
             return redirect(url_for('home'))
 
         elif alg_form.submit.data and alg_form.validate_on_submit():
-            session['target'] = alg_form.target.data
-            session['algorithm'] = alg_form.algorithm.data
-            return str(session['file']) + '<br/>' + str(session['target']) + '<br/>' + str(session['algorithm'])
+            dashboard_config = {'location': session['filename'],
+                                'target': alg_form.target.data,
+                                'algorithms': alg_form.algorithm.data
+                                }
+            session['dashboard_config'] = dashboard_config
+            print(os.getcwd())
+            return redirect(url_for('reload'))
 
         return render_template('home.html', title='Home', file_form=file_form, up_form=up_form)
 
@@ -72,8 +76,8 @@ def get_app():
 
     if to_reload:
         with app.app_context():
-            from application.plotlydash.Dashboards import IrisDashboard
-            app = IrisDashboard(app).create_dashboard(session['dashboard_config'])
+            from application.plotlydash.Dashboard_new import FileDashboard
+            app = FileDashboard(app).create_dashboard(session['dashboard_config'])
 
     return app
 
