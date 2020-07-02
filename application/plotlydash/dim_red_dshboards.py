@@ -30,6 +30,7 @@ class DimRedDash():
         if self.method == 'PCA':
             visualisation = VisualizationPlotly(pd_data_frame=self.stats.reduced_pandas_dataframe_pca)
             scatter_fig = visualisation.plot_data()
+            scatter_fig_density = visualisation.plot_data_density()
             box_fig = visualisation.box_plot_classifications()
 
             # if pca_graph option
@@ -41,6 +42,13 @@ class DimRedDash():
                     dcc.Graph(id='reduced_data_plot_pca', figure=scatter_fig)
                 ], className='five columns'
                 ),
+
+                html.Div([
+                    dcc.Graph(id='reduced_data_plot_density_pca', figure=scatter_fig_density)
+                ], className='five columns'
+                ),
+
+
                 html.Div([
                     dcc.Graph(id='box_outliers_plot_pca', figure=box_fig)
                 ], className='five columns'
@@ -49,6 +57,7 @@ class DimRedDash():
                     dcc.Graph(id='connected_graph_figure_pca', figure=pca_graph),
                 ], className='five columns'
                 ),
+
             ], className="row")
 
 
@@ -57,6 +66,7 @@ class DimRedDash():
             visualisation = VisualizationPlotly(pd_data_frame=self.stats.reduced_pandas_dataframe_lle)
             scatter_fig_lle = visualisation.plot_data()
             box_fig_lle = visualisation.box_plot_classifications()
+            scatter_fig_density_lle = visualisation.plot_data_density()
 
             # if pca_graph option
             self.stats.graph_neighbours(n_neighbours=4, algorithm='lle') # this should be done somewhere else
@@ -67,6 +77,12 @@ class DimRedDash():
                     dcc.Graph(id='reduced_data_plot_lle', figure=scatter_fig_lle)
                 ], className='five columns'
                 ),
+
+                html.Div([
+                    dcc.Graph(id='reduced_data_plot_density_lle', figure=scatter_fig_density_lle)
+                ], className='five columns'
+                ),
+
                 html.Div([
                     dcc.Graph(id='box_outliers_plot_lle', figure=box_fig_lle)
                 ], className='five columns'
