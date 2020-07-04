@@ -4,6 +4,7 @@ from sklearn.manifold import LocallyLinearEmbedding
 from sklearn.manifold import TSNE
 from sklearn.decomposition import PCA, KernelPCA
 from sklearn.neighbors import kneighbors_graph
+from sklearn.manifold import Isomap
 
 class DataStatistics():
     def __init__(self):
@@ -15,6 +16,7 @@ class DataStatistics():
         self.reduced_pandas_dataframe_lle = None
         self.reduced_pandas_dataframe_tsne = None
         self.reduced_pandas_dataframe_kernelpca = None
+        self.reduced_pandas_dataframe_isomap = None
         self.features = None
         self.d_red = None
         self.d = None
@@ -115,6 +117,23 @@ class DataStatistics():
         # Concadenate the unlabeled kernel pca dataframe with the classifications
         self.reduced_pandas_dataframe_kernelpca = pd.concat([pcak_Df, self.classifications], axis=1)
 
+    def apply_isomap(self, m=2, k=6):
+        ''' Perform Isomap  on the dataframe and reduce to an m dimensional subspace with k neighbour
+        Definition:  apply_isomap(X, m)
+        Input:       m                  - int, dimension of the subspace to project
+                     k                  - int, number of the k nearest neighbours the algorithm uses
+
+        '''
+        self.d_red = m
+
+        isomap = Isomap(n_neighbors=k, n_components=m)
+
+        # Update X
+        isomap_red_data = isomap.fit_transform(self.pandas_data_frame_nolabels)
+        isomapDf = pd.DataFrame(data=isomap_red_data)
+        # Concadenate the unlabeled pca dataframe with the classifications
+        self.reduced_pandas_dataframe_isomap = pd.concat([isomapDf, self.classifications], axis=1)
+
 
     def graph_neighbours(self, n_neighbours, algorithm):
         ''' This method computes the edges and nodes for a given number of neighbours by using the k nearest neighbours,
@@ -134,6 +153,8 @@ class DataStatistics():
             X = self.reduced_pandas_dataframe_tsne
         elif algorithm == 'kernel_pca':
             X = self.reduced_pandas_dataframe_kernelpca
+        elif algorithm == 'isomap':
+            X = self.reduced_pandas_dataframe_isomap
 
 
         del X['Classification']
@@ -154,3 +175,5 @@ class DataStatistics():
 
         else:
             print('ERROR DIM to High')
+
+
