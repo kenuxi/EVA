@@ -1,6 +1,7 @@
 import numpy as np
 import plotly.express as px
 import plotly.graph_objects as go
+import plotly.figure_factory as ff
 
 class VisualizationPlotly():
     ''' This class gives the user the possibility to make different plotly plots to visualize
@@ -12,6 +13,7 @@ class VisualizationPlotly():
         Input: pd_data_frame  - pandas data frame representing data
         '''
         self.pd_data_frame = pd_data_frame
+        self.pd_data_frame_nolabel = pd_data_frame.drop(columns='Classification')
         # Extract information about the data frame
         self.features = self.pd_data_frame.keys().tolist()
 
@@ -230,5 +232,12 @@ class VisualizationPlotly():
                                  color='Classification', title='Density Contour')
             else:
                 fig = px.density_contour(self.pd_data_frame, x=self.features[0], y=self.features[1], c='blue', title='Density Contour')
+
+        return fig
+
+    def plot_dendrogram(self):
+        fig = go.Figure(ff.create_dendrogram(self.pd_data_frame_nolabel))
+        # fig.update_layout(width=800, height=600)
+        fig.update_layout(title="Dendrogram")
 
         return fig

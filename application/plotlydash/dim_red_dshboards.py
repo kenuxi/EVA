@@ -32,6 +32,7 @@ class DimRedDash():
             scatter_fig = visualisation.plot_data()
             scatter_fig_density = visualisation.plot_data_density()
             box_fig = visualisation.box_plot_classifications()
+            dendrogram = visualisation.plot_dendrogram()
 
             # if pca_graph option
             self.stats.graph_neighbours(n_neighbours=4, algorithm='pca') # this should be done somewhere else
@@ -58,6 +59,11 @@ class DimRedDash():
                 ], className='five columns'
                 ),
 
+                html.Div([
+                    dcc.Graph(id='dendrogram_pca', figure=dendrogram),
+                ], className='five columns'
+                ),
+
             ], className="row")
 
 
@@ -67,6 +73,7 @@ class DimRedDash():
             scatter_fig_lle = visualisation.plot_data()
             box_fig_lle = visualisation.box_plot_classifications()
             scatter_fig_density_lle = visualisation.plot_data_density()
+            dendrogram_lle = visualisation.plot_dendrogram()
 
             # if pca_graph option
             self.stats.graph_neighbours(n_neighbours=4, algorithm='lle') # this should be done somewhere else
@@ -90,7 +97,13 @@ class DimRedDash():
                 html.Div([
                     dcc.Graph(id='connected_graph_figure_lle', figure=lle_graph),
                 ], className='five columns'
-                )
+                ),
+
+                html.Div([
+                    dcc.Graph(id='dendrogram_lle', figure=dendrogram_lle),
+                ], className='five columns'
+                ),
+
             ], className="row"
 
             )
@@ -126,12 +139,13 @@ class DimRedDash():
             # Init List corresponding to the PCA Dashboardb PLOTS
             dashboard = html.Div(children=tsne_board, className="row")
 
-        # ISOMAP CASE HERE, right now just 2 plots (scatter and boxplot)
+        # ISOMAP CASE HERE
         if self.method == 'ISOMAP':
             visualisation = VisualizationPlotly(pd_data_frame=self.stats.reduced_pandas_dataframe_isomap)
             scatter_fig_isomap = visualisation.plot_data()
             box_fig_isomap = visualisation.box_plot_classifications()
             scatter_fig_density_isomap = visualisation.plot_data_density()
+            dendrogram_isomap = visualisation.plot_dendrogram()
 
             # if pca_graph option
             self.stats.graph_neighbours(n_neighbours=6, algorithm='isomap')  # this should be done somewhere else
@@ -155,17 +169,24 @@ class DimRedDash():
                 html.Div([
                     dcc.Graph(id='connected_graph_figure_isomap', figure=isomap_graph),
                 ], className='five columns'
-                )
+                ),
+
+                html.Div([
+                    dcc.Graph(id='dendrogram_isomap', figure=dendrogram_isomap),
+                ], className='five columns'
+                ),
+
             ], className="row"
 
             )
 
-        # UMAP CASE HERE, right now just 2 plots (scatter and boxplot)
+        # UMAP CASE HERE
         if self.method == 'UMAP':
             visualisation = VisualizationPlotly(pd_data_frame=self.stats.reduced_pandas_dataframe_umap)
             scatter_fig_umap = visualisation.plot_data()
             box_fig_umap = visualisation.box_plot_classifications()
             scatter_fig_density_umap = visualisation.plot_data_density()
+            dendrogram_umap = visualisation.plot_dendrogram()
 
             # if pca_graph option
             self.stats.graph_neighbours(n_neighbours=6, algorithm='umap')  # this should be done somewhere else
@@ -189,7 +210,13 @@ class DimRedDash():
                 html.Div([
                     dcc.Graph(id='connected_graph_figure_umap', figure=umap_graph),
                 ], className='five columns'
-                )
+                ),
+
+                html.Div([
+                    dcc.Graph(id='dendrogram_umap', figure=dendrogram_umap),
+                ], className='five columns'
+                ),
+
             ], className="row"
 
             )
