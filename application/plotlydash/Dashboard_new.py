@@ -127,6 +127,14 @@ class FileDashboard(RemoteCSVDashboard):
            dashboards_merged.append(dashboard.dropdowns)
            dashboards_merged.append(dashboard.graph)
 
+
+        if 'UMAP' in dim_red_methods:
+           main_stats.apply_umap()
+           dashboard = DimRedDash(stats=main_stats, method='UMAP')
+           dashboards_merged.append(dashboard.title)
+           dashboards_merged.append(dashboard.dropdowns)
+           dashboards_merged.append(dashboard.graph)
+
         # Merge
 
         print(type(dashboards_merged))

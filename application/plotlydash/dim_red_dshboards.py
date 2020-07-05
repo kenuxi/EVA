@@ -11,7 +11,7 @@ class DimRedDash():
         Definition:  load_data(self, file_name)
 
         Input:       stats   - object, from DataStatistics class, containing all needed info/data for the plots
-                     method  - str, 'PCA', 'LLE', 'TSNE' , 'ISOMAP', or 'KERNEL_PCA' indicating the method
+                     method  - str, 'PCA', 'LLE', 'TSNE' , 'ISOMAP', 'UMAP', 'KERNEL_PCA' indicating the method
 
         '''
 
@@ -154,6 +154,40 @@ class DimRedDash():
                 ),
                 html.Div([
                     dcc.Graph(id='connected_graph_figure_isomap', figure=isomap_graph),
+                ], className='five columns'
+                )
+            ], className="row"
+
+            )
+
+        # UMAP CASE HERE, right now just 2 plots (scatter and boxplot)
+        if self.method == 'UMAP':
+            visualisation = VisualizationPlotly(pd_data_frame=self.stats.reduced_pandas_dataframe_umap)
+            scatter_fig_umap = visualisation.plot_data()
+            box_fig_umap = visualisation.box_plot_classifications()
+            scatter_fig_density_umap = visualisation.plot_data_density()
+
+            # if pca_graph option
+            self.stats.graph_neighbours(n_neighbours=6, algorithm='umap')  # this should be done somewhere else
+            umap_graph = visualisation.graph_neighbours(self.stats.edges, self.stats.nodes)
+
+            dashboard = html.Div([
+                html.Div([
+                    dcc.Graph(id='reduced_data_plot_umap', figure=scatter_fig_umap)
+                ], className='five columns'
+                ),
+
+                html.Div([
+                    dcc.Graph(id='reduced_data_plot_density_umap', figure=scatter_fig_density_umap)
+                ], className='five columns'
+                ),
+
+                html.Div([
+                    dcc.Graph(id='box_outliers_plot_umap', figure=box_fig_umap)
+                ], className='five columns'
+                ),
+                html.Div([
+                    dcc.Graph(id='connected_graph_figure_umap', figure=umap_graph),
                 ], className='five columns'
                 )
             ], className="row"
@@ -353,6 +387,55 @@ class DimRedDash():
                     html.Div([
                         daq.NumericInput(
                             id='box_red_dim_isomap',
+                            min=1,
+                            max=self.stats.d_red,
+                            size=120,
+                            label='Boxplot dimension',
+                            labelPosition='bottom',
+                            value=2)
+                    ], className='two columns'),
+
+                ], className="row"
+            )
+
+        # UMAP DROPDOWNS HERE
+        if self.method == 'UMAP':
+            dashboard = html.Div(
+                [
+                    html.Div([
+                        daq.NumericInput(
+                            id='red_dim_input_umap',
+                            min=1,
+                            max=self.stats.d_red,
+                            size=120,
+                            label='subspace dimension',
+                            labelPosition='bottom',
+                            value=2),
+                    ], className='two columns'),
+
+                    html.Div([
+                        dcc.Checklist(
+                            id='outlier_only_options_umap',
+                            options=[
+                                {'label': 'Only show Outliers', 'value': 'yes'}
+                            ],
+                        ),
+                    ], className='one column'),
+
+                    html.Div([
+                        daq.NumericInput(
+                            id='nieghbours_umap',
+                            min=1,
+                            max=self.stats.n - 1,
+                            size=120,
+                            label='K-Neighbours',
+                            labelPosition='bottom',
+                            value=6),
+                    ], className='two columns'),
+
+                    html.Div([
+                        daq.NumericInput(
+                            id='box_red_dim_umap',
                             min=1,
                             max=self.stats.d_red,
                             size=120,

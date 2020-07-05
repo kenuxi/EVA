@@ -15,7 +15,7 @@ class SelectFileForm(FlaskForm):
 
 class AlgorithmForm(FlaskForm):
     target = StringField(validators=[DataRequired()])
-    algorithm = SelectMultipleField(label='Algorithm', choices=[('PCA', 'PCA'), ('T-SNE', 'T-SNE'), ('LLE', 'LLE'), ('ISOMAP', 'ISOMAP')])
+    algorithm = SelectMultipleField(label='Algorithm', choices=[('PCA', 'PCA'), ('T-SNE', 'T-SNE'), ('LLE', 'LLE'), ('ISOMAP', 'ISOMAP'), ('UMAP', 'UMAP')])
     submit = SubmitField(label='Submit')
 
 

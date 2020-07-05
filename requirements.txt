@@ -13,3 +13,4 @@ statsmodels == 0.10.0
 dash_daq == *
 werkzeug == 0.16.1
 flask_uploads == *
+umap-learn >= 0.4

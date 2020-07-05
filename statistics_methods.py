@@ -5,6 +5,7 @@ from sklearn.manifold import TSNE
 from sklearn.decomposition import PCA, KernelPCA
 from sklearn.neighbors import kneighbors_graph
 from sklearn.manifold import Isomap
+import umap
 
 class DataStatistics():
     def __init__(self):
@@ -17,6 +18,7 @@ class DataStatistics():
         self.reduced_pandas_dataframe_tsne = None
         self.reduced_pandas_dataframe_kernelpca = None
         self.reduced_pandas_dataframe_isomap = None
+        self.reduced_pandas_dataframe_umap = None
         self.features = None
         self.d_red = None
         self.d = None
@@ -135,13 +137,27 @@ class DataStatistics():
         self.reduced_pandas_dataframe_isomap = pd.concat([isomapDf, self.classifications], axis=1)
 
 
+    def apply_umap(self, m=2, k=5):
+        ''' Perform UMAP  on the dataframe and reduce to an m dimensional subspace with k neighbour
+        Definition:  apply_umap(X, m)
+        Input:       m                  - int, dimension of the subspace to project
+                     k                  - int, number of the k nearest neighbours the algorithm uses
+
+        '''
+        self.d_red = m
+
+        embedding = umap.UMAP(n_neighbors=k,
+                              n_components=m).fit_transform(self.pandas_data_frame_nolabels)
+        umap_df = pd.DataFrame(embedding)
+        self.reduced_pandas_dataframe_umap = pd.concat([umap_df, self.classifications], axis=1)
+
     def graph_neighbours(self, n_neighbours, algorithm):
         ''' This method computes the edges and nodes for a given number of neighbours by using the k nearest neighbours,
             the graph is computed for the reduces data -> in 2dim or 3dim
 
         Input:       n_neighbours    - int, number of neighbours to consider for the knearest algorithm
                      algorithm       - str, refers to the pandas red data frame used to compute the graph nodes+edges
-                                       'pca', 'lle', 'tsne' or 'kernel_pca'
+                                       'pca', 'lle', 'tsne', 'kernel_pca', 'isomap', 'umap'
         '''
 
         # Construct X
@@ -155,6 +171,8 @@ class DataStatistics():
             X = self.reduced_pandas_dataframe_kernelpca
         elif algorithm == 'isomap':
             X = self.reduced_pandas_dataframe_isomap
+        elif algorithm == 'umap':
+            X = self.reduced_pandas_dataframe_umap
 
 
         del X['Classification']
