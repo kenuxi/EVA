@@ -46,7 +46,7 @@ class FileDashboard(RemoteCSVDashboard):
 
     def create_dashboard(self, data_dict: Dict[str, str]):
         data_file_name = data_dict['location']     # This is now in 'data' not 'application/data'
-        dim_red_methods = data_dict['algorithms']  # This is now a list.
+        #dim_red_methods = data_dict['algorithms']  # This is now a list.
         main_stats = DataStatistics()
         main_stats.load_data(data_file_name)
 
@@ -95,15 +95,15 @@ class FileDashboard(RemoteCSVDashboard):
         ),)
 
         # Apply selected algorithms
-        if 'PCA' in dim_red_methods:
+        if 'PCA' in data_dict:
             main_stats.apply_pca()
-            dashboard = DimRedDash(stats=main_stats, method='PCA')
+            dashboard = DimRedDash(stats=main_stats, method='PCA', plot_options=data_dict['PCA'])
 
             dashboards_merged.append(dashboard.title)
             dashboards_merged.append(dashboard.dropdowns)
             dashboards_merged.append(dashboard.graph)
 
-        if 'TSNE' in dim_red_methods:
+        if 'TSNE' in data_dict:
             main_stats.apply_tsne()
             dashboard = DimRedDash(stats=main_stats, method='TSNE')
 
@@ -111,7 +111,7 @@ class FileDashboard(RemoteCSVDashboard):
             dashboards_merged.append(dashboard.dropdowns)
             dashboards_merged.append(dashboard.graph)
 
-        if 'LLE' in dim_red_methods:
+        if 'LLE' in data_dict:
            main_stats.apply_lle()
            dashboard = DimRedDash(stats=main_stats, method='LLE')
 
@@ -120,7 +120,6 @@ class FileDashboard(RemoteCSVDashboard):
            dashboards_merged.append(dashboard.graph)
 
         # Merge
-
         print(type(dashboards_merged))
         print(len(dashboards_merged))
         # Merge all dashboards here
@@ -134,11 +133,15 @@ class FileDashboard(RemoteCSVDashboard):
             html.Div( children= dashboards_merged, className='twelve columns offset-by-one')
         )
 
-
         return self.dash_app.server
 
 
 
+#dashboard_config = {'location': session['filename'],
+#                    'target': alg_form.target.data,
+#                    'PCA': [],
+#'LLE':['scatter,'box','kn']
+ #                   }
 
 
 

@@ -81,7 +81,6 @@ def get_app():
 
     return app
 
-
 class AppReloader:
     def __init__(self, create_app):
         self.create_app = create_app
