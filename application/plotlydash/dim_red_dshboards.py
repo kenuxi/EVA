@@ -48,7 +48,7 @@ class DimRedDash():
                 ], className='five columns'
                 ))
 
-            if 'graph' in self.plot_options:
+            if 'k' in self.plot_options:
                 self.stats.graph_neighbours(n_neighbours=4, algorithm='pca')  # this should be done somewhere else
                 pca_graph = visualisation.graph_neighbours(self.stats.edges, self.stats.nodes)
                 pca_plots.append(                html.Div([
@@ -68,22 +68,22 @@ class DimRedDash():
             if 'scatter' in self.plot_options:
                 scatter_fig_lle = visualisation.plot_data()
                 lle_plots.append(html.Div([
-                    dcc.Graph(id='reduced_data_plot_pca', figure=scatter_fig_lle)
+                    dcc.Graph(id='reduced_data_plot_lle', figure=scatter_fig_lle)
                 ], className='five columns'
                 ))
 
             if 'box' in self.plot_options:
                 box_fig_lle = visualisation.box_plot_classifications()
                 lle_plots.append(html.Div([
-                    dcc.Graph(id='box_outliers_plot_pca', figure=box_fig_lle)
+                    dcc.Graph(id='box_outliers_plot_lle', figure=box_fig_lle)
                 ], className='five columns'
                 ))
 
-            if 'graph' in self.plot_options:
+            if 'k' in self.plot_options:
                 self.stats.graph_neighbours(n_neighbours=4, algorithm='lle')  # this should be done somewhere else
                 lle_graph = visualisation.graph_neighbours(self.stats.edges, self.stats.nodes)
                 lle_plots.append(                html.Div([
-                    dcc.Graph(id='connected_graph_figure_pca', figure=lle_graph),
+                    dcc.Graph(id='connected_graph_figure_lle', figure=lle_graph),
                 ], className='five columns'
                 ))
 
@@ -99,22 +99,22 @@ class DimRedDash():
             if 'scatter' in self.plot_options:
                 scatter_fig_tsne = visualisation.plot_data()
                 tsne_plots.append(html.Div([
-                    dcc.Graph(id='reduced_data_plot_pca', figure=scatter_fig_tsne)
+                    dcc.Graph(id='reduced_data_plot_tsne', figure=scatter_fig_tsne)
                 ], className='five columns'
                 ))
 
             if 'box' in self.plot_options:
                 box_fig_tsne = visualisation.box_plot_classifications()
                 tsne_plots.append(html.Div([
-                    dcc.Graph(id='box_outliers_plot_pca', figure=box_fig_tsne)
+                    dcc.Graph(id='box_outliers_plot_tsne', figure=box_fig_tsne)
                 ], className='five columns'
                 ))
 
-            if 'graph' in self.plot_options:
-                self.stats.graph_neighbours(n_neighbours=4, algorithm='lle')  # this should be done somewhere else
+            if 'k' in self.plot_options:
+                self.stats.graph_neighbours(n_neighbours=4, algorithm='tsne')  # this should be done somewhere else
                 tsne_graph = visualisation.graph_neighbours(self.stats.edges, self.stats.nodes)
                 tsne_plots.append(                html.Div([
-                    dcc.Graph(id='connected_graph_figure_pca', figure=tsne_graph),
+                    dcc.Graph(id='connected_graph_figure_tsne', figure=tsne_graph),
                 ], className='five columns'
                 ))
 

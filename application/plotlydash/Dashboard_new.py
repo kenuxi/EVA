@@ -49,7 +49,7 @@ class FileDashboard(RemoteCSVDashboard):
         #dim_red_methods = data_dict['algorithms']  # This is now a list.
         main_stats = DataStatistics()
         main_stats.load_data(data_file_name)
-
+        print(data_dict)
         # Init List containing all html div(...) dashboards
         dashboards_merged = []
         # Add title
@@ -95,7 +95,7 @@ class FileDashboard(RemoteCSVDashboard):
         ),)
 
         # Apply selected algorithms
-        if 'PCA' in data_dict:
+        if data_dict['PCA']:
             main_stats.apply_pca()
             dashboard = DimRedDash(stats=main_stats, method='PCA', plot_options=data_dict['PCA'])
 
@@ -103,7 +103,7 @@ class FileDashboard(RemoteCSVDashboard):
             dashboards_merged.append(dashboard.dropdowns)
             dashboards_merged.append(dashboard.graph)
 
-        if 'TSNE' in data_dict:
+        if data_dict['TSNE']:
             main_stats.apply_tsne()
             dashboard = DimRedDash(stats=main_stats, method='TSNE', plot_options=data_dict['TSNE'])
 
@@ -111,7 +111,7 @@ class FileDashboard(RemoteCSVDashboard):
             dashboards_merged.append(dashboard.dropdowns)
             dashboards_merged.append(dashboard.graph)
 
-        if 'LLE' in data_dict:
+        if data_dict['LLE']:
            main_stats.apply_lle()
            dashboard = DimRedDash(stats=main_stats, method='LLE', plot_options=data_dict['LLE'])
 
