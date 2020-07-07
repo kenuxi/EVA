@@ -61,7 +61,7 @@
         </tr>
     </thead>
     <tbody>
-      {% for row in df.itertuples() %}
+      {% for row in df.head(5).itertuples() %}
         <tr>
           {% for column in row %}
             <td>{{ column }}</td>
