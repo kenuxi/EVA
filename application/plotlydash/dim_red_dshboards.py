@@ -5,7 +5,7 @@ from visualisation_methods import VisualizationPlotly
 
 
 class DimRedDash():
-    def __init__(self, stats, method):
+    def __init__(self, stats, method, plot_options):
         '''
 
         Definition:  load_data(self, file_name)
@@ -17,6 +17,7 @@ class DimRedDash():
 
         self.stats = stats
         self.method = method
+        self.plot_options = plot_options
 
         self.graph = self._get_graph()
         self.dropdowns = self._getdropdowns()
@@ -29,87 +30,95 @@ class DimRedDash():
         # PCA CASE HERE, right now just 2 plots (scatter and boxplot)
         if self.method == 'PCA':
             visualisation = VisualizationPlotly(pd_data_frame=self.stats.reduced_pandas_dataframe_pca)
-            scatter_fig = visualisation.plot_data()
-            box_fig = visualisation.box_plot_classifications()
 
-            # if pca_graph option
-            self.stats.graph_neighbours(n_neighbours=4, algorithm='pca') # this should be done somewhere else
-            pca_graph = visualisation.graph_neighbours(self.stats.edges, self.stats.nodes)
-
-            dashboard = html.Div([
-                html.Div([
+            # Depending on the plot_options the user selected, produce corresponding plots and append them to the
+            # list
+            pca_plots = []
+            if 'scatter' in self.plot_options:
+                scatter_fig = visualisation.plot_data()
+                pca_plots.append(html.Div([
                     dcc.Graph(id='reduced_data_plot_pca', figure=scatter_fig)
                 ], className='five columns'
-                ),
-                html.Div([
+                ))
+
+            if 'box' in self.plot_options:
+                box_fig = visualisation.box_plot_classifications()
+                pca_plots.append(html.Div([
                     dcc.Graph(id='box_outliers_plot_pca', figure=box_fig)
                 ], className='five columns'
-                ),
-                html.Div([
+                ))
+
+            if 'graph' in self.plot_options:
+                self.stats.graph_neighbours(n_neighbours=4, algorithm='pca')  # this should be done somewhere else
+                pca_graph = visualisation.graph_neighbours(self.stats.edges, self.stats.nodes)
+                pca_plots.append(                html.Div([
                     dcc.Graph(id='connected_graph_figure_pca', figure=pca_graph),
                 ], className='five columns'
-                ),
-            ], className="row")
+                ))
+
+            dashboard = html.Div(children=pca_plots, className="row")
 
 
-        # LLE CASE HERE, right now just 2 plots (scatter and boxplot)
         if self.method == 'LLE':
             visualisation = VisualizationPlotly(pd_data_frame=self.stats.reduced_pandas_dataframe_lle)
-            scatter_fig_lle = visualisation.plot_data()
-            box_fig_lle = visualisation.box_plot_classifications()
 
-            # if pca_graph option
-            self.stats.graph_neighbours(n_neighbours=4, algorithm='lle') # this should be done somewhere else
-            lle_graph = visualisation.graph_neighbours(self.stats.edges, self.stats.nodes)
-
-            dashboard = html.Div([
-                html.Div([
-                    dcc.Graph(id='reduced_data_plot_lle', figure=scatter_fig_lle)
+            # Depending on the plot_options the user selected, produce corresponding plots and append them to the
+            # list
+            lle_plots = []
+            if 'scatter' in self.plot_options:
+                scatter_fig_lle = visualisation.plot_data()
+                lle_plots.append(html.Div([
+                    dcc.Graph(id='reduced_data_plot_pca', figure=scatter_fig_lle)
                 ], className='five columns'
-                ),
-                html.Div([
-                    dcc.Graph(id='box_outliers_plot_lle', figure=box_fig_lle)
+                ))
+
+            if 'box' in self.plot_options:
+                box_fig_lle = visualisation.box_plot_classifications()
+                lle_plots.append(html.Div([
+                    dcc.Graph(id='box_outliers_plot_pca', figure=box_fig_lle)
                 ], className='five columns'
-                ),
-                html.Div([
-                    dcc.Graph(id='connected_graph_figure_lle', figure=lle_graph),
+                ))
+
+            if 'graph' in self.plot_options:
+                self.stats.graph_neighbours(n_neighbours=4, algorithm='lle')  # this should be done somewhere else
+                lle_graph = visualisation.graph_neighbours(self.stats.edges, self.stats.nodes)
+                lle_plots.append(                html.Div([
+                    dcc.Graph(id='connected_graph_figure_pca', figure=lle_graph),
                 ], className='five columns'
-                )
-            ], className="row"
+                ))
 
-            )
+            dashboard = html.Div(children=lle_plots, className="row")
 
 
-        # TSNE CASE  HERE, right now just 2 plots (scatter and boxplot)
         if self.method == 'TSNE':
             visualisation = VisualizationPlotly(pd_data_frame=self.stats.reduced_pandas_dataframe_tsne)
-            scatter_fig_tsne = visualisation.plot_data()
-            box_fig_tsne = visualisation.box_plot_classifications()
 
-            # if pca_graph option
-            self.stats.graph_neighbours(n_neighbours=4, algorithm='tsne') # this should be done somewhere else
-            tsne_graph = visualisation.graph_neighbours(self.stats.edges, self.stats.nodes)
+            # Depending on the plot_options the user selected, produce corresponding plots and append them to the
+            # list
+            tsne_plots = []
+            if 'scatter' in self.plot_options:
+                scatter_fig_tsne = visualisation.plot_data()
+                tsne_plots.append(html.Div([
+                    dcc.Graph(id='reduced_data_plot_pca', figure=scatter_fig_tsne)
+                ], className='five columns'
+                ))
 
-            tsne_board = []
+            if 'box' in self.plot_options:
+                box_fig_tsne = visualisation.box_plot_classifications()
+                tsne_plots.append(html.Div([
+                    dcc.Graph(id='box_outliers_plot_pca', figure=box_fig_tsne)
+                ], className='five columns'
+                ))
 
-            # Build subboard according to the user specifications # still to be implemented
-            tsne_board.append(html.Div([
-                dcc.Graph(id='reduced_data_plot_tsne', figure=scatter_fig_tsne)
-            ], className='five columns'
-            ),)
+            if 'graph' in self.plot_options:
+                self.stats.graph_neighbours(n_neighbours=4, algorithm='lle')  # this should be done somewhere else
+                tsne_graph = visualisation.graph_neighbours(self.stats.edges, self.stats.nodes)
+                tsne_plots.append(                html.Div([
+                    dcc.Graph(id='connected_graph_figure_pca', figure=tsne_graph),
+                ], className='five columns'
+                ))
 
-            tsne_board.append(html.Div([
-                dcc.Graph(id='box_outliers_plot_tsne', figure=box_fig_tsne)
-            ], className='five columns'
-            ),)
-
-            tsne_board.append(html.Div([
-                dcc.Graph(id='connected_graph_figure_tsne', figure=tsne_graph)
-            ], className='five columns'
-            ),)
-            # Init List corresponding to the PCA Dashboardb PLOTS
-            dashboard = html.Div(children=tsne_board, className="row")
-
+            dashboard = html.Div(children=tsne_plots, className="row")
 
         return dashboard
 
@@ -118,10 +127,9 @@ class DimRedDash():
         '''
         # PCA DROPDOWNS HERE
         if self.method == 'PCA':
-            dashboard =  html.Div(
-                [
-
-                    html.Div([
+            pca_dropdowns = []
+            if 'scatter' in self.plot_options:
+                pca_dropdowns.append(html.Div([
                         daq.NumericInput(
                             id='rem_vari',
                             disabled=True,
@@ -131,18 +139,18 @@ class DimRedDash():
                             label='Remained Variance %',
                             labelPosition='bottom',
                             value=self.stats.remained_variance)
-                    ],  className='two columns'),
+                    ],  className='two columns'))
 
-                    html.Div([
+                pca_dropdowns.append(html.Div([
                         dcc.Checklist(
                             id='outlier_only_options_pca',
                             options=[
                                 {'label': 'Only show Outliers', 'value': 'yes'}
                             ],
                         ),
-                    ], className='one column'),
+                    ], className='one column'))
 
-                    html.Div([
+                pca_dropdowns.append(html.Div([
                         daq.NumericInput(
                             id='red_dim_input_pca',
                             min=1,
@@ -151,9 +159,10 @@ class DimRedDash():
                             label='subspace dimension',
                             labelPosition='bottom',
                             value=2),
-                    ],className='two columns'),
+                    ], className='two columns'))
 
-                    html.Div([
+            if 'box' in self.plot_options:
+                pca_dropdowns.append(html.Div([
                         daq.NumericInput(
                             id='box_red_dim_pca',
                             min=1,
@@ -162,16 +171,19 @@ class DimRedDash():
                             label='Boxplot dimension',
                             labelPosition='bottom',
                             value=2)
-                    ], className='two columns'),
+                    ], className='two columns'))
 
-                ], className="row"
-            )
+            if 'graph' in self.plot_options:
+                pass
+
+            dashboard = html.Div(children=pca_dropdowns, className="row")
 
         # TSNE OPTIONS HERE
         if self.method == 'TSNE':
-            dashboard = html.Div(
-                [
-                    html.Div([
+            tsne_dropdowns = []
+
+            if 'scatter' in self.plot_options:
+                tsne_dropdowns.append(html.Div([
                         daq.NumericInput(
                             id='red_dim_input_tsne',
                             min=1,
@@ -180,18 +192,18 @@ class DimRedDash():
                             label='subspace dimension',
                             labelPosition='bottom',
                             value=2),
-                    ],className='two columns'),
+                    ], className='two columns'))
 
-                    html.Div([
+                tsne_dropdowns.append(html.Div([
                         dcc.Checklist(
                             id='outlier_only_options_tsne',
                             options=[
                                 {'label': 'Only show Outliers', 'value': 'yes'}
                             ],
                         ),
-                    ], className='one column'),
+                    ], className='one column'))
 
-                    html.Div([
+                tsne_dropdowns.append(                    html.Div([
                         daq.NumericInput(
                             id='perplexity_tsne',
                             min=1,
@@ -200,9 +212,10 @@ class DimRedDash():
                             label='Perplexity',
                             labelPosition='bottom',
                             value=30),
-                    ], className='two columns'),
+                    ], className='two columns'))
 
-                    html.Div([
+            if 'box' in self.plot_options:
+                tsne_dropdowns.append(html.Div([
                         daq.NumericInput(
                             id='box_red_dim_tsne',
                             min=1,
@@ -211,16 +224,19 @@ class DimRedDash():
                             label='Boxplot dimension',
                             labelPosition='bottom',
                             value=2)
-                    ], className='two columns'),
+                    ], className='two columns'))
 
-                ], className="row"
-            )
+            if 'graph' in self.plot_options:
+                pass
+
+            dashboard = html.Div(children=tsne_dropdowns, className="row")
 
         # LLE DROPDOWNS HERE
         if self.method == 'LLE':
-            dashboard = html.Div(
-                [
-                    html.Div([
+            lle_dropdowns = []
+
+            if 'scatter' in self.plot_options:
+                lle_dropdowns.append(html.Div([
                         daq.NumericInput(
                             id='red_dim_input_lle',
                             min=1,
@@ -229,18 +245,18 @@ class DimRedDash():
                             label='subspace dimension',
                             labelPosition='bottom',
                             value=2),
-                    ],className='two columns'),
+                    ],className='two columns'))
 
-                    html.Div([
+                lle_dropdowns.append(html.Div([
                         dcc.Checklist(
                             id='outlier_only_options_lle',
                             options=[
                                 {'label': 'Only show Outliers', 'value': 'yes'}
                             ],
                         ),
-                    ], className='one column'),
+                    ], className='one column'))
 
-                    html.Div([
+                lle_dropdowns.append(html.Div([
                         daq.NumericInput(
                             id='nieghbours_lle',
                             min=1,
@@ -249,9 +265,10 @@ class DimRedDash():
                             label='K-Neighbours',
                             labelPosition='bottom',
                             value=5),
-                    ], className='two columns'),
+                    ], className='two columns'))
 
-                    html.Div([
+            if 'box' in self.plot_options:
+                lle_dropdowns.append(html.Div([
                         daq.NumericInput(
                             id='box_red_dim_lle',
                             min=1,
@@ -260,10 +277,12 @@ class DimRedDash():
                             label='Boxplot dimension',
                             labelPosition='bottom',
                             value=2)
-                    ], className='two columns'),
+                    ], className='two columns'))
 
-                ], className="row"
-            )
+            if 'graph' in self.plot_options:
+                pass
+
+            dashboard = html.Div(children=lle_dropdowns, className="row")
 
         return dashboard
 
