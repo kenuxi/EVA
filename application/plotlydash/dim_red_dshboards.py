@@ -120,6 +120,66 @@ class DimRedDash():
 
             dashboard = html.Div(children=tsne_plots, className="row")
 
+        if self.method == 'UMAP':
+            visualisation = VisualizationPlotly(pd_data_frame=self.stats.reduced_pandas_dataframe_umap)
+
+            # Depending on the plot_options the user selected, produce corresponding plots and append them to the
+            # list
+            umap_plots = []
+            if 'scatter' in self.plot_options:
+                scatter_fig = visualisation.plot_data()
+                umap_plots.append(html.Div([
+                    dcc.Graph(id='reduced_data_plot_umap', figure=scatter_fig)
+                ], className='five columns'
+                ))
+
+            if 'box' in self.plot_options:
+                box_fig = visualisation.box_plot_classifications()
+                umap_plots.append(html.Div([
+                    dcc.Graph(id='box_outliers_plot_umap', figure=box_fig)
+                ], className='five columns'
+                ))
+
+            if 'k' in self.plot_options:
+                self.stats.graph_neighbours(n_neighbours=4, algorithm='umap')  # this should be done somewhere else
+                umap_graph = visualisation.graph_neighbours(self.stats.edges, self.stats.nodes)
+                umap_plots.append(html.Div([
+                    dcc.Graph(id='connected_graph_figure_umap', figure=umap_graph),
+                ], className='five columns'
+                ))
+
+            dashboard = html.Div(children=umap_plots, className="row")
+
+        if self.method == 'ISOMAP':
+            visualisation = VisualizationPlotly(pd_data_frame=self.stats.reduced_pandas_dataframe_isomap)
+
+            # Depending on the plot_options the user selected, produce corresponding plots and append them to the
+            # list
+            isomap_plots = []
+            if 'scatter' in self.plot_options:
+                scatter_fig = visualisation.plot_data()
+                isomap_plots.append(html.Div([
+                    dcc.Graph(id='reduced_data_plot_isomap', figure=scatter_fig)
+                ], className='five columns'
+                ))
+
+            if 'box' in self.plot_options:
+                box_fig = visualisation.box_plot_classifications()
+                isomap_plots.append(html.Div([
+                    dcc.Graph(id='box_outliers_plot_isomap', figure=box_fig)
+                ], className='five columns'
+                ))
+
+            if 'k' in self.plot_options:
+                self.stats.graph_neighbours(n_neighbours=4, algorithm='isomap')  # this should be done somewhere else
+                isomap_graph = visualisation.graph_neighbours(self.stats.edges, self.stats.nodes)
+                isomap_plots.append(html.Div([
+                    dcc.Graph(id='connected_graph_figure_umap', figure=isomap_graph),
+                ], className='five columns'
+                ))
+
+            dashboard = html.Div(children=isomap_plots, className="row")
+
         return dashboard
 
     def _getdropdowns(self):
