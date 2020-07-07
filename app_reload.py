@@ -59,7 +59,7 @@ def get_app():
                             dashboard_config[alg].append(field.description)
 
             session['dashboard_config'] = dashboard_config
-            return f"{session['dashboard_config']}"
+            return redirect(url_for('reload'))      # f"{session['dashboard_config']}"
 
         return render_template('home.html', title='Home', file_form=file_form, up_form=up_form)
 
