@@ -105,7 +105,7 @@ class FileDashboard(RemoteCSVDashboard):
 
         if 'TSNE' in data_dict:
             main_stats.apply_tsne()
-            dashboard = DimRedDash(stats=main_stats, method='TSNE')
+            dashboard = DimRedDash(stats=main_stats, method='TSNE', plot_options=data_dict['TSNE'])
 
             dashboards_merged.append(dashboard.title)
             dashboards_merged.append(dashboard.dropdowns)
@@ -113,7 +113,7 @@ class FileDashboard(RemoteCSVDashboard):
 
         if 'LLE' in data_dict:
            main_stats.apply_lle()
-           dashboard = DimRedDash(stats=main_stats, method='LLE')
+           dashboard = DimRedDash(stats=main_stats, method='LLE', plot_options=data_dict['LLE'])
 
            dashboards_merged.append(dashboard.title)
            dashboards_merged.append(dashboard.dropdowns)
