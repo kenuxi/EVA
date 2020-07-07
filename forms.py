@@ -1,8 +1,9 @@
 import os
 from flask_wtf import FlaskForm
 from flask_wtf.file import FileField, FileAllowed
-from wtforms import SubmitField, SelectField, StringField, SelectMultipleField
+from wtforms import SubmitField, SelectField, SelectMultipleField, BooleanField, widgets
 from wtforms.validators import DataRequired
+from config import vis_types
 # from wtforms import PasswordField
 # from wtforms.validators import Length, Email, EqualTo
 
@@ -14,14 +15,38 @@ class SelectFileForm(FlaskForm):
 
 
 class AlgorithmForm(FlaskForm):
-    target = StringField(validators=[DataRequired()])
-    algorithm = SelectMultipleField(label='Algorithm', choices=[('PCA', 'PCA'), ('T-SNE', 'T-SNE'), ('LLE', 'LLE')])
     submit = SubmitField(label='Submit')
 
 
 class UploadForm(FlaskForm):
     csv_file = FileField(label='CSV', validators=[DataRequired(), FileAllowed(['csv'], 'Wrong file format!')])
     csv_submit = SubmitField(label='Upload')
+
+
+class VisForm(FlaskForm):
+    target = SelectField(label='Label Column', choices=[])
+    PCA1 = BooleanField(label='scatter', description="scatter")
+    PCA2 = BooleanField(label='box', description="box")
+    PCA3 = BooleanField(label='k', description="k")
+    LLE1 = BooleanField(label='scatter', description="scatter")
+    LLE2 = BooleanField(label='box', description="box")
+    LLE3 = BooleanField(label='k', description="k")
+    TSNE1 = BooleanField(label='scatter', description="scatter")
+    TSNE2 = BooleanField(label='box', description="box")
+    TSNE3 = BooleanField(label='k', description="k")
+    submit = SubmitField(label='Submit')
+
+
+class MultiCheckboxField(SelectMultipleField):
+    widget = widgets.ListWidget(prefix_label=False)
+    option_widget = widgets.CheckboxInput()
+
+
+class MultiAlgForm(FlaskForm):
+    pca = MultiCheckboxField(label='PCA')
+    lle = MultiCheckboxField(label='LLE')
+    tsne = MultiCheckboxField(label='TSNE')
+    submit = SubmitField(label='Submit')
 
 
 '''

@@ -1,10 +1,11 @@
 from werkzeug.serving import run_simple
 from flask import Flask, render_template, url_for, redirect, request, flash
 from flask_uploads import configure_uploads, UploadSet
-from forms import SelectFileForm, AlgorithmForm, UploadForm
+from forms import SelectFileForm, AlgorithmForm, UploadForm, VisForm
 from config import app_secret_key, session
 import pandas as pd
 import os
+from config import alg_types
 
 
 to_reload = False
@@ -22,19 +23,19 @@ def get_app():
     @app.route('/home', methods=['GET', 'POST'])
     def home():
         file_form = SelectFileForm()
-        alg_form = AlgorithmForm()
         up_form = UploadForm()
-
+        vis_form = VisForm()
         if file_form.file_submit.data and file_form.validate_on_submit():
             df = pd.read_csv(file_form.file.data)
             # app.config['session']['df'] = df
             session['filename'] = file_form.file.data
             session['DF'] = df
+            vis_form.target.choices = [(str(col), str(col)) for col in df.columns]
             return render_template('home.html', title='Home',
                                    df=df,
                                    file_form=file_form,
                                    up_form=up_form,
-                                   alg_form=alg_form)
+                                   vis_form=vis_form)
 
         elif up_form.csv_submit.data and up_form.validate_on_submit():
             csv_data = up_form.csv_file.data
@@ -46,14 +47,21 @@ def get_app():
             flash('Your file has been Added!', 'success')
             return redirect(url_for('home'))
 
-        elif alg_form.submit.data and alg_form.validate_on_submit():
+        elif vis_form.submit.data:
             dashboard_config = {'location': session['filename'],
-                                'target': alg_form.target.data,
-                                'algorithms': alg_form.algorithm.data
+                                'target': vis_form.target.data,
+                                'PCA': [],
+                                'LLE': [],
+                                'TSNE': []
                                 }
+            for alg in alg_types:
+                for field in vis_form:
+                    if field.type == "BooleanField" and alg in field.short_name:
+                        if field.data:
+                            dashboard_config[alg].append(field.description)
+
             session['dashboard_config'] = dashboard_config
-            print(os.getcwd())
-            return redirect(url_for('reload'))
+            return redirect(url_for('redirect'))    # f"{session['dashboard_config']}"
 
         return render_template('home.html', title='Home', file_form=file_form, up_form=up_form)
 
