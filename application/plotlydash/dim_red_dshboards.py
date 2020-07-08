@@ -269,7 +269,6 @@ class DimRedDash():
             if 'graph' in self.plot_options:
                 pass
 
-
             dashboard = html.Div(children=pca_dropdowns, className="row")
 
         # TSNE OPTIONS HERE
