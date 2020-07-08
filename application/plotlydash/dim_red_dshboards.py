@@ -243,7 +243,7 @@ class DimRedDash():
             if 'density' in self.plot_options:
                 isomap_density = visualisation.plot_data_density()
                 isomap_plots.append(html.Div([
-                    dcc.Graph(id='density_umap', figure=isomap_density),
+                    dcc.Graph(id='density_isomap', figure=isomap_density),
                 ], className='five columns'
                 ))
 
