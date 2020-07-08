@@ -50,8 +50,11 @@ def get_app():
                                 'target': vis_form.target.data,
                                 'PCA': [],
                                 'LLE': [],
-                                'TSNE': []
+                                'TSNE': [],
+                                'UMAP': [],
+                                'ISOMAP': []
                                 }
+
             for alg in alg_types:
                 for field in vis_form:
                     if field.type == "BooleanField" and alg in field.short_name:
@@ -59,6 +62,7 @@ def get_app():
                             dashboard_config[alg].append(field.description)
 
             session['dashboard_config'] = dashboard_config
+            print(dashboard_config)
             return redirect(url_for('reload'))      # f"{session['dashboard_config']}"
 
         return render_template('home.html', title='Home', file_form=file_form, up_form=up_form)

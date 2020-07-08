@@ -22,11 +22,22 @@ class VisForm(FlaskForm):
     PCA1 = BooleanField(label='scatter', description="scatter")
     PCA2 = BooleanField(label='box', description="box")
     PCA3 = BooleanField(label='k', description="k")
+
     LLE1 = BooleanField(label='scatter', description="scatter")
     LLE2 = BooleanField(label='box', description="box")
     LLE3 = BooleanField(label='k', description="k")
+
     TSNE1 = BooleanField(label='scatter', description="scatter")
     TSNE2 = BooleanField(label='box', description="box")
     TSNE3 = BooleanField(label='k', description="k")
+
+    UMAP1 = BooleanField(label='scatter', description="scatter")
+    UMAP2 = BooleanField(label='box', description="box")
+    UMAP3 = BooleanField(label='k', description="k")
+
+    ISOMAP1 = BooleanField(label='scatter', description="scatter")
+    ISOMAP2 = BooleanField(label='box', description="box")
+    ISOMAP3 = BooleanField(label='k', description="k")
+
     submit = SubmitField(label='Submit')
 

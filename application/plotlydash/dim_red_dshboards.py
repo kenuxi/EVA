@@ -58,7 +58,6 @@ class DimRedDash():
 
             dashboard = html.Div(children=pca_plots, className="row")
 
-
         if self.method == 'LLE':
             visualisation = VisualizationPlotly(pd_data_frame=self.stats.reduced_pandas_dataframe_lle)
 
@@ -88,7 +87,6 @@ class DimRedDash():
                 ))
 
             dashboard = html.Div(children=lle_plots, className="row")
-
 
         if self.method == 'TSNE':
             visualisation = VisualizationPlotly(pd_data_frame=self.stats.reduced_pandas_dataframe_tsne)
