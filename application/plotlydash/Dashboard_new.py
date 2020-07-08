@@ -120,8 +120,6 @@ class FileDashboard(RemoteCSVDashboard):
            dashboards_merged.append(dashboard.graph)
 
 
-
-
         if data_dict['UMAP']:
            main_stats.apply_umap()
            dashboard = DimRedDash(stats=main_stats, method='UMAP', plot_options=data_dict['UMAP'])

@@ -57,6 +57,12 @@ class DimRedDash():
                 ], className='five columns'
                 ))
 
+            if 'dendogram' in self.plot_options:
+                pca_dendo = visualisation.plot_dendrogram()
+                pca_plots.append(html.Div([
+                    dcc.Graph(id='dendogram_pca', figure=pca_dendo),
+                ], className='five columns'
+                ))
             dashboard = html.Div(children=pca_plots, className="row")
 
         if self.method == 'LLE':
@@ -84,6 +90,13 @@ class DimRedDash():
                 lle_graph = visualisation.graph_neighbours(self.stats.edges, self.stats.nodes)
                 lle_plots.append(                html.Div([
                     dcc.Graph(id='connected_graph_figure_lle', figure=lle_graph),
+                ], className='five columns'
+                ))
+
+            if 'dendogram' in self.plot_options:
+                lle_dendo = visualisation.plot_dendrogram()
+                lle_plots.append(html.Div([
+                    dcc.Graph(id='dendogram_lle', figure=lle_dendo),
                 ], className='five columns'
                 ))
 
@@ -117,6 +130,13 @@ class DimRedDash():
                 ], className='five columns'
                 ))
 
+            if 'dendogram' in self.plot_options:
+                tsne_dendo = visualisation.plot_dendrogram()
+                tsne_plots.append(html.Div([
+                    dcc.Graph(id='dendogram_pca', figure=tsne_dendo),
+                ], className='five columns'
+                ))
+
             dashboard = html.Div(children=tsne_plots, className="row")
 
         if self.method == 'UMAP':
@@ -147,6 +167,13 @@ class DimRedDash():
                 ], className='five columns'
                 ))
 
+            if 'dendogram' in self.plot_options:
+                umap_dendo = visualisation.plot_dendrogram()
+                umap_plots.append(html.Div([
+                    dcc.Graph(id='dendogram_umap', figure=umap_dendo),
+                ], className='five columns'
+                ))
+
             dashboard = html.Div(children=umap_plots, className="row")
 
         if self.method == 'ISOMAP':
@@ -174,6 +201,13 @@ class DimRedDash():
                 isomap_graph = visualisation.graph_neighbours(self.stats.edges, self.stats.nodes)
                 isomap_plots.append(html.Div([
                     dcc.Graph(id='connected_graph_figure_umap', figure=isomap_graph),
+                ], className='five columns'
+                ))
+
+            if 'dendogram' in self.plot_options:
+                isomap_dendo = visualisation.plot_dendrogram()
+                isomap_plots.append(html.Div([
+                    dcc.Graph(id='dendogram_isomap', figure=isomap_dendo),
                 ], className='five columns'
                 ))
 
@@ -234,6 +268,7 @@ class DimRedDash():
 
             if 'graph' in self.plot_options:
                 pass
+
 
             dashboard = html.Div(children=pca_dropdowns, className="row")
 
