@@ -133,7 +133,7 @@ class DimRedDash():
             if 'dendogram' in self.plot_options:
                 tsne_dendo = visualisation.plot_dendrogram()
                 tsne_plots.append(html.Div([
-                    dcc.Graph(id='dendogram_pca', figure=tsne_dendo),
+                    dcc.Graph(id='dendogram_tsne', figure=tsne_dendo),
                 ], className='five columns'
                 ))
 
