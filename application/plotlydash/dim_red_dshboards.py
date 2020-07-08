@@ -49,14 +49,6 @@ class DimRedDash():
                 ], className='five columns'
                 ))
 
-            if 'k' in self.plot_options:
-                self.stats.graph_neighbours(n_neighbours=4, algorithm='pca')  # this should be done somewhere else
-                pca_graph = visualisation.graph_neighbours(self.stats.edges, self.stats.nodes)
-                pca_plots.append(                html.Div([
-                    dcc.Graph(id='connected_graph_figure_pca', figure=pca_graph),
-                ], className='five columns'
-                ))
-
             if 'dendogram' in self.plot_options:
                 pca_dendo = visualisation.plot_dendrogram()
                 pca_plots.append(html.Div([
@@ -68,6 +60,14 @@ class DimRedDash():
                 pca_density = visualisation.plot_data_density()
                 pca_plots.append(html.Div([
                     dcc.Graph(id='density_pca', figure=pca_density),
+                ], className='five columns'
+                ))
+
+            if 'k' in self.plot_options:
+                self.stats.graph_neighbours(n_neighbours=4, algorithm='pca')  # this should be done somewhere else
+                pca_graph = visualisation.graph_neighbours(self.stats.edges, self.stats.nodes)
+                pca_plots.append(html.Div([
+                    dcc.Graph(id='connected_graph_figure_pca', figure=pca_graph),
                 ], className='five columns'
                 ))
 
@@ -93,13 +93,6 @@ class DimRedDash():
                 ], className='five columns'
                 ))
 
-            if 'k' in self.plot_options:
-                self.stats.graph_neighbours(n_neighbours=4, algorithm='lle')  # this should be done somewhere else
-                lle_graph = visualisation.graph_neighbours(self.stats.edges, self.stats.nodes)
-                lle_plots.append(                html.Div([
-                    dcc.Graph(id='connected_graph_figure_lle', figure=lle_graph),
-                ], className='five columns'
-                ))
 
             if 'dendogram' in self.plot_options:
                 lle_dendo = visualisation.plot_dendrogram()
@@ -112,6 +105,14 @@ class DimRedDash():
                 lle_density = visualisation.plot_data_density()
                 lle_plots.append(html.Div([
                     dcc.Graph(id='density_lle', figure=lle_density),
+                ], className='five columns'
+                ))
+
+            if 'k' in self.plot_options:
+                self.stats.graph_neighbours(n_neighbours=4, algorithm='lle')  # this should be done somewhere else
+                lle_graph = visualisation.graph_neighbours(self.stats.edges, self.stats.nodes)
+                lle_plots.append(                html.Div([
+                    dcc.Graph(id='connected_graph_figure_lle', figure=lle_graph),
                 ], className='five columns'
                 ))
 
@@ -137,14 +138,6 @@ class DimRedDash():
                 ], className='five columns'
                 ))
 
-            if 'k' in self.plot_options:
-                self.stats.graph_neighbours(n_neighbours=4, algorithm='tsne')  # this should be done somewhere else
-                tsne_graph = visualisation.graph_neighbours(self.stats.edges, self.stats.nodes)
-                tsne_plots.append(                html.Div([
-                    dcc.Graph(id='connected_graph_figure_tsne', figure=tsne_graph),
-                ], className='five columns'
-                ))
-
             if 'dendogram' in self.plot_options:
                 tsne_dendo = visualisation.plot_dendrogram()
                 tsne_plots.append(html.Div([
@@ -156,6 +149,14 @@ class DimRedDash():
                 tsne_density = visualisation.plot_data_density()
                 tsne_plots.append(html.Div([
                     dcc.Graph(id='density_tsne', figure=tsne_density),
+                ], className='five columns'
+                ))
+
+            if 'k' in self.plot_options:
+                self.stats.graph_neighbours(n_neighbours=4, algorithm='tsne')  # this should be done somewhere else
+                tsne_graph = visualisation.graph_neighbours(self.stats.edges, self.stats.nodes)
+                tsne_plots.append(                html.Div([
+                    dcc.Graph(id='connected_graph_figure_tsne', figure=tsne_graph),
                 ], className='five columns'
                 ))
 
@@ -181,14 +182,6 @@ class DimRedDash():
                 ], className='five columns'
                 ))
 
-            if 'k' in self.plot_options:
-                self.stats.graph_neighbours(n_neighbours=4, algorithm='umap')  # this should be done somewhere else
-                umap_graph = visualisation.graph_neighbours(self.stats.edges, self.stats.nodes)
-                umap_plots.append(html.Div([
-                    dcc.Graph(id='connected_graph_figure_umap', figure=umap_graph),
-                ], className='five columns'
-                ))
-
             if 'dendogram' in self.plot_options:
                 umap_dendo = visualisation.plot_dendrogram()
                 umap_plots.append(html.Div([
@@ -200,6 +193,14 @@ class DimRedDash():
                 umap_density = visualisation.plot_data_density()
                 umap_plots.append(html.Div([
                     dcc.Graph(id='density_umap', figure=umap_density),
+                ], className='five columns'
+                ))
+
+            if 'k' in self.plot_options:
+                self.stats.graph_neighbours(n_neighbours=4, algorithm='umap')  # this should be done somewhere else
+                umap_graph = visualisation.graph_neighbours(self.stats.edges, self.stats.nodes)
+                umap_plots.append(html.Div([
+                    dcc.Graph(id='connected_graph_figure_umap', figure=umap_graph),
                 ], className='five columns'
                 ))
 
@@ -225,14 +226,6 @@ class DimRedDash():
                 ], className='five columns'
                 ))
 
-            if 'k' in self.plot_options:
-                self.stats.graph_neighbours(n_neighbours=4, algorithm='isomap')  # this should be done somewhere else
-                isomap_graph = visualisation.graph_neighbours(self.stats.edges, self.stats.nodes)
-                isomap_plots.append(html.Div([
-                    dcc.Graph(id='connected_graph_figure_umap', figure=isomap_graph),
-                ], className='five columns'
-                ))
-
             if 'dendogram' in self.plot_options:
                 isomap_dendo = visualisation.plot_dendrogram()
                 isomap_plots.append(html.Div([
@@ -244,6 +237,15 @@ class DimRedDash():
                 isomap_density = visualisation.plot_data_density()
                 isomap_plots.append(html.Div([
                     dcc.Graph(id='density_isomap', figure=isomap_density),
+                ], className='five columns'
+                ))
+
+
+            if 'k' in self.plot_options:
+                self.stats.graph_neighbours(n_neighbours=4, algorithm='isomap')  # this should be done somewhere else
+                isomap_graph = visualisation.graph_neighbours(self.stats.edges, self.stats.nodes)
+                isomap_plots.append(html.Div([
+                    dcc.Graph(id='connected_graph_figure_isomap', figure=isomap_graph),
                 ], className='five columns'
                 ))
 
