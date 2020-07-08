@@ -120,21 +120,21 @@ class FileDashboard(RemoteCSVDashboard):
            dashboards_merged.append(dashboard.graph)
 
 
-        # just uncomment when UMAP and ISOMAP options are ready
 
-        #if data_dict['UMAP']:
-        #   main_stats.apply_umap()
-        #   dashboard = DimRedDash(stats=main_stats, method='UMAP', plot_options=data_dict['UMAP'])
-        #   dashboards_merged.append(dashboard.title)
-        #   dashboards_merged.append(dashboard.dropdowns)
-        #   dashboards_merged.append(dashboard.graph)
 
-        #if data_dict['ISOMAP']:
-        #   main_stats.apply_umap()
-        #   dashboard = DimRedDash(stats=main_stats, method='ISOMAP', plot_options=data_dict['ISOMAP'])
-        #   dashboards_merged.append(dashboard.title)
-        #   dashboards_merged.append(dashboard.dropdowns)
-        #   dashboards_merged.append(dashboard.graph)
+        if data_dict['UMAP']:
+           main_stats.apply_umap()
+           dashboard = DimRedDash(stats=main_stats, method='UMAP', plot_options=data_dict['UMAP'])
+           dashboards_merged.append(dashboard.title)
+           dashboards_merged.append(dashboard.dropdowns)
+           dashboards_merged.append(dashboard.graph)
+
+        if data_dict['ISOMAP']:
+           main_stats.apply_isomap()
+           dashboard = DimRedDash(stats=main_stats, method='ISOMAP', plot_options=data_dict['ISOMAP'])
+           dashboards_merged.append(dashboard.title)
+           dashboards_merged.append(dashboard.dropdowns)
+           dashboards_merged.append(dashboard.graph)
 
         # Merge
         print(type(dashboards_merged))

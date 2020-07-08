@@ -342,6 +342,113 @@ class DimRedDash():
 
             dashboard = html.Div(children=lle_dropdowns, className="row")
 
+
+        # TSNE OPTIONS HERE
+        if self.method == 'UMAP':
+            umap_dropdowns = []
+
+            if 'scatter' in self.plot_options:
+                umap_dropdowns.append(html.Div([
+                        daq.NumericInput(
+                            id='red_dim_input_umap',
+                            min=1,
+                            max=self.stats.d_red,
+                            size=120,
+                            label='subspace dimension',
+                            labelPosition='bottom',
+                            value=2),
+                    ], className='two columns'))
+
+                umap_dropdowns.append(html.Div([
+                        dcc.Checklist(
+                            id='outlier_only_options_umap',
+                            options=[
+                                {'label': 'Only show Outliers', 'value': 'yes'}
+                            ],
+                        ),
+                    ], className='one column'))
+
+                umap_dropdowns.append(                    html.Div([
+                        daq.NumericInput(
+                            id='kneighbours_umap',
+                            min=1,
+                            max=100,
+                            size=120,
+                            label='k-Neighbours',
+                            labelPosition='bottom',
+                            value=30),
+                    ], className='two columns'))
+
+            if 'box' in self.plot_options:
+                umap_dropdowns.append(html.Div([
+                        daq.NumericInput(
+                            id='box_red_dim_umap',
+                            min=1,
+                            max=self.stats.d_red,
+                            size=120,
+                            label='Boxplot dimension',
+                            labelPosition='bottom',
+                            value=2)
+                    ], className='two columns'))
+
+            if 'graph' in self.plot_options:
+                pass
+
+            dashboard = html.Div(children=umap_dropdowns, className="row")
+
+        # ISOMAP DROPDOWNS HERE
+        if self.method == 'ISOMAP':
+            isomap_dropdowns = []
+
+            if 'scatter' in self.plot_options:
+                isomap_dropdowns.append(html.Div([
+                        daq.NumericInput(
+                            id='red_dim_input_isomap',
+                            min=1,
+                            max=self.stats.d_red,
+                            size=120,
+                            label='subspace dimension',
+                            labelPosition='bottom',
+                            value=2),
+                    ], className='two columns'))
+
+                isomap_dropdowns.append(html.Div([
+                        dcc.Checklist(
+                            id='outlier_only_options_isomap',
+                            options=[
+                                {'label': 'Only show Outliers', 'value': 'yes'}
+                            ],
+                        ),
+                    ], className='one column'))
+
+                isomap_dropdowns.append(                    html.Div([
+                        daq.NumericInput(
+                            id='kneighbours_isomap',
+                            min=1,
+                            max=100,
+                            size=120,
+                            label='k-Neighbours',
+                            labelPosition='bottom',
+                            value=30),
+                    ], className='two columns'))
+
+            if 'box' in self.plot_options:
+                isomap_dropdowns.append(html.Div([
+                        daq.NumericInput(
+                            id='box_red_dim_isomap',
+                            min=1,
+                            max=self.stats.d_red,
+                            size=120,
+                            label='Boxplot dimension',
+                            labelPosition='bottom',
+                            value=2)
+                    ], className='two columns'))
+
+            if 'graph' in self.plot_options:
+                pass
+
+            dashboard = html.Div(children=isomap_dropdowns, className="row")
+
         return dashboard
 
     def _gettitle(self):
