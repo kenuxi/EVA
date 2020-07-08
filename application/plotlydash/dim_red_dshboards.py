@@ -21,6 +21,7 @@ class DimRedDash():
 
         self.graph = self._get_graph()
         self.dropdowns = self._getdropdowns()
+        self.callbacks = self._getcallbacks()
         self.title = self._gettitle()
 
     def _get_graph(self):
@@ -451,6 +452,8 @@ class DimRedDash():
 
         return dashboard
 
+    def _getcallbacks(self):
+        pass
     def _gettitle(self):
 
         dashboard_title = html.Div(
