@@ -19,25 +19,31 @@ class UploadForm(FlaskForm):
 
 class VisForm(FlaskForm):
     target = SelectField(label='Label Column', choices=[])
-    PCA1 = BooleanField(label='scatter', description="scatter")
-    PCA2 = BooleanField(label='box', description="box")
-    PCA3 = BooleanField(label='k', description="k")
 
-    LLE1 = BooleanField(label='scatter', description="scatter")
-    LLE2 = BooleanField(label='box', description="box")
-    LLE3 = BooleanField(label='k', description="k")
+    PCA1 = BooleanField(label='scatter', description='scatter')
+    PCA2 = BooleanField(label='box', description='box')
+    PCA3 = BooleanField(label='k', description='k')
+    PCA4 = BooleanField(label='dendo', description='dendogram')
 
-    TSNE1 = BooleanField(label='scatter', description="scatter")
-    TSNE2 = BooleanField(label='box', description="box")
-    TSNE3 = BooleanField(label='k', description="k")
+    LLE1 = BooleanField(label='scatter', description='scatter')
+    LLE2 = BooleanField(label='box', description='box')
+    LLE3 = BooleanField(label='k', description='k')
+    LLE4 = BooleanField(label='dendo', description='dendogram')
 
-    UMAP1 = BooleanField(label='scatter', description="scatter")
-    UMAP2 = BooleanField(label='box', description="box")
-    UMAP3 = BooleanField(label='k', description="k")
+    TSNE1 = BooleanField(label='scatter', description='scatter')
+    TSNE2 = BooleanField(label='box', description='box')
+    TSNE3 = BooleanField(label='k', description='k')
+    TSNE4 = BooleanField(label='dendo', description='dendogram')
 
-    ISOMAP1 = BooleanField(label='scatter', description="scatter")
-    ISOMAP2 = BooleanField(label='box', description="box")
-    ISOMAP3 = BooleanField(label='k', description="k")
+    UMAP1 = BooleanField(label='scatter', description='scatter')
+    UMAP2 = BooleanField(label='box', description='box')
+    UMAP3 = BooleanField(label='k', description='k')
+    UMAP4 = BooleanField(label='dendo', description='dendogram')
+
+    ISOMAP1 = BooleanField(label='scatter', description='scatter')
+    ISOMAP2 = BooleanField(label='box', description='box')
+    ISOMAP3 = BooleanField(label='k', description='k')
+    ISOMAP4 = BooleanField(label='dendo', description='dendogram')
 
     submit = SubmitField(label='Submit')
 
