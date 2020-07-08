@@ -63,6 +63,14 @@ class DimRedDash():
                     dcc.Graph(id='dendogram_pca', figure=pca_dendo),
                 ], className='five columns'
                 ))
+
+            if 'density' in self.plot_options:
+                pca_density = visualisation.plot_data_density()
+                pca_plots.append(html.Div([
+                    dcc.Graph(id='density_pca', figure=pca_density),
+                ], className='five columns'
+                ))
+
             dashboard = html.Div(children=pca_plots, className="row")
 
         if self.method == 'LLE':
@@ -97,6 +105,13 @@ class DimRedDash():
                 lle_dendo = visualisation.plot_dendrogram()
                 lle_plots.append(html.Div([
                     dcc.Graph(id='dendogram_lle', figure=lle_dendo),
+                ], className='five columns'
+                ))
+
+            if 'density' in self.plot_options:
+                lle_density = visualisation.plot_data_density()
+                lle_plots.append(html.Div([
+                    dcc.Graph(id='density_lle', figure=lle_density),
                 ], className='five columns'
                 ))
 
@@ -137,6 +152,13 @@ class DimRedDash():
                 ], className='five columns'
                 ))
 
+            if 'density' in self.plot_options:
+                tsne_density = visualisation.plot_data_density()
+                tsne_plots.append(html.Div([
+                    dcc.Graph(id='density_tsne', figure=tsne_density),
+                ], className='five columns'
+                ))
+
             dashboard = html.Div(children=tsne_plots, className="row")
 
         if self.method == 'UMAP':
@@ -174,6 +196,13 @@ class DimRedDash():
                 ], className='five columns'
                 ))
 
+            if 'density' in self.plot_options:
+                umap_density = visualisation.plot_data_density()
+                umap_plots.append(html.Div([
+                    dcc.Graph(id='density_umap', figure=umap_density),
+                ], className='five columns'
+                ))
+
             dashboard = html.Div(children=umap_plots, className="row")
 
         if self.method == 'ISOMAP':
@@ -208,6 +237,13 @@ class DimRedDash():
                 isomap_dendo = visualisation.plot_dendrogram()
                 isomap_plots.append(html.Div([
                     dcc.Graph(id='dendogram_isomap', figure=isomap_dendo),
+                ], className='five columns'
+                ))
+
+            if 'density' in self.plot_options:
+                isomap_density = visualisation.plot_data_density()
+                isomap_plots.append(html.Div([
+                    dcc.Graph(id='density_umap', figure=isomap_density),
                 ], className='five columns'
                 ))
 
