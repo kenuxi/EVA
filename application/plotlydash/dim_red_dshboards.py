@@ -525,7 +525,29 @@ class DimRedDash():
         return dashboard
 
     def _getcallbacks(self):
-        pass
+        if self.method == 'PCA':
+        @app
+
+
+        @app.callback(
+            [Output(component_id='my_scatter_plot', component_property='figure'),
+             Output(component_id='eva_object', component_property='data')],
+            [Input(component_id='select dataset', component_property='value')]
+        )
+        def update_graph(selected_dataset):
+            if selected_dataset is not '':
+                # Init class object
+                eva_data = EvaData()
+                eva_data.load_data(file_name=selected_dataset)
+                # Return scatter figure
+                fig = eva_data.visualize_original_data()
+
+                return fig, selected_dataset
+            else:
+                return dash.no_update
+
+
+
     def _gettitle(self):
 
         dashboard_title = html.Div(
