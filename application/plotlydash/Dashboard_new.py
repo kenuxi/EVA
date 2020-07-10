@@ -6,6 +6,8 @@ import dash
 from config import iris_config, external_stylesheets
 from application.plotlydash.dim_red_dshboards import DimRedDash
 from statistics_methods import DataStatistics
+from dash.dependencies import Input, Output
+from visualisation_methods import  VisualizationPlotly
 
 from typing import List, Dict
 
@@ -49,7 +51,6 @@ class FileDashboard(RemoteCSVDashboard):
         #dim_red_methods = data_dict['algorithms']  # This is now a list.
         main_stats = DataStatistics()
         main_stats.load_data(data_file_name)
-        print(data_dict)
         # Init List containing all html div(...) dashboards
         dashboards_merged = []
         # Add title
@@ -135,9 +136,8 @@ class FileDashboard(RemoteCSVDashboard):
            dashboards_merged.append(dashboard.graph)
 
         # Merge
-        print(type(dashboards_merged))
-        print(len(dashboards_merged))
         # Merge all dashboards here
+        selected_options_number = (len(dashboards_merged)-1)/2
 
         self.dash_app.css.config.serve_locally = False
         # Boostrap CSS.
@@ -147,6 +147,81 @@ class FileDashboard(RemoteCSVDashboard):
         self.dash_app.layout = html.Div(
             html.Div( children= dashboards_merged, className='twelve columns offset-by-one')
         )
+
+        if data_dict['PCA']:
+
+             if 'scatter' in data_dict['PCA']:
+                 @self.dash_app.callback(
+                     [Output(component_id='reduced_data_plot_pca', component_property='figure')],
+                     [Input(component_id='red_dim_input_pca', component_property='value')]
+                 )
+
+                 def update_pca(m):
+                     main_stats.apply_pca(m=m)
+                     pca_vis = VisualizationPlotly(pd_data_frame=main_stats.reduced_pandas_dataframe_pca).plot_data()
+
+                     return [pca_vis]
+
+        if data_dict['LLE']:
+
+             if 'scatter' in data_dict['LLE']:
+                 @self.dash_app.callback(
+                     [Output(component_id='reduced_data_plot_lle', component_property='figure')],
+                     [Input(component_id='red_dim_input_lle', component_property='value'),
+                      Input(component_id='neighbours_lle', component_property='value')]
+                 )
+
+                 def update_lle(m, k_neighbours):
+                     main_stats.apply_lle(m=m, k=k_neighbours)
+                     lle_vis = VisualizationPlotly(pd_data_frame=main_stats.reduced_pandas_dataframe_lle).plot_data()
+
+                     return [lle_vis]
+
+        if data_dict['TSNE']:
+
+             if 'scatter' in data_dict['TSNE']:
+                 @self.dash_app.callback(
+                     [Output(component_id='reduced_data_plot_tsne', component_property='figure')],
+                     [Input(component_id='red_dim_input_tsne', component_property='value'),
+                      Input(component_id='perplexity_tsne', component_property='value')]
+                 )
+
+                 def update_tsne(m, perplexity):
+                     main_stats.apply_tsne(m=m, perplexity=perplexity)
+                     tsne_vis = VisualizationPlotly(pd_data_frame=main_stats.reduced_pandas_dataframe_tsne).plot_data()
+
+                     return [tsne_vis]
+
+
+        if data_dict['UMAP']:
+
+             if 'scatter' in data_dict['UMAP']:
+                 @self.dash_app.callback(
+                     [Output(component_id='reduced_data_plot_umap', component_property='figure')],
+                     [Input(component_id='red_dim_input_umap', component_property='value'),
+                      Input(component_id='kneighbours_umap', component_property='value')]
+                 )
+
+                 def update_umap(m, k_neighbours):
+                     main_stats.apply_umap(m=m, k=k_neighbours)
+                     umap_vis = VisualizationPlotly(pd_data_frame=main_stats.reduced_pandas_dataframe_umap).plot_data()
+
+                     return [umap_vis]
+
+        if data_dict['ISOMAP']:
+
+             if 'scatter' in data_dict['ISOMAP']:
+                 @self.dash_app.callback(
+                     [Output(component_id='reduced_data_plot_isomap', component_property='figure')],
+                     [Input(component_id='red_dim_input_isomap', component_property='value'),
+                      Input(component_id='kneighbours_isomap', component_property='value')]
+                 )
+
+                 def update_isomap(m, k_neighbours):
+                     main_stats.apply_isomap(m=m, k=k_neighbours)
+                     isomap_vis = VisualizationPlotly(pd_data_frame=main_stats.reduced_pandas_dataframe_isomap).plot_data()
+
+                     return [isomap_vis]
 
         return self.dash_app.server
 

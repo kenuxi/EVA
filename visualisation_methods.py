@@ -37,16 +37,14 @@ class VisualizationPlotly():
         if self.d == 1:
             if self.classification:
                 fig = px.scatter(self.pd_data_frame, x=self.features[0], y=np.zeros(self.n),
-                                 color='Classification', title='Data', marginal_y='histogram', marginal_x='box',
-                                 trendline='lowess')
+                                 color='Classification', title='Data', marginal_y='histogram', marginal_x='box')
             else:
                 fig = px.scatter(self.pd_data_frame, x=self.features[0], y=np.zeros(self.n), c='blue', title='Data')
 
         elif self.d == 2:
             if self.classification:
                 fig = px.scatter(self.pd_data_frame, x=self.features[0], y=self.features[1],
-                                 color='Classification', title='Data', marginal_y='histogram', marginal_x='box',
-                                 trendline='lowess')
+                                 color='Classification', title='Data', marginal_y='histogram', marginal_x='box')
             else:
                 fig = px.scatter(self.pd_data_frame, x=self.features[0], y=self.features[1], c='blue', title='Data')
 

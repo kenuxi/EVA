@@ -3,7 +3,6 @@ import dash_html_components as html
 import dash_daq as daq
 from visualisation_methods import VisualizationPlotly
 
-
 class DimRedDash():
     def __init__(self, stats, method, plot_options):
         '''
@@ -285,11 +284,12 @@ class DimRedDash():
                         daq.NumericInput(
                             id='red_dim_input_pca',
                             min=1,
-                            max=self.stats.d_red,
+                            max=min([self.stats.d, 3]),
                             size=120,
                             label='subspace dimension',
                             labelPosition='bottom',
-                            value=2),
+                            value=2
+                            ),
                     ], className='two columns'))
 
             if 'box' in self.plot_options:
@@ -389,7 +389,7 @@ class DimRedDash():
 
                 lle_dropdowns.append(html.Div([
                         daq.NumericInput(
-                            id='nieghbours_lle',
+                            id='neighbours_lle',
                             min=1,
                             max=self.stats.n-1,
                             size=120,
@@ -416,7 +416,7 @@ class DimRedDash():
             dashboard = html.Div(children=lle_dropdowns, className="row")
 
 
-        # TSNE OPTIONS HERE
+        # UMAP OPTIONS HERE
         if self.method == 'UMAP':
             umap_dropdowns = []
 
@@ -525,28 +525,7 @@ class DimRedDash():
         return dashboard
 
     def _getcallbacks(self):
-        if self.method == 'PCA':
-        @app
-
-
-        @app.callback(
-            [Output(component_id='my_scatter_plot', component_property='figure'),
-             Output(component_id='eva_object', component_property='data')],
-            [Input(component_id='select dataset', component_property='value')]
-        )
-        def update_graph(selected_dataset):
-            if selected_dataset is not '':
-                # Init class object
-                eva_data = EvaData()
-                eva_data.load_data(file_name=selected_dataset)
-                # Return scatter figure
-                fig = eva_data.visualize_original_data()
-
-                return fig, selected_dataset
-            else:
-                return dash.no_update
-
-
+        pass
 
     def _gettitle(self):
 
