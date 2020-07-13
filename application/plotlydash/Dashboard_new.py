@@ -46,7 +46,7 @@ class FileDashboard(RemoteCSVDashboard):
                                   routes_pathname_prefix=self.prefix,
                                   external_stylesheets=self.stylesheets)
 
-    def create_dashboard(self, data_dict: Dict[str, str]):
+    def create_dashboard(self, data_dict: Dict):
         data_file_name = data_dict['location']     # This is now in 'data' not 'application/data'
         #dim_red_methods = data_dict['algorithms']  # This is now a list.
         main_stats = DataStatistics()
