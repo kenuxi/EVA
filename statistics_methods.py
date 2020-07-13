@@ -200,46 +200,51 @@ class DataStatistics():
             print('ERROR DIM to High')
 
 
-def create_labels(labels_d, original_pd):
-    ''' This function creates a labeled pandas data frame with labels 'Inliers' and 'Outliers' according to the
-        options specified in the input dictionary labels_d
+    def create_labeled_df(self):
+        # Read info from dictionary
+        column_name = self.label_column
+        selected_inlier = self.inlier
+        selected_outlier = self.outlier
+        outlier_percentage = self.ratio / 100  # labeld['ratio'] is given in 2%, 80% and we need 0.2, 0.8
 
-        Input:       labels_d          - dict with entries 'inliers': list of labels corresponding to the inliers,
-                                         'outliers': list of labels corresponding to the outliers, 'ratio': float percentage
-                                          of outliers in the new pandas dataframe, 'labels': name of the column containing
-                                          the labels
+        Inliers_pd = self.pandas_data_frame[self.pandas_data_frame[str(column_name)].isin(selected_inlier)]
+        Outliers_pd = self.pandas_data_frame[self.pandas_data_frame[str(column_name)].isin(selected_outlier)]
 
-                    original_pd        - pandas data frame, original pandas data frame that will be modified
+        # Compute how many Inliers we have and how many Outliers we need to get the selected outliers-ratio(percentage)
+        N_inl = Inliers_pd.shape[0]
+        N_outl = int((N_inl * outlier_percentage) / (1 - outlier_percentage))
 
-        Output:    new_labeled_pd      - pandas data frame, labeled with 'Inliers' and 'Outliers'
+        # Consider the case when our needed N_outl is greater then the given N_outl
+        if Outliers_pd.shape[0] < N_outl:
+            Outliers_pd_final = Outliers_pd
+        else:
+            Outliers_pd_final = Outliers_pd[0:N_outl]
+
+        # Set respective label names to outlier and inliers
+        Outliers_pd_final['Classification'] = 'Outliers'
+        Inliers_pd['Classification'] = 'Inlier'
+
+        # Just merge/concadenate both inlier and outlier pandas dataframe into the new pd + overwrite
+        self.pandas_data_frame = pd.concat([Inliers_pd, Outliers_pd_final], ignore_index=True)
+        self.pandas_data_frame_nolabels = self.pandas_data_frame[self.features]
+        self.classifications = self.pandas_data_frame['Classification']
+        # Read data information (number of features and samples)
+        self.n, self.d = self.pandas_data_frame_nolabels.shape
 
 
-    '''
 
-    # Read info from dictionary
-    column_name = labels_d['labels']
-    selected_inlier = labels_d['inliers']
-    selected_outlier = labels_d['outliers']
-    outlier_percentage = labels_d['ratio']/100  #labeld['ratio'] is given in 2%, 80% and we need 0.2, 0.8 for our
-                                                # computations
+'''
+# Upload csv dataframe
+file_name = './data/fmnist.csv'
+example = DataStatistics()
+example.load_data(file_name=file_name)
+example.inlier =[1, 2, 3]
+example.outlier = [8, 9]
+example.ratio = 10
+example.label_column = 'Clothes'
+# The Last Column of the data frame needs to contain the labels
+example.create_labeled_df()
 
-    Inliers_pd = original_pd[original_pd[str(column_name)].isin(selected_inlier)]
-    Outliers_pd = original_pd[original_pd[str(column_name)].isin(selected_outlier)]
-
-    # Compute how many Inliers we have and how many Outliers we need to get the selected outliers-ratio(percentage)
-    N_inl = Inliers_pd.shape[0]
-    N_outl = int((N_inl * outlier_percentage) / (1 - outlier_percentage))
-
-    # Consider the case when our needed N_outl is greater then the given N_outl
-    if Outliers_pd.shape[0] < N_outl:
-        Outliers_pd_final = Outliers_pd
-    else:
-        Outliers_pd_final = Outliers_pd[0:N_outl]
-
-    # Set respective label names to outlier and inliers
-    Outliers_pd_final['Classification'] = 'Outliers'
-    Inliers_pd['Classification'] = 'Inlier'
-    # Just merge/concadenate both inlier and outlier pandas dataframe into the new pd
-    new_labeled_pd = pd.concat([Inliers_pd, Outliers_pd_final], ignore_index=True)
-
-    return new_labeled_pd
+print(example.n, example.d)
+print(example.classifications)
+'''
