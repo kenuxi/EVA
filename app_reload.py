@@ -53,16 +53,25 @@ def get_app():
             initial_labels = [(str(col), str(col)) for col in session['df'][label_columns[0][0]].unique()]
             label_form.inliers.choices = initial_labels
             label_form.outliers.choices = initial_labels
+
+            # check if dataframe is already labeled
+            alr_labeled = False
+            if 'Inlier' in initial_labels[0]:
+                alr_labeled = True
+            print('hherrre')
             return render_template('home.html', title='Home',
-                                   df=ds.pandas_data_frame,
-                                   file_form=file_form,
-                                   up_form=up_form,
-                                   label_form=label_form)
+                                    df=ds.pandas_data_frame,
+                                    file_form=file_form,
+                                    up_form=up_form,
+                                    label_form=label_form)
 
         elif label_form.submit.data:
+            print('now here')
             ds.label_column = label_form.label_column.data
-            ds.inlier = label_form.outliers.data
-            ds.outliers = label_form.inliers.data
+            ds.inlier = label_form.inliers.data
+            ds.outliers = label_form.outliers.data
+
+            # Create new object with the dataframe according to the users spec
 
             return render_template('home.html', title='Home',
                                    df=session['df'],
@@ -72,6 +81,7 @@ def get_app():
                                    vis_form=vis_form)           # f'{label_form.label_column.data}, {label_form.outliers.data}, {label_form.inliers.data}'
 
         elif vis_form.submit.data:
+            print('here')
             dashboard_config = {'location': session['filename'],
                                 'target': vis_form.target.data,
                                 'PCA': [],
