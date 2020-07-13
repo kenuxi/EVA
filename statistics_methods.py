@@ -6,6 +6,8 @@ from sklearn.decomposition import PCA, KernelPCA
 from sklearn.neighbors import kneighbors_graph
 from sklearn.manifold import Isomap
 import umap
+import kmapper as km
+
 
 class DataStatistics():
     def __init__(self):
@@ -19,6 +21,7 @@ class DataStatistics():
         self.reduced_pandas_dataframe_kernelpca = None
         self.reduced_pandas_dataframe_isomap = None
         self.reduced_pandas_dataframe_umap = None
+        self.reduced_pandas_dataframe_kmap = None
         self.features = None
         self.d_red = None
         self.d = None
@@ -151,13 +154,46 @@ class DataStatistics():
         umap_df = pd.DataFrame(embedding)
         self.reduced_pandas_dataframe_umap = pd.concat([umap_df, self.classifications], axis=1)
 
+    def apply_kmap(self, m=2, k=5, a = 'PCA'):
+        ''' Perform KMAP  on the dataframe and reduce to an m dimensional subspace with k neighbour
+        Definition:  KMAP(X, m, a)
+        Input:       m                  - int, dimension of the subspace to project
+                     k                  - int, number of the k nearest neighbours the algorithm uses
+                     a                  - string, algorithm to use
+
+
+        '''
+        self.d_red = m
+
+
+        # Initialize
+        mapper = km.KeplerMapper(verbose=1)
+
+        # Fit to and transform the data
+
+        if a == 'UMAP':
+            projected_data = mapper.fit_transform(self.pandas_data_frame_nolabels, projection=umap.UMAP(n_components=m,
+                                                                          n_neighbors=k))  # X-Y axis
+
+        if a == 'ISOMAP':
+            projected_data = mapper.fit_transform(self.pandas_data_frame_nolabels, projection=Isomap(n_components=m,
+                                                                       n_neighbors=k))  # X-Y axis
+
+        if a == 'PCA':
+            projected_data = mapper.fit_transform(self.pandas_data_frame_nolabels, projection=PCA(n_components=m))
+
+        kmap_df = pd.DataFrame(projected_data)
+        self.reduced_pandas_dataframe_kmap = pd.concat([kmap_df, self.classifications], axis=1)
+
+
+
     def graph_neighbours(self, n_neighbours, algorithm):
         ''' This method computes the edges and nodes for a given number of neighbours by using the k nearest neighbours,
             the graph is computed for the reduces data -> in 2dim or 3dim
 
         Input:       n_neighbours    - int, number of neighbours to consider for the knearest algorithm
                      algorithm       - str, refers to the pandas red data frame used to compute the graph nodes+edges
-                                       'pca', 'lle', 'tsne', 'kernel_pca', 'isomap', 'umap'
+                                       'pca', 'lle', 'tsne', 'kernel_pca', 'isomap', 'umap', 'kmap'
         '''
 
         # Construct X
@@ -173,6 +209,8 @@ class DataStatistics():
             X = self.reduced_pandas_dataframe_isomap
         elif algorithm == 'umap':
             X = self.reduced_pandas_dataframe_umap
+        elif algorithm == 'kmap':
+            X = self.reduced_pandas_dataframe_kmap
 
 
         del X['Classification']

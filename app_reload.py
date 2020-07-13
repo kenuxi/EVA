@@ -52,7 +52,8 @@ def get_app():
                                 'LLE': [],
                                 'TSNE': [],
                                 'UMAP': [],
-                                'ISOMAP': []
+                                'ISOMAP': [],
+                                'KMAP': []
                                 }
 
             for alg in alg_types:

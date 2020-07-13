@@ -37,7 +37,7 @@ class VisualizationPlotly():
         if self.d == 1:
             if self.classification:
                 fig = px.scatter(self.pd_data_frame, x=self.features[0], y=np.zeros(self.n),
-                                 color='Classification', title='Data', marginal_y='histogram', marginal_x='box')
+                                 color='Classification', title='Data')
             else:
                 fig = px.scatter(self.pd_data_frame, x=self.features[0], y=np.zeros(self.n), c='blue', title='Data')
 
@@ -232,6 +232,32 @@ class VisualizationPlotly():
                 fig = px.density_contour(self.pd_data_frame, x=self.features[0], y=self.features[1], c='blue', title='Density Contour')
 
         return fig
+
+
+    def plot_data_heat(self):
+        ''' Visualize reduced data in a 1dim,  2dim or 3dim scatter plot. If the panda data frame contains "Classification"
+        as one column, the plots are labeled, otherwise not.
+        '''
+
+        # If reduced data is just 1 dimensional
+        if self.d == 1:
+            if self.classification:
+                fig = px.density_contour(self.pd_data_frame, x=self.features[0], y=np.zeros(self.n),
+                                 title='Heat Map')
+                fig.update_traces(contours_coloring="fill")
+            else:
+                fig = px.density_contour(self.pd_data_frame, x=self.features[0], y=np.zeros(self.n), c='blue', title='Heat Map')
+
+        else :
+            if self.classification:
+                fig = px.density_contour(self.pd_data_frame, x=self.features[0], y=self.features[1],
+                                  title='Heat Map')
+                fig.update_traces(contours_coloring="fill")
+            else:
+                fig = px.density_contour(self.pd_data_frame, x=self.features[0], y=self.features[1], c='blue', title='Heat Map')
+
+        return fig
+
 
     def plot_dendrogram(self):
         fig = go.Figure(ff.create_dendrogram(self.pd_data_frame_nolabel))

@@ -128,6 +128,14 @@ class FileDashboard(RemoteCSVDashboard):
            dashboards_merged.append(dashboard.dropdowns)
            dashboards_merged.append(dashboard.graph)
 
+
+        if data_dict['KMAP']:
+           main_stats.apply_kmap()
+           dashboard = DimRedDash(stats=main_stats, method='KMAP', plot_options=data_dict['KMAP'])
+           dashboards_merged.append(dashboard.title)
+           dashboards_merged.append(dashboard.dropdowns)
+           dashboards_merged.append(dashboard.graph)
+
         if data_dict['ISOMAP']:
            main_stats.apply_isomap()
            dashboard = DimRedDash(stats=main_stats, method='ISOMAP', plot_options=data_dict['ISOMAP'])
@@ -207,6 +215,24 @@ class FileDashboard(RemoteCSVDashboard):
                      umap_vis = VisualizationPlotly(pd_data_frame=main_stats.reduced_pandas_dataframe_umap).plot_data()
 
                      return [umap_vis]
+
+
+        if data_dict['KMAP']:
+
+             if 'scatter' in data_dict['KMAP']:
+                 @self.dash_app.callback(
+                     [Output(component_id='reduced_data_plot_kmap', component_property='figure')],
+                     [Input(component_id='red_dim_input_kmap', component_property='value'),
+                      Input(component_id='kneighbours_kmap', component_property='value'),
+                      Input(component_id='algs_kmap', component_property='value')]
+                 )
+
+                 def update_kmap(m, k_neighbours, a):
+                     main_stats.apply_kmap(m=m, k=k_neighbours, a=a)
+                     kmap_vis = VisualizationPlotly(pd_data_frame=main_stats.reduced_pandas_dataframe_kmap).plot_data()
+
+                     return [kmap_vis]
+
 
         if data_dict['ISOMAP']:
 

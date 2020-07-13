@@ -62,6 +62,14 @@ class DimRedDash():
                 ], className='five columns'
                 ))
 
+
+            if 'heat' in self.plot_options:
+                pca_heat = visualisation.plot_data_heat()
+                pca_plots.append(html.Div([
+                    dcc.Graph(id='heat_pca', figure=pca_heat),
+                ], className='five columns'
+                ))
+
             if 'k' in self.plot_options:
                 self.stats.graph_neighbours(n_neighbours=4, algorithm='pca')  # this should be done somewhere else
                 pca_graph = visualisation.graph_neighbours(self.stats.edges, self.stats.nodes)
@@ -107,6 +115,14 @@ class DimRedDash():
                 ], className='five columns'
                 ))
 
+            if 'heat' in self.plot_options:
+                lle_heat = visualisation.plot_data_heat()
+                lle_plots.append(html.Div([
+                    dcc.Graph(id='heat_lle', figure=lle_heat),
+                ], className='five columns'
+                ))
+
+
             if 'k' in self.plot_options:
                 self.stats.graph_neighbours(n_neighbours=4, algorithm='lle')  # this should be done somewhere else
                 lle_graph = visualisation.graph_neighbours(self.stats.edges, self.stats.nodes)
@@ -150,6 +166,15 @@ class DimRedDash():
                     dcc.Graph(id='density_tsne', figure=tsne_density),
                 ], className='five columns'
                 ))
+
+
+            if 'heat' in self.plot_options:
+                tsne_heat = visualisation.plot_data_heat()
+                tsne_plots.append(html.Div([
+                    dcc.Graph(id='heat_tsne', figure=tsne_heat),
+                ], className='five columns'
+                ))
+
 
             if 'k' in self.plot_options:
                 self.stats.graph_neighbours(n_neighbours=4, algorithm='tsne')  # this should be done somewhere else
@@ -195,6 +220,15 @@ class DimRedDash():
                 ], className='five columns'
                 ))
 
+
+            if 'heat' in self.plot_options:
+                umap_heat = visualisation.plot_data_heat()
+                umap_plots.append(html.Div([
+                    dcc.Graph(id='heat_umap', figure=umap_heat),
+                ], className='five columns'
+                ))
+
+
             if 'k' in self.plot_options:
                 self.stats.graph_neighbours(n_neighbours=4, algorithm='umap')  # this should be done somewhere else
                 umap_graph = visualisation.graph_neighbours(self.stats.edges, self.stats.nodes)
@@ -204,6 +238,59 @@ class DimRedDash():
                 ))
 
             dashboard = html.Div(children=umap_plots, className="row")
+
+
+        if self.method == 'KMAP':
+            visualisation = VisualizationPlotly(pd_data_frame=self.stats.reduced_pandas_dataframe_kmap)
+
+            # Depending on the plot_options the user selected, produce corresponding plots and append them to the
+            # list
+            kmap_plots = []
+            if 'scatter' in self.plot_options:
+                scatter_fig = visualisation.plot_data()
+                kmap_plots.append(html.Div([
+                    dcc.Graph(id='reduced_data_plot_kmap', figure=scatter_fig)
+                ], className='five columns'
+                ))
+
+            if 'box' in self.plot_options:
+                box_fig = visualisation.box_plot_classifications()
+                kmap_plots.append(html.Div([
+                    dcc.Graph(id='box_outliers_plot_kmap', figure=box_fig)
+                ], className='five columns'
+                ))
+
+            if 'dendogram' in self.plot_options:
+                kmap_dendo = visualisation.plot_dendrogram()
+                kmap_plots.append(html.Div([
+                    dcc.Graph(id='dendogram_kmap', figure=kmap_dendo),
+                ], className='five columns'
+                ))
+
+            if 'density' in self.plot_options:
+                kmap_density = visualisation.plot_data_density()
+                kmap_plots.append(html.Div([
+                    dcc.Graph(id='density_kmap', figure=kmap_density),
+                ], className='five columns'
+                ))
+
+            if 'heat' in self.plot_options:
+                kmap_heat = visualisation.plot_data_heat()
+                kmap_plots.append(html.Div([
+                    dcc.Graph(id='heat_kmap', figure=kmap_heat),
+                ], className='five columns'
+                ))
+
+
+            if 'k' in self.plot_options:
+                self.stats.graph_neighbours(n_neighbours=4, algorithm='kmap')  # this should be done somewhere else
+                kmap_graph = visualisation.graph_neighbours(self.stats.edges, self.stats.nodes)
+                kmap_plots.append(html.Div([
+                    dcc.Graph(id='connected_graph_figure_kmap', figure=kmap_graph),
+                ], className='five columns'
+                ))
+
+            dashboard = html.Div(children=kmap_plots, className="row")
 
         if self.method == 'ISOMAP':
             visualisation = VisualizationPlotly(pd_data_frame=self.stats.reduced_pandas_dataframe_isomap)
@@ -238,6 +325,15 @@ class DimRedDash():
                     dcc.Graph(id='density_isomap', figure=isomap_density),
                 ], className='five columns'
                 ))
+
+
+            if 'heat' in self.plot_options:
+                isomap_heat = visualisation.plot_data_heat()
+                isomap_plots.append(html.Div([
+                    dcc.Graph(id='heat_isomap', figure=isomap_heat),
+                ], className='five columns'
+                ))
+
 
 
             if 'k' in self.plot_options:
@@ -468,6 +564,70 @@ class DimRedDash():
                 pass
 
             dashboard = html.Div(children=umap_dropdowns, className="row")
+
+        # KMAP OPTIONS HERE
+        if self.method == 'KMAP':
+            kmap_dropdowns = []
+
+            if 'scatter' in self.plot_options:
+                kmap_dropdowns.append(html.Div([
+                    daq.NumericInput(
+                        id='red_dim_input_kmap',
+                        min=1,
+                        max=self.stats.d_red,
+                        size=120,
+                        label='subspace dimension',
+                        labelPosition='bottom',
+                        value=2),
+                ], className='two columns'))
+
+                kmap_dropdowns.append(html.Div([
+                    dcc.Checklist(
+                        id='outlier_only_options_kmap',
+                        options=[
+                            {'label': 'Only show Outliers', 'value': 'yes'}
+                        ],
+                    ),
+                ], className='one column'))
+
+                kmap_dropdowns.append(html.Div([
+                    daq.NumericInput(
+                        id='kneighbours_kmap',
+                        min=1,
+                        max=100,
+                        size=120,
+                        label='k-Neighbours',
+                        labelPosition='bottom',
+                        value=30),
+                ], className='two columns'))
+
+                kmap_dropdowns.append(html.Div([
+                    dcc.Dropdown(
+                        id='algs_kmap',
+                        options=[
+                            {'label': 'PCA', 'value': 'PCA'},
+                            {'label': 'UMAP', 'value': 'UMAP'},
+                            {'label': 'ISOMAP', 'value': 'ISOMAP'}
+                        ],
+                        value='PCA'),
+                ], className='two columns'))
+
+            if 'box' in self.plot_options:
+                kmap_dropdowns.append(html.Div([
+                    daq.NumericInput(
+                        id='box_red_dim_kmap',
+                        min=1,
+                        max=self.stats.d_red,
+                        size=120,
+                        label='Boxplot dimension',
+                        labelPosition='bottom',
+                        value=2)
+                ], className='two columns'))
+
+            if 'graph' in self.plot_options:
+                pass
+
+            dashboard = html.Div(children=kmap_dropdowns, className="row")
 
         # ISOMAP DROPDOWNS HERE
         if self.method == 'ISOMAP':

@@ -10,4 +10,4 @@ app_secret_key = 'b042acdb071518100e25f40b93088487'
 session = {}
 
 vis_types = ['Scatter', 'Box', 'K-Nearest']
-alg_types = ['PCA', 'LLE', 'TSNE', 'UMAP', 'ISOMAP']
+alg_types = ['PCA', 'LLE', 'TSNE', 'UMAP', 'ISOMAP', 'KMAP']
