@@ -17,8 +17,14 @@ class UploadForm(FlaskForm):
     csv_submit = SubmitField(label='Upload')
 
 
+class LabelForm(FlaskForm):
+    label_column = SelectField(label='Label Column', choices=[])
+    inliers = SelectMultipleField(label='Inlier Data', choices=[])
+    outliers = SelectMultipleField(label='Outlier Data', choices=[])
+    submit = SubmitField(label='Submit')
+
+
 class VisForm(FlaskForm):
-    target = SelectField(label='Label Column', choices=[])
 
     PCA1 = BooleanField(label='scatter', description='scatter')
     PCA2 = BooleanField(label='box', description='box')
