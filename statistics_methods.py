@@ -261,10 +261,11 @@ class DataStatistics():
         # Set respective label names to outlier and inliers
         Outliers_pd_final['Classification'] = 'Outliers'
         Inliers_pd['Classification'] = 'Inlier'
-
         # Just merge/concadenate both inlier and outlier pandas dataframe into the new pd + overwrite
         self.pandas_data_frame = pd.concat([Inliers_pd, Outliers_pd_final], ignore_index=True)
-        self.pandas_data_frame_nolabels = self.pandas_data_frame[self.features]
+        self.pandas_data_frame = self.pandas_data_frame.drop([column_name], axis=1)
+        print(self.pandas_data_frame)
+        self.pandas_data_frame_nolabels = self.pandas_data_frame.drop(['Classification'], axis=1)
         self.classifications = self.pandas_data_frame['Classification']
         # Read data information (number of features and samples)
         self.n, self.d = self.pandas_data_frame_nolabels.shape

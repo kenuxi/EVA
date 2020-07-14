@@ -52,12 +52,12 @@ def get_app():
 
             # populating inlier and outlier choices with initial options
             # this changes dynamically once in app
+
+            print(label_columns)
             initial_labels = [(str(col), str(col)) for col in session['df'][label_columns[0][0]].unique()]
             initial_labels.sort()
             label_form.inliers.choices = initial_labels
             label_form.outliers.choices = initial_labels
-
-            print(session['ds'].pandas_data_frame)
 
             return render_template('home.html', title='Home',
                                    df=session['ds'].pandas_data_frame,
@@ -119,7 +119,7 @@ def get_app():
 
     @app.route('/getlabels/<column>', methods=['GET'])
     def getlabels(column):
-        labels = [label for label in session['ds'].pandas_data_frame[str(column)].unique()]
+        labels = [str(label) for label in session['ds'].pandas_data_frame[str(column)].unique()]
         return jsonify({'labels': labels})
 
     @app.route('/reload')

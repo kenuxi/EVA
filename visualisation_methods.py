@@ -44,7 +44,7 @@ class VisualizationPlotly():
         elif self.d == 2:
             if self.classification:
 
-                if self.n > 1000:
+                if self.n > 1000000:
                     fig = go.Figure()
                     fig.add_trace(
                         go.Scattergl(
