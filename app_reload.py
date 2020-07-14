@@ -46,16 +46,19 @@ def get_app():
             session['df'] = session['ds'].pandas_data_frame
 
             # populating label choices with data from file
-            label_columns = [(str(col), str(col)) for col in session['ds'].pandas_data_frame.columns]
+            label_columns = [(str(col), str(col)) for col in session['df']]
             label_columns.reverse()     # reverse cause last col is usually label
             label_form.label_column.choices = label_columns
 
             # populating inlier and outlier choices with initial options
             # this changes dynamically once in app
             initial_labels = [(str(col), str(col)) for col in session['df'][label_columns[0][0]].unique()]
+            initial_labels.sort()
             label_form.inliers.choices = initial_labels
             label_form.outliers.choices = initial_labels
+
             print(session['ds'].pandas_data_frame)
+
             return render_template('home.html', title='Home',
                                    df=session['ds'].pandas_data_frame,
                                    file_form=file_form,
@@ -68,8 +71,22 @@ def get_app():
             session['ds'].outliers = label_form.outliers.data
             session['ds'].ratio = label_form.ratio.data
             session['ds'].create_labeled_df()
+
+            # populating label choices with data from file
+            label_columns = [(str(col), str(col)) for col in session['df']]
+            label_columns.reverse()     # reverse cause last col is usually label
+            label_form.label_column.choices = label_columns
+
+            # populating inlier and outlier choices with initial options
+            # this changes dynamically once in app
+            initial_labels = [(str(col), str(col)) for col in session['df'][label_columns[0][0]].unique()]
+            initial_labels.sort()
+            label_form.inliers.choices = initial_labels
+            label_form.outliers.choices = initial_labels
+
             print(f'{label_form.label_column.data}, {label_form.outliers.data}, {label_form.inliers.data}, {label_form.ratio.data}')
             print(session['ds'].pandas_data_frame)
+
             return render_template('home.html', title='Home',
                                    df=session['ds'].pandas_data_frame,
                                    file_form=file_form,
