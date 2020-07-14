@@ -187,6 +187,12 @@ class DataStatistics():
         if a == 'PCA':
             projected_data = mapper.fit_transform(self.pandas_data_frame_nolabels, projection=PCA(n_components=m))
 
+        if a == 'TSNE':
+            projected_data = mapper.fit_transform(self.pandas_data_frame_nolabels, projection=TSNE(n_components=m, perplexity=30))
+
+        if a == 'LLE':
+            projected_data = mapper.fit_transform(self.pandas_data_frame_nolabels, projection=LocallyLinearEmbedding(n_components=m, n_neighbors=k, max_iter=100))
+
         kmap_df = pd.DataFrame(projected_data)
         self.reduced_pandas_dataframe_kmap = pd.concat([kmap_df, self.classifications], axis=1)
 
