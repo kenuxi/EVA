@@ -61,7 +61,6 @@ class VisForm(FlaskForm):
     ISOMAP5 = BooleanField(label='density', description='density')
     ISOMAP6 = BooleanField(label='heat', description='heat')
 
-
     KMAP1 = BooleanField(label='scatter', description='scatter')
     KMAP2 = BooleanField(label='box', description='box')
     KMAP3 = BooleanField(label='k', description='k')
