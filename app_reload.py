@@ -45,7 +45,7 @@ def get_app():
             session['df'] = ds.pandas_data_frame
             # populating label choices with data from file
             label_columns = [(str(col), str(col)) for col in ds.pandas_data_frame.columns]
-            label_columns.reverse() #reverse cause last col is usually label
+            label_columns.reverse()     # reverse cause last col is usually label
             label_form.label_column.choices = label_columns
 
             # populating inlier and outlier choices with initial options
@@ -54,36 +54,28 @@ def get_app():
             label_form.inliers.choices = initial_labels
             label_form.outliers.choices = initial_labels
 
-            # check if dataframe is already labeled
-            alr_labeled = False
-            if 'Inlier' in initial_labels[0]:
-                alr_labeled = True
-            print('hherrre')
             return render_template('home.html', title='Home',
-                                    df=ds.pandas_data_frame,
-                                    file_form=file_form,
-                                    up_form=up_form,
-                                    label_form=label_form)
+                                   df=ds.pandas_data_frame,
+                                   file_form=file_form,
+                                   up_form=up_form,
+                                   label_form=label_form)
 
-        elif label_form.submit.data:
-            print('now here')
+        elif label_form.label_submit.data:
             ds.label_column = label_form.label_column.data
             ds.inlier = label_form.inliers.data
             ds.outliers = label_form.outliers.data
-
-            # Create new object with the dataframe according to the users spec
-
+            ds.ratio = label_form.ratio.data
             return render_template('home.html', title='Home',
                                    df=session['df'],
                                    file_form=file_form,
                                    up_form=up_form,
                                    label_form=label_form,
-                                   vis_form=vis_form)           # f'{label_form.label_column.data}, {label_form.outliers.data}, {label_form.inliers.data}'
+                                   vis_form=vis_form)
+                              # f'{label_form.label_column.data}, {label_form.outliers.data}, {label_form.inliers.data}, {label_form.ratio.data}'
 
-        elif vis_form.submit.data:
-            print('here')
-            dashboard_config = {'location': session['filename'],
-                                'target': vis_form.target.data,
+        elif vis_form.vis_submit.data:
+
+            dashboard_config = {'ds': ds,
                                 'PCA': [],
                                 'LLE': [],
                                 'TSNE': [],
@@ -105,8 +97,6 @@ def get_app():
 
     @app.route('/getlabels/<column>', methods=['GET'])
     def getlabel(column):
-        # df = request.args.get('df')
-        # column = request.args.get('column')
         labels = [label for label in session['df'][column].unique()]
         return jsonify({'labels': labels})
 

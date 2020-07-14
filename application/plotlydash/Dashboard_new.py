@@ -47,10 +47,7 @@ class FileDashboard(RemoteCSVDashboard):
                                   external_stylesheets=self.stylesheets)
 
     def create_dashboard(self, data_dict: Dict):
-        data_file_name = data_dict['location']     # This is now in 'data' not 'application/data'
-        #dim_red_methods = data_dict['algorithms']  # This is now a list.
-        main_stats = DataStatistics()
-        main_stats.load_data(data_file_name)
+        main_stats = data_dict['ds']
         # Init List containing all html div(...) dashboards
         dashboards_merged = []
         # Add title
