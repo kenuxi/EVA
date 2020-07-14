@@ -3,6 +3,7 @@ import dash_html_components as html
 import dash_daq as daq
 from visualisation_methods import VisualizationPlotly
 
+
 class DimRedDash():
     def __init__(self, stats, method, plot_options):
         '''

@@ -1,9 +1,8 @@
 import os
 from flask_wtf import FlaskForm
 from flask_wtf.file import FileField, FileAllowed
-from wtforms import SubmitField, SelectField, SelectMultipleField, BooleanField, widgets
+from wtforms import SubmitField, SelectField, SelectMultipleField, BooleanField, FloatField
 from wtforms.validators import DataRequired
-from config import vis_types
 
 
 class SelectFileForm(FlaskForm):
@@ -17,8 +16,15 @@ class UploadForm(FlaskForm):
     csv_submit = SubmitField(label='Upload')
 
 
+class LabelForm(FlaskForm):
+    label_column = SelectField(label='Label Column', choices=[])
+    inliers = SelectMultipleField(label='Inlier Data', choices=[])
+    outliers = SelectMultipleField(label='Outlier Data', choices=[])
+    ratio = FloatField(label='Ratio', validators=[DataRequired()], default=1)
+    label_submit = SubmitField(label='Submit')
+
+
 class VisForm(FlaskForm):
-    target = SelectField(label='Label Column', choices=[])
 
     PCA1 = BooleanField(label='scatter', description='scatter')
     PCA2 = BooleanField(label='box', description='box')
@@ -63,5 +69,5 @@ class VisForm(FlaskForm):
     KMAP5 = BooleanField(label='density', description='density')
     KMAP6 = BooleanField(label='heat', description='heat')
 
-    submit = SubmitField(label='Submit')
+    vis_submit = SubmitField(label='Submit')
 

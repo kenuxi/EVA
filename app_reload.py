@@ -1,10 +1,10 @@
-from werkzeug.serving import run_simple
-from flask import Flask, render_template, url_for, redirect, flash
-from flask_uploads import configure_uploads, UploadSet
-from forms import SelectFileForm, UploadForm, VisForm
-from config import app_secret_key, session
-import pandas as pd
 import os
+from werkzeug.serving import run_simple
+from flask import Flask, render_template, url_for, redirect, flash, jsonify
+from flask_uploads import configure_uploads, UploadSet
+from forms import SelectFileForm, UploadForm, VisForm, LabelForm
+from config import app_secret_key, session
+from statistics_methods import DataStatistics
 from config import alg_types
 
 
@@ -17,37 +17,69 @@ def get_app():
     app.config['SECRET_KEY'] = app_secret_key
     csv_files = UploadSet('data', ('csv',), default_dest=lambda x: 'data')
     configure_uploads(app, csv_files)
+    session['ds'] = DataStatistics()
 
     @app.route('/', methods=['GET', 'POST'])
     @app.route('/home', methods=['GET', 'POST'])
     def home():
         file_form = SelectFileForm()
         up_form = UploadForm()
+        label_form = LabelForm()
         vis_form = VisForm()
-        if file_form.file_submit.data and file_form.validate_on_submit():
-            df = pd.read_csv(file_form.file.data)
-            session['filename'] = file_form.file.data
-            session['DF'] = df
-            vis_form.target.choices = [(str(col), str(col)) for col in df.columns]
-            return render_template('home.html', title='Home',
-                                   df=df,
-                                   file_form=file_form,
-                                   up_form=up_form,
-                                   vis_form=vis_form)
 
-        elif up_form.csv_submit.data and up_form.validate_on_submit():
+        if up_form.csv_submit.data and up_form.validate_on_submit():
             csv_data = up_form.csv_file.data
             filename = csv_data.filename
             if filename in os.listdir(os.path.join('data')):
                 flash('Filename exists!', 'danger')
                 return redirect(url_for('home'))
+
             csv_data.save(os.path.join('data', filename))
             flash('Your file has been Added!', 'success')
             return redirect(url_for('home'))
 
-        elif vis_form.submit.data:
-            dashboard_config = {'location': session['filename'],
-                                'target': vis_form.target.data,
+        elif file_form.file_submit.data and file_form.validate_on_submit():
+            # loading data from file into wrapper class
+            session['ds'].load_data(file_form.file.data)
+
+            # separate dataframe for easier access
+            session['df'] = session['ds'].pandas_data_frame
+
+            # populating label choices with data from file
+            label_columns = [(str(col), str(col)) for col in session['ds'].pandas_data_frame.columns]
+            label_columns.reverse()     # reverse cause last col is usually label
+            label_form.label_column.choices = label_columns
+
+            # populating inlier and outlier choices with initial options
+            # this changes dynamically once in app
+            initial_labels = [(str(col), str(col)) for col in session['df'][label_columns[0][0]].unique()]
+            label_form.inliers.choices = initial_labels
+            label_form.outliers.choices = initial_labels
+            print(session['ds'].pandas_data_frame)
+            return render_template('home.html', title='Home',
+                                   df=session['ds'].pandas_data_frame,
+                                   file_form=file_form,
+                                   up_form=up_form,
+                                   label_form=label_form)
+
+        elif label_form.label_submit.data:
+            session['ds'].label_column = label_form.label_column.data
+            session['ds'].inliers = label_form.inliers.data
+            session['ds'].outliers = label_form.outliers.data
+            session['ds'].ratio = label_form.ratio.data
+            session['ds'].create_labeled_df()
+            print(f'{label_form.label_column.data}, {label_form.outliers.data}, {label_form.inliers.data}, {label_form.ratio.data}')
+            print(session['ds'].pandas_data_frame)
+            return render_template('home.html', title='Home',
+                                   df=session['ds'].pandas_data_frame,
+                                   file_form=file_form,
+                                   up_form=up_form,
+                                   label_form=label_form,
+                                   vis_form=vis_form)
+
+        elif vis_form.vis_submit.data:
+            print(vis_form.validate())
+            dashboard_config = {'ds': session['ds'],
                                 'PCA': [],
                                 'LLE': [],
                                 'TSNE': [],
@@ -67,6 +99,11 @@ def get_app():
             return redirect(url_for('reload'))      # f"{session['dashboard_config']}"
 
         return render_template('home.html', title='Home', file_form=file_form, up_form=up_form)
+
+    @app.route('/getlabels/<column>', methods=['GET'])
+    def getlabels(column):
+        labels = [label for label in session['ds'].pandas_data_frame[str(column)].unique()]
+        return jsonify({'labels': labels})
 
     @app.route('/reload')
     def reload():
