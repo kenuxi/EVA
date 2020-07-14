@@ -608,6 +608,8 @@ class DimRedDash():
                         options=[
                             {'label': 'PCA', 'value': 'PCA'},
                             {'label': 'UMAP', 'value': 'UMAP'},
+                            {'label': 'LLE', 'value': 'LLE'},
+                            {'label': 'TSNE', 'value': 'TSNE'},
                             {'label': 'ISOMAP', 'value': 'ISOMAP'}
                         ],
                         value='PCA'),
