@@ -18,16 +18,16 @@ def get_app():
     app.config['SECRET_KEY'] = app_secret_key
     csv_files = UploadSet('data', ('csv',), default_dest=lambda x: 'data')
     configure_uploads(app, csv_files)
+    session['ds'] = DataStatistics()
 
     @app.route('/', methods=['GET', 'POST'])
     @app.route('/home', methods=['GET', 'POST'])
     def home():
-        ds = DataStatistics()
-
         file_form = SelectFileForm()
         up_form = UploadForm()
-        vis_form = VisForm()
         label_form = LabelForm()
+        vis_form = VisForm()
+
         if up_form.csv_submit.data and up_form.validate_on_submit():
             csv_data = up_form.csv_file.data
             filename = csv_data.filename
@@ -40,11 +40,13 @@ def get_app():
 
         elif file_form.file_submit.data and file_form.validate_on_submit():
             # loading data from file into wrapper class
-            ds.load_data(file_form.file.data)
+            session['ds'].load_data(file_form.file.data)
+
             # separate dataframe for easier access
-            session['df'] = ds.pandas_data_frame
+            session['df'] = session['ds'].pandas_data_frame
+
             # populating label choices with data from file
-            label_columns = [(str(col), str(col)) for col in ds.pandas_data_frame.columns]
+            label_columns = [(str(col), str(col)) for col in session['ds'].pandas_data_frame.columns]
             label_columns.reverse()     # reverse cause last col is usually label
             label_form.label_column.choices = label_columns
 
@@ -53,29 +55,30 @@ def get_app():
             initial_labels = [(str(col), str(col)) for col in session['df'][label_columns[0][0]].unique()]
             label_form.inliers.choices = initial_labels
             label_form.outliers.choices = initial_labels
-
+            print(session['ds'].pandas_data_frame)
             return render_template('home.html', title='Home',
-                                   df=ds.pandas_data_frame,
+                                   df=session['ds'].pandas_data_frame,
                                    file_form=file_form,
                                    up_form=up_form,
                                    label_form=label_form)
 
         elif label_form.label_submit.data:
-            ds.label_column = label_form.label_column.data
-            ds.inlier = label_form.inliers.data
-            ds.outliers = label_form.outliers.data
-            ds.ratio = label_form.ratio.data
+            session['ds'].label_column = label_form.label_column.data
+            session['ds'].inlier = label_form.inliers.data
+            session['ds'].outliers = label_form.outliers.data
+            session['ds'].ratio = label_form.ratio.data
+            print(f'{label_form.label_column.data}, {label_form.outliers.data}, {label_form.inliers.data}, {label_form.ratio.data}')
+            print(session['ds'].pandas_data_frame)
             return render_template('home.html', title='Home',
-                                   df=session['df'],
+                                   df=session['ds'].pandas_data_frame,
                                    file_form=file_form,
                                    up_form=up_form,
                                    label_form=label_form,
                                    vis_form=vis_form)
-                              # f'{label_form.label_column.data}, {label_form.outliers.data}, {label_form.inliers.data}, {label_form.ratio.data}'
 
         elif vis_form.vis_submit.data:
-
-            dashboard_config = {'ds': ds,
+            print(vis_form.validate())
+            dashboard_config = {'ds': session['ds'],
                                 'PCA': [],
                                 'LLE': [],
                                 'TSNE': [],
@@ -97,7 +100,7 @@ def get_app():
 
     @app.route('/getlabels/<column>', methods=['GET'])
     def getlabel(column):
-        labels = [label for label in session['df'][column].unique()]
+        labels = [label for label in session['ds'].pandas_data_frame[str(column)].unique()]
         return jsonify({'labels': labels})
 
     @app.route('/reload')
