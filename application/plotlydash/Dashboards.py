@@ -381,6 +381,9 @@ class IrisDashboard(RemoteCSVDashboard):
             elif dim_red_method == 'T-SNE':
                 main_data.apply_TSNE(m=m, perplexity=tsne_perpl)
 
+            elif dim_red_method == 'MDS':
+                main_data.apply_MDS(m=m)
+
             fig = main_data.visualize_reduced_data()
 
             return [fig]
