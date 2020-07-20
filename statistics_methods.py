@@ -149,7 +149,7 @@ class DataStatistics():
         self.reduced_pandas_dataframe_isomap = pd.concat([isomapDf, self.classifications], axis=1)
 
 
-    def apply_umap(self, m=2, k=5):
+    def apply_umap(self, m=2, k=15):
         ''' Perform UMAP  on the dataframe and reduce to an m dimensional subspace with k neighbour
         Definition:  apply_umap(X, m)
         Input:       m                  - int, dimension of the subspace to project
