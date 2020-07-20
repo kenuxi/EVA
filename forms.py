@@ -68,5 +68,13 @@ class VisForm(FlaskForm):
     KMAP5 = BooleanField(label='density', description='density')
     KMAP6 = BooleanField(label='heat', description='heat')
 
+    MDS1 = BooleanField(label='scatter', description='scatter')
+    MDS2 = BooleanField(label='box', description='box')
+    MDS3 = BooleanField(label='k', description='k')
+    MDS4 = BooleanField(label='dendo', description='dendogram')
+    MDS5 = BooleanField(label='density', description='density')
+    MDS6 = BooleanField(label='heat', description='heat')
+
+
     vis_submit = SubmitField(label='Submit')
 
