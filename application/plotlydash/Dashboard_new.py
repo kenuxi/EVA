@@ -169,6 +169,7 @@ class FileDashboard(RemoteCSVDashboard):
                  )
 
                  def update_pca(m):
+                     print('pca update')
                      main_stats.apply_pca(m=m)
                      pca_vis = VisualizationPlotly(pd_data_frame=main_stats.reduced_pandas_dataframe_pca).plot_data()
 

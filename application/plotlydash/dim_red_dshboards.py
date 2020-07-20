@@ -39,7 +39,7 @@ class DimRedDash():
                 scatter_fig = visualisation.plot_data()
                 pca_plots.append(html.Div([
                     dcc.Graph(id='reduced_data_plot_pca', figure=scatter_fig)
-                ], className='five columns'
+                ], className='five columns', style={"height" : "30%", "width" : "25%"}
                 ))
 
             if 'box' in self.plot_options:
@@ -561,7 +561,7 @@ class DimRedDash():
                         daq.NumericInput(
                             id='red_dim_input_umap',
                             min=1,
-                            max=self.stats.d_red,
+                            max=min([self.stats.d, 3]),
                             size=120,
                             label='subspace dimension',
                             labelPosition='bottom',
@@ -585,7 +585,7 @@ class DimRedDash():
                             size=120,
                             label='k-Neighbours',
                             labelPosition='bottom',
-                            value=30),
+                            value=5),
                     ], className='two columns'))
 
             if 'box' in self.plot_options:
