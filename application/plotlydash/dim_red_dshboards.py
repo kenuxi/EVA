@@ -11,7 +11,7 @@ class DimRedDash():
         Definition:  load_data(self, file_name)
 
         Input:       stats   - object, from DataStatistics class, containing all needed info/data for the plots
-                     method  - str, 'PCA', 'LLE', 'TSNE', 'MDS' or 'KERNEL_PCA' indicating the method
+                     method  - str, 'PCA', 'LLE', 'TSNE' or 'KERNEL_PCA' indicating the method
 
         '''
 
@@ -63,6 +63,7 @@ class DimRedDash():
                 ], className='five columns'
                 ))
 
+
             if 'heat' in self.plot_options:
                 pca_heat = visualisation.plot_data_heat()
                 pca_plots.append(html.Div([
@@ -100,6 +101,7 @@ class DimRedDash():
                 ], className='five columns'
                 ))
 
+
             if 'dendogram' in self.plot_options:
                 lle_dendo = visualisation.plot_dendrogram()
                 lle_plots.append(html.Div([
@@ -120,6 +122,7 @@ class DimRedDash():
                     dcc.Graph(id='heat_lle', figure=lle_heat),
                 ], className='five columns'
                 ))
+
 
             if 'k' in self.plot_options:
                 self.stats.graph_neighbours(n_neighbours=4, algorithm='lle')  # this should be done somewhere else
@@ -165,12 +168,14 @@ class DimRedDash():
                 ], className='five columns'
                 ))
 
+
             if 'heat' in self.plot_options:
                 tsne_heat = visualisation.plot_data_heat()
                 tsne_plots.append(html.Div([
                     dcc.Graph(id='heat_tsne', figure=tsne_heat),
                 ], className='five columns'
                 ))
+
 
             if 'k' in self.plot_options:
                 self.stats.graph_neighbours(n_neighbours=4, algorithm='tsne')  # this should be done somewhere else
@@ -216,12 +221,14 @@ class DimRedDash():
                 ], className='five columns'
                 ))
 
+
             if 'heat' in self.plot_options:
                 umap_heat = visualisation.plot_data_heat()
                 umap_plots.append(html.Div([
                     dcc.Graph(id='heat_umap', figure=umap_heat),
                 ], className='five columns'
                 ))
+
 
             if 'k' in self.plot_options:
                 self.stats.graph_neighbours(n_neighbours=4, algorithm='umap')  # this should be done somewhere else
@@ -232,6 +239,7 @@ class DimRedDash():
                 ))
 
             dashboard = html.Div(children=umap_plots, className="row")
+
 
         if self.method == 'KMAP':
             visualisation = VisualizationPlotly(pd_data_frame=self.stats.reduced_pandas_dataframe_kmap)
@@ -273,6 +281,7 @@ class DimRedDash():
                     dcc.Graph(id='heat_kmap', figure=kmap_heat),
                 ], className='five columns'
                 ))
+
 
             if 'k' in self.plot_options:
                 self.stats.graph_neighbours(n_neighbours=4, algorithm='kmap')  # this should be done somewhere else
@@ -318,12 +327,15 @@ class DimRedDash():
                 ], className='five columns'
                 ))
 
+
             if 'heat' in self.plot_options:
                 isomap_heat = visualisation.plot_data_heat()
                 isomap_plots.append(html.Div([
                     dcc.Graph(id='heat_isomap', figure=isomap_heat),
                 ], className='five columns'
                 ))
+
+
 
             if 'k' in self.plot_options:
                 self.stats.graph_neighbours(n_neighbours=4, algorithm='isomap')  # this should be done somewhere else
@@ -334,57 +346,6 @@ class DimRedDash():
                 ))
 
             dashboard = html.Div(children=isomap_plots, className="row")
-
-        if self.method == 'MDS':
-            visualisation = VisualizationPlotly(pd_data_frame=self.stats.reduced_pandas_dataframe_mds)
-
-            # Depending on the plot_options the user selected, produce corresponding plots and append them to the
-            # list
-            mds_plots = []
-            if 'scatter' in self.plot_options:
-                scatter_fig = visualisation.plot_data()
-                mds_plots.append(html.Div([
-                    dcc.Graph(id='reduced_data_plot_mds', figure=scatter_fig)
-                ], className='five columns'
-                ))
-
-            if 'box' in self.plot_options:
-                box_fig = visualisation.box_plot_classifications()
-                mds_plots.append(html.Div([
-                    dcc.Graph(id='box_outliers_plot_mds', figure=box_fig)
-                ], className='five columns'
-                ))
-
-            if 'dendogram' in self.plot_options:
-                mds_dendo = visualisation.plot_dendrogram()
-                mds_plots.append(html.Div([
-                    dcc.Graph(id='dendogram_mds', figure=mds_dendo),
-                ], className='five columns'
-                ))
-
-            if 'density' in self.plot_options:
-                mds_density = visualisation.plot_data_density()
-                mds_plots.append(html.Div([
-                    dcc.Graph(id='density_mds', figure=mds_density),
-                ], className='five columns'
-                ))
-
-            if 'heat' in self.plot_options:
-                mds_heat = visualisation.plot_data_heat()
-                mds_plots.append(html.Div([
-                    dcc.Graph(id='heat_mds', figure=mds_heat),
-                ], className='five columns'
-                ))
-
-            if 'k' in self.plot_options:
-                self.stats.graph_neighbours(n_neighbours=4, algorithm='mds')  # this should be done somewhere else
-                mds_graph = visualisation.graph_neighbours(self.stats.edges, self.stats.nodes)
-                mds_plots.append(html.Div([
-                    dcc.Graph(id='connected_graph_figure_mds', figure=mds_graph),
-                ], className='five columns'
-                ))
-
-            dashboard = html.Div(children=mds_plots, className="row")
 
         return dashboard
 
@@ -649,8 +610,7 @@ class DimRedDash():
                             {'label': 'UMAP', 'value': 'UMAP'},
                             {'label': 'LLE', 'value': 'LLE'},
                             {'label': 'TSNE', 'value': 'TSNE'},
-                            {'label': 'ISOMAP', 'value': 'ISOMAP'},
-                            {'label': 'MDS', 'value': 'MDS'}
+                            {'label': 'ISOMAP', 'value': 'ISOMAP'}
                         ],
                         value='PCA'),
                 ], className='two columns'))
@@ -724,49 +684,6 @@ class DimRedDash():
                 pass
 
             dashboard = html.Div(children=isomap_dropdowns, className="row")
-
-        # MDS DROPDOWNS HERE
-        if self.method == 'MDS':
-            mds_dropdowns = []
-            if 'scatter' in self.plot_options:
-
-                mds_dropdowns.append(html.Div([
-                        dcc.Checklist(
-                            id='outlier_only_options_mds',
-                            options=[
-                                {'label': 'Only show Outliers', 'value': 'yes'}
-                            ],
-                        ),
-                    ], className='one column'))
-
-                mds_dropdowns.append(html.Div([
-                        daq.NumericInput(
-                            id='red_dim_input_mds',
-                            min=1,
-                            max=min([self.stats.d, 3]),
-                            size=120,
-                            label='subspace dimension',
-                            labelPosition='bottom',
-                            value=2
-                            ),
-                    ], className='two columns'))
-
-            if 'box' in self.plot_options:
-                mds_dropdowns.append(html.Div([
-                        daq.NumericInput(
-                            id='box_red_dim_mds',
-                            min=1,
-                            max=self.stats.d_red,
-                            size=120,
-                            label='Boxplot dimension',
-                            labelPosition='bottom',
-                            value=2)
-                    ], className='two columns'))
-
-            if 'graph' in self.plot_options:
-                pass
-
-            dashboard = html.Div(children=mds_dropdowns, className="row")
 
         return dashboard
 

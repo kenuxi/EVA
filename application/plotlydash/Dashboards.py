@@ -13,7 +13,6 @@ import numpy as np
 import pandas as pd
 from sklearn.manifold import LocallyLinearEmbedding
 from sklearn.manifold import TSNE
-from sklearn.manifold import MDS
 from sklearn.decomposition import PCA
 import plotly.express as px
 
@@ -146,20 +145,6 @@ class EvaData():
         self.reduced_pandas_data = pd.DataFrame(data=self.X_red)
         self.reduced_pandas_data['Classification'] = self.pandas_data_frame['Classification']
         self.red_method = 'LLE'
-
-    def apply_MDS(self, m):
-        '''
-        Perform Multi Dimensional Scaling on X and reduce to an m dimensional subspace
-        Definition: apply_MDS(X, m)
-        Input:      X               - NxD array of N data points with D features
-                    m               - int, dimension of the subspace to project
-        '''
-        embedding = MDS(n_components=m, max_iter=300)
-        self.X_red = embedding.fit_transform(self.X)
-        self.d_red = m
-        self.reduced_pandas_data = pd.DataFrame(data=self.X_red)
-        self.reduced_pandas_data['Classification'] = self.pandas_data_frame['Classification']
-        self.red_method = 'MDS'
 
     def apply_TSNE(self, m, perplexity=30):
         ''' Perform t-distributed Stochastic Neighbor Embedding. on X and reduce to an m dimensional subspace
@@ -381,11 +366,11 @@ class IrisDashboard(RemoteCSVDashboard):
             elif dim_red_method == 'T-SNE':
                 main_data.apply_TSNE(m=m, perplexity=tsne_perpl)
 
-            elif dim_red_method == 'MDS':
-                main_data.apply_MDS(m=m)
-
             fig = main_data.visualize_reduced_data()
 
             return [fig]
+
+
+
         return self.dash_app.server
 
