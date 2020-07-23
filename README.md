@@ -1,4 +1,4 @@
-<<<<<<< HEAD
+
 # EVA
 
 ## your overall plan
@@ -98,4 +98,30 @@ Run the app
 ```
 docker run -p 5000:port name:tag (example: docker run -p 5000:5000 iris-app:latest)
 ```
->>>>>>> CSV_up_uttam
+# Documentation
+
+## Dimensionality reduction algorithms
+Dimensionality reduction algorithms help with understanding data through visualisation.
+The main concept of dimensionality reduction is using techniques to embed high dimensional (D > 3) 
+points to lower, usually 2 or 3 dimensional space to plot the data.
+
+EVA implements following dimensionality reduction algorithms:
+### PCA
+##### Info 
+Principal component analysis (PCA) is a classic algorithm for dimensionality reduction. 
+PCA transforms points from the original space to the space of uncorelated features over given dataset
+via eigendecomposition of covariance matrix or SVD.
+
+https://en.wikipedia.org/wiki/Principal_component_analysis
+##### Drawbacks
+PCA by design is a linear algorithm meaning that it's not capable of capturing non-linear correlations.
+
+##### Adjustable parameters
+* n_dim - change the dimensionality of the projection
+### LLE
+
+### T-SNE
+### UMAP
+### ISOMAP
+### k-MAPPER
+### MDS
