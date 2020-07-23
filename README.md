@@ -192,8 +192,8 @@ In order to add new algorithm, follow these steps:
 
 1. Extend `EvaData` class in `application/plotlydash/Dashboard.py` with `apply_{name_of_your_alg}` method following convention of the other `apply` methods.
 2. Extend `_getgraph` and `_getdropdowns` methods in `DimRedDash` class in `application/plotldydash/dim_red_dshboards.py` to support new plots and callbacks for your new algorithm.
-5. Add new form options to `VisForm` class in `forms.py` file,
-6. Edit form code in `application/templates/home.html` to include your new, updated form.
+3. Add new form options to `VisForm` class in `forms.py` file,
+4. Edit form code in `application/templates/home.html` to include your new, updated form.
 
 
 
