@@ -107,31 +107,79 @@ points to lower, usually 2 or 3 dimensional space to plot the data.
 
 EVA implements following dimensionality reduction algorithms:
 ### PCA
-##### Info 
+#### Info 
 Principal component analysis (PCA) is a classic algorithm for dimensionality reduction. 
-PCA transforms points from the original space to the space of uncorelated features over given dataset
+PCA transforms points from the original space to the space of uncorrelated features over given dataset
 via eigendecomposition of covariance matrix.
 PCA by design is a linear algorithm meaning that it's not capable of capturing non-linear correlations.
 
 https://en.wikipedia.org/wiki/Principal_component_analysis
 
-##### Adjustable parameters
+#### Adjustable parameters
 * n_dim - change the dimensionality of the projection
 ### LLE
-##### Info
-LLE is a non-linear dimensionality reduction algorithms. LLE is a two step procedure. The first step consists 
+#### Info
+Locally Linear Embedding (LLE) is a nonlinear dimensionality reduction algorithm. LLE is a two step procedure. The first step consists 
 of finding k-nearest neighbours of each point and computing the weights of reconstructing original point with 
 it's neighbours. Second step embeds high-dimensional data points in lower dimensional space using weights learned 
 in the first step.
 
 https://cs.nyu.edu/~roweis/lle/papers/lleintro.pdf
 
-###### Adjustable parameters
+#### Adjustable parameters
 * n_dim - change the dimensionality of the projection
 * k_neighbours - change number of neighbours used to reconstruct the point in the first step
-### T-SNE
+### t-SNE
+#### Info
+T-distributed Stochastic Neighbour Embedding (t-SNE) is a nonlinear dimensionality reduction
+algorithm. In order to create low-dimensional mapping, t-SNE computes similarity of high-dimensional
+points through creating a probability distribution. This distribution is used for creating low-dimensional
+mapping of points by comparing it to the distribution of low-dimensional points and minimizing
+the difference between those two using K-L Divergence.
+
+http://www.jmlr.org/papers/volume9/vandermaaten08a/vandermaaten08a.pdf
+
+#### Adjustable parameters
+* n_dim - change the dimensionality of the projection
+* perplexity - change the target perplexity of the algorithm, balance attention between global and local structure of the data
 
 ### UMAP
+#### Info
+Uniform Manifold Approximation and Projection (UMAP) is a general dimensionality reduction algorithm using topological tools.
+UMAP assumes that the data is uniformly distributed on a Rimannian manifold which is locally connected and the Rimannian metric is locally constant or can be approximated as such.
+UMAPS models data manifold with fuzzy topological structure and embed the data into low dimensional space
+by finding closest possible equivalent topological structure. 
+
+https://arxiv.org/pdf/1802.03426.pdf
+
+#### Adjustable parameters 
+* n_dim - change the dimensionality of the projection
+* k_neighbours - change the number of neighbours used in creation of k-neighbour graph 
 ### ISOMAP
+#### Info
+ISOMAP is a nonlinear dimensionality reduction algorithm. In order to create low dimensional embedding of data ISOMAP
+creates weighted graph of k-nearest neighbours with euclidean distance as weights of the graph. After the graph is 
+created, ISOMAP computes shortest paths between two nodes and use this information to create low dimensional representation with MDS algorithm.
+
+http://web.mit.edu/cocosci/Papers/sci_reprint.pdf
+#### Adjustable parameters 
+* n_dim - change the dimensionality of the projection
+* k_neighbours - change the number of neighbours used in creation of k-neighbour graph
 ### k-MAPPER
+
+#### Info
+Kepler-MAPPER (k-MAPPER) is python library implementing MAPPER algorithm form the topological data analysis field.
+k-MAPPER use embedding created by other dimensionality reduction algorithm (ex. t-SNE) and pass it to MAPPER algorithm.
+
+https://github.com/scikit-tda/kepler-mapper
+#### Adjustable parameters 
+* n_dim - change the dimensionality of the projection
+* k_neighbours - change the number of neighbours passed to the MAPPER algorithm
 ### MDS
+#### Info
+Multidimensional Scaling (MDS) is a nonlinear dimensionality reduction algorithm.
+Low dimensional embedding is obtained by solving eigenvalue problem in double centered matrix of squared proximity matrix.
+
+https://en.wikipedia.org/wiki/Multidimensional_scaling
+#### Adjustable parameters 
+* n_dim - change the dimensionality of the projection
