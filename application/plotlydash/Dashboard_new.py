@@ -140,6 +140,13 @@ class FileDashboard(RemoteCSVDashboard):
            dashboards_merged.append(dashboard.dropdowns)
            dashboards_merged.append(dashboard.graph)
 
+        if data_dict['MDS']:
+            main_stats.apply_mds()
+            dashboard = DimRedDash(stats=main_stats, method='MDS', plot_options=data_dict['MDS'])
+            dashboards_merged.append(dashboard.title)
+            dashboards_merged.append(dashboard.dropdowns)
+            dashboards_merged.append(dashboard.graph)
+
         # Merge
         # Merge all dashboards here
         selected_options_number = (len(dashboards_merged)-1)/2
@@ -162,6 +169,7 @@ class FileDashboard(RemoteCSVDashboard):
                  )
 
                  def update_pca(m):
+                     print('pca update')
                      main_stats.apply_pca(m=m)
                      pca_vis = VisualizationPlotly(pd_data_frame=main_stats.reduced_pandas_dataframe_pca).plot_data()
 

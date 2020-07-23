@@ -102,7 +102,8 @@ def get_app():
                                 'TSNE': [],
                                 'UMAP': [],
                                 'ISOMAP': [],
-                                'KMAP': []
+                                'KMAP': [],
+                                'MDS': [],
                                 }
 
             for alg in alg_types:
