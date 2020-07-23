@@ -110,17 +110,27 @@ EVA implements following dimensionality reduction algorithms:
 ##### Info 
 Principal component analysis (PCA) is a classic algorithm for dimensionality reduction. 
 PCA transforms points from the original space to the space of uncorelated features over given dataset
-via eigendecomposition of covariance matrix or SVD.
+via eigendecomposition of covariance matrix.
+PCA by design is a linear algorithm meaning that it's not capable of capturing non-linear correlations.
 
 https://en.wikipedia.org/wiki/Principal_component_analysis
-##### Drawbacks
-PCA by design is a linear algorithm meaning that it's not capable of capturing non-linear correlations.
 
 ##### Adjustable parameters
 * n_dim - change the dimensionality of the projection
 ### LLE
+##### Info
+LLE is a non-linear dimensionality reduction algorithms. LLE is a two step procedure. The first step consists 
+of finding k-nearest neighbours of each point and computing the weights of reconstructing original point with 
+it's neighbours. Second step embeds high-dimensional data points in lower dimensional space using weights learned 
+in the first step.
 
+https://cs.nyu.edu/~roweis/lle/papers/lleintro.pdf
+
+###### Adjustable parameters
+* n_dim - change the dimensionality of the projection
+* k_neighbours - change number of neighbours used to reconstruct the point in the first step
 ### T-SNE
+
 ### UMAP
 ### ISOMAP
 ### k-MAPPER
