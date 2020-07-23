@@ -59,14 +59,6 @@ Week 3: Create First demo prototype using sample data
 Week 4-5: Running first prototype, including Flask, applying at least T-SNE, PCA
 
 =======
-# dash_iris_demo_flask
-This code shows how to create interactive plots using dash using iris dataset
-fetched from remote source. This time, plotly dash is hosted on a Flask app allowing
-to develop our app further.
-You can check the details here:
-```
-https://hackersandslackers.com/plotly-dash-with-flask/
-```
 # Installing
 Create new python3 virtual environment:
 ```
@@ -80,23 +72,23 @@ Install libraries:
 ```
 pip install -r requirements.txt
 ```
-Run example:
+Run the app:
 ```
 python app.py
 ```
-Iris example is at:
+Go to this address in your web browser:
 ```
-http://127.0.0.1:5000/iris_example/
+http://127.0.0.1:5000
 ```
 
 # Docker
 Create docker image
 ```
-docker build -t name:tag . (example: docker build -t iris-app:latest .)
+docker build -t name:tag . (example: docker build -t EVA:latest .)
 ```
 Run the app
 ```
-docker run -p 5000:port name:tag (example: docker run -p 5000:5000 iris-app:latest)
+docker run -p 5000:port name:tag (example: docker run -p 5000:5000 EVA:latest)
 ```
 # Documentation
 
