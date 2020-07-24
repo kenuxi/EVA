@@ -7,6 +7,8 @@ from sklearn.neighbors import kneighbors_graph
 from sklearn.manifold import Isomap, MDS
 import umap
 import kmapper as km
+from sklearn import preprocessing
+from scipy.spatial.distance import cdist
 
 
 class DataStatistics():
@@ -31,6 +33,8 @@ class DataStatistics():
         self.inliers = None
         self.outliers = None
         self.ratio = None
+        self.normalize = False
+        self.pre_process = None
 
     def load_data(self, file_name, from_file=True, data_frame = None):
         ''' Load dataset from an input filename (.csv) as a numpy array and as a pandas dataframe. The input csv data
@@ -269,6 +273,7 @@ class DataStatistics():
             selected_outlier = self.outliers
             outlier_percentage = self.ratio / 100  # labeld['ratio'] is given in 2%, 80% and we need 0.2, 0.8
 
+
             Inliers_pd = self.pandas_data_frame[self.pandas_data_frame[str(column_name)].isin(selected_inlier)]
             Outliers_pd = self.pandas_data_frame[self.pandas_data_frame[str(column_name)].isin(selected_outlier)]
 
@@ -297,5 +302,65 @@ class DataStatistics():
             self.classifications = self.pandas_data_frame['Classification']
             # Read data information (number of features and samples)
             self.n, self.d = self.pandas_data_frame_nolabels.shape
+
+            if self.normalize:
+                self.normalize_data()
+
+            if self.pre_process:
+                print('PCA PRE')
+                self.pca_preprocessing(m=int(self.pre_process))
+
+    def normalize_data(self):
+        ''' This method just normalizes the pandas dataframes to the range 0-1 by using the sklearn function
+        MinMaxScaler
+        '''
+        # Apply MinMaxScaler to the pandas data frame values (nolabels because we do not want 'inliers/outliers') in the
+        # values
+
+        min_max_scaler = preprocessing.MinMaxScaler()
+        scaled_pd = min_max_scaler.fit_transform(self.pandas_data_frame_nolabels.values)
+        # Update pandas dataframes
+        self.pandas_data_frame_nolabels= pd.DataFrame(scaled_pd)
+
+        self.pandas_data_frame = pd.DataFrame(scaled_pd)
+        self.pandas_data_frame['Classification'] = self.classifications
+
+    def pca_preprocessing(self, m):
+        # Apply pca with correspondent dim
+        self.apply_pca(m=m)
+        self.pandas_data_frame = self.reduced_pandas_dataframe_pca
+        self.pandas_data_frame_nolabels = self.pandas_data_frame.drop(['Classification'], axis=1)
+        self.n, self.d = self.pandas_data_frame_nolabels.shape
+
+    def compute_distances(self, distance_type='euclidean'):
+        ''' This method computes the distances between inliers-inliers, inliers-outliers and outliers-outliers.
+            It saves the dist in  a pandas dataframe with each distance and the corresponding distance type a 'inlier_inlier',
+            'inlier_outlier' and 'outlier_outlier'
+
+            Input:        distance_type: str , it denotes the distance type the user wants to use. It can be set to
+                                        'euclidean', '' or ''
+        '''
+        # Extract nxd data as numpy array from the pandas data frame for inliers & outliers
+        data_inlier_np = self.pandas_data_frame_nolabels[self.classifications == 'Inlier'].values
+        data_outlier_np = self.pandas_data_frame_nolabels[self.classifications == 'Outliers'].values
+
+        # Compute distances and flatten them to 1d arrays
+        dist_inl_inl = cdist(data_inlier_np, data_inlier_np).flatten()
+        dist_inl_outl = cdist(data_inlier_np, data_outlier_np).flatten()
+        dist_outl_outl = cdist(data_outlier_np, data_outlier_np).flatten()
+
+        # create pandas dataframes for each one
+        pd_inl_inl = pd.DataFrame(dist_inl_inl)
+        pd_inl_inl['Distance type'] = 'Inlier_Inlier'
+
+
+        pd_inl_outl = pd.DataFrame(dist_inl_outl)
+        pd_inl_outl['Distance type'] = 'Inlier_Outlier'
+
+        pd_outl_outl = pd.DataFrame(dist_outl_outl)
+        pd_outl_outl['Distance type'] = 'Outlier_Outlier'
+
+        # Join all dataframes to one
+        self.distances_pd = pd.concat([pd_inl_inl, pd_inl_outl, pd_outl_outl])
 
 

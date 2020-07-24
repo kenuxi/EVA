@@ -7,9 +7,7 @@ from config import app_secret_key, session
 from statistics_methods import DataStatistics
 from config import alg_types
 
-
 to_reload = False
-
 
 def get_app():
     app = Flask(__name__, instance_relative_config=False,

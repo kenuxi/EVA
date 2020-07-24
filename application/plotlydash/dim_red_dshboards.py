@@ -39,7 +39,7 @@ class DimRedDash():
                 scatter_fig = visualisation.plot_data()
                 pca_plots.append(html.Div([
                     dcc.Graph(id='reduced_data_plot_pca', figure=scatter_fig)
-                ], className='five columns', style={"height" : "30%", "width" : "25%"}
+                ], className='five columns'
                 ))
 
             if 'box' in self.plot_options:

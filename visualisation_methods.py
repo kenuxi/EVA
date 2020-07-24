@@ -2,6 +2,7 @@ import numpy as np
 import plotly.express as px
 import plotly.graph_objects as go
 import plotly.figure_factory as ff
+import plotly.figure_factory as ff
 
 class VisualizationPlotly():
     ''' This class gives the user the possibility to make different plotly plots to visualize
@@ -273,10 +274,26 @@ class VisualizationPlotly():
 
         return fig
 
-
     def plot_dendrogram(self):
         fig = go.Figure(ff.create_dendrogram(self.pd_data_frame_nolabel))
         # fig.update_layout(width=800, height=600)
         fig.update_layout(title="Dendrogram")
 
+        return fig
+
+    def plot_distances_distribution(self, distances_pd, bins_size):
+        ''' Plots the distances distribution for inliers_inliers, inliers_outliers and outliers_outliers.
+            Input:        distances_pd: pandas data frame, containing the distances and its type (inlier_inlier,
+                                        inlier_outlier and outlier_outlier)
+        '''
+
+        #fig = px.histogram(distances_pd, x=distances_pd.columns[0], color=distances_pd['Distance type'], marginal="rug",  # can be `box`, `violin`
+        #                   hover_data=distances_pd.columns)
+        x_inl_inl = distances_pd[distances_pd['Distance type'] == 'Inlier_Inlier'][0].values
+        x_inl_outl = distances_pd[distances_pd['Distance type'] == 'Inlier_Outlier'][0].values
+        x_outl_outl = distances_pd[distances_pd['Distance type'] == 'Outlier_Outlier'][0].values
+
+        hist_data = [ x_inl_outl, x_outl_outl]
+        group_labels = ['Inlier-Outlier', 'Outlier-Outlier']
+        fig = ff.create_distplot(hist_data, group_labels,  show_hist=False, bin_size=bins_size)
         return fig
