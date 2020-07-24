@@ -83,37 +83,58 @@
           <fieldset class="form-group">
             <legend class="border-bottom mb-4">Labels and Outliers</legend>
             <div class="row">
+
               <div class="form-group col-3">
-                {{ label_form.label_column.label(class="form-control-label") }}
-                {{ label_form.label_column(class="form-control-label") }}
-                {% for error in label_form.label_column.errors %}
-                  <span style="color: red;">[{{ error }}]</span>
-                {% endfor %}
+                Rows: {{df.shape[0]}} <br/>
+                Columns: {{df.shape[1]}} <br/>
+                Inliers Selected: <p id="num_inliers">0</p>
+                Outliers Selected: <p id="num_outliers">0</p>
               </div>
 
               <div class="form-group col-3">
-                {{ label_form.inliers.label(class="form-control-label") }}
-                {{ label_form.inliers(class="form-control-label") }}
+                <p>{{ label_form.label_column.label(class="form-control-label") }}
+                {{ label_form.label_column }}</p>
+                {% for error in label_form.label_column.errors %}
+                  <span style="color: red;">[{{ error }}]</span>
+                {% endfor %}
+
+                <p>
+                  {{ label_form.ratio_bool }}
+                  {{ label_form.ratio.label(class="form-control-label") }}
+                  {{ label_form.ratio }}
+                </p>
+
+                {% for error in label_form.ratio.errors %}
+                  <span style="color: red;">[{{ error }}]</span>
+                {% endfor %}
+
+                <p>
+                  {{ label_form.normalize_bool }}
+                  Normalize data?
+                </p>
+                <p>
+                  {{ label_form.preprocess_bool }}
+                  PCA preprocessing?
+                  {{ label_form.preprocess }}
+                </p>
+              </div>
+
+              <div class="form-group col-3">
+                <h5>{{ label_form.inliers.label(class="form-control-label") }}</h5>
+                {{ label_form.inliers }}
                 {% for error in label_form.inliers.errors %}
                   <span style="color: red;">[{{ error }}]</span>
                 {% endfor %}
               </div>
 
               <div class="form-group col-3">
-                {{ label_form.outliers.label(class="form-control-label") }}
-                {{ label_form.outliers(class="form-control-label") }}
+                <h5>{{ label_form.outliers.label(class="form-control-label") }}</h5>
+                {{ label_form.outliers }}
                 {% for error in label_form.outliers.errors %}
                   <span style="color: red;">[{{ error }}]</span>
                 {% endfor %}
               </div>
 
-              <div class="form-group col-3">
-                {{ label_form.ratio.label(class="form-control-label") }}
-                {{ label_form.ratio(class="form-control-label") }}
-                {% for error in label_form.ratio.errors %}
-                  <span style="color: red;">[{{ error }}]</span>
-                {% endfor %}
-              </div>
             </div>
           </fieldset>
 
@@ -125,6 +146,8 @@
             let column_select = document.getElementById('label_column')
             let inliers_select = document.getElementById('inliers')
             let outliers_select = document.getElementById('outliers')
+            let num_inliers_select = document.getElementById('num_inliers')
+            let num_outliers_select = document.getElementById('num_outliers')
 
             column_select.onchange = function () {
               column = column_select.value;
@@ -141,6 +164,26 @@
                 });
               });
             }
+
+            inliers_select.onchange = function () {
+              let selectedInliers = Array.from(inliers_select.selectedOptions).map(option => option.value);
+
+              fetch('/getnumrows/' + [selectedInliers]).then(function(response) {
+                response.json().then(function(data) {
+                  num_inliers_select.innerHTML = data.num_rows;
+                });
+              });
+            };
+
+            outliers_select.onchange = function () {
+              let selectedOutliers = Array.from(outliers_select.selectedOptions).map(option => option.value);
+
+              fetch('/getnumrows/' + [selectedOutliers]).then(function(response) {
+                response.json().then(function(data) {
+                  num_outliers_select.innerHTML = data.num_rows;
+                });
+              });
+            };
           </script>
         </form>
       </div>

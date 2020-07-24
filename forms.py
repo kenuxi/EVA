@@ -18,9 +18,13 @@ class UploadForm(FlaskForm):
 
 class LabelForm(FlaskForm):
     label_column = SelectField(label='Label Column', choices=[])
+    ratio_bool = BooleanField(label='Ratio_bool')
+    ratio = FloatField(label='Ratio', validators=[DataRequired()], default=1)
+    normalize_bool = BooleanField(label='normalize_bool')
+    preprocess_bool = BooleanField(label='preprocess?')
+    preprocess = FloatField(label='Dimensions', default=2)
     inliers = SelectMultipleField(label='Inlier Data', choices=[])
     outliers = SelectMultipleField(label='Outlier Data', choices=[])
-    ratio = FloatField(label='Ratio', validators=[DataRequired()], default=1)
     label_submit = SubmitField(label='Submit')
 
 
