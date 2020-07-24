@@ -1,6 +1,6 @@
 import os
 from werkzeug.serving import run_simple
-from flask import Flask, render_template, url_for, redirect, flash, jsonify
+from flask import Flask, render_template, url_for, redirect, flash, jsonify, request
 from flask_uploads import configure_uploads, UploadSet
 from forms import SelectFileForm, UploadForm, VisForm, LabelForm
 from config import app_secret_key, session
@@ -49,11 +49,11 @@ def get_app():
             label_columns = [(str(col), str(col)) for col in session['df']]
             label_columns.reverse()     # reverse cause last col is usually label
             label_form.label_column.choices = label_columns
+            # keeping track of selected label_column in backend
+            session['ds'].label_column = label_columns[0][0]
 
             # populating inlier and outlier choices with initial options
             # this changes dynamically once in app
-
-            print(label_columns)
             initial_labels = [(str(col), str(col)) for col in session['df'][label_columns[0][0]].unique()]
             initial_labels.sort()
             label_form.inliers.choices = initial_labels
@@ -68,8 +68,10 @@ def get_app():
         elif label_form.label_submit.data:
             session['ds'].label_column = label_form.label_column.data
             session['ds'].inliers = label_form.inliers.data
-            session['ds'].outliers = label_form.outliers.data
-            session['ds'].ratio = label_form.ratio.data
+            session['ds'].outliers = [outlier for outlier in label_form.outliers.data if outlier not in session['ds'].inliers]
+            session['ds'].ratio = label_form.ratio.data if label_form.ratio_bool.data else None
+            session['ds'].normalize = label_form.normalize_bool.data
+            session['ds'].pre_process = label_form.preprocess.data if label_form.preprocess_bool.data else None
             session['ds'].create_labeled_df()
 
             # populating label choices with data from file
@@ -84,9 +86,7 @@ def get_app():
             label_form.inliers.choices = initial_labels
             label_form.outliers.choices = initial_labels
 
-            print(f'{label_form.label_column.data}, {label_form.outliers.data}, {label_form.inliers.data}, {label_form.ratio.data}')
-            print(session['ds'].pandas_data_frame)
-
+            print(session['ds'].inliers, session['ds'].outliers)
             return render_template('home.html', title='Home',
                                    df=session['ds'].pandas_data_frame,
                                    file_form=file_form,
@@ -97,13 +97,13 @@ def get_app():
         elif vis_form.vis_submit.data:
             print(vis_form.validate())
             dashboard_config = {'ds': session['ds'],
-                                'PCA': [],
-                                'LLE': [],
+                                'PCA':  [],
+                                'LLE':  [],
                                 'TSNE': [],
                                 'UMAP': [],
                                 'ISOMAP': [],
                                 'KMAP': [],
-                                'MDS': [],
+                                'MDS':  [],
                                 }
 
             for alg in alg_types:
@@ -121,7 +121,20 @@ def get_app():
     @app.route('/getlabels/<column>', methods=['GET'])
     def getlabels(column):
         labels = [str(label) for label in session['ds'].pandas_data_frame[str(column)].unique()]
+        session['ds'].label_column = column
         return jsonify({'labels': labels})
+
+    @app.route('/getnumrows/')
+    @app.route('/getnumrows/<selected_labels>', methods=['GET'])
+    def getnumrows(selected_labels=None):
+        if not selected_labels:
+            return jsonify({'num_rows': 0})
+
+        labels_list = selected_labels.split(',')
+        count = 0
+        for label in labels_list:
+            count += (session['df'][session['ds'].label_column] == label).sum()
+        return jsonify({'num_rows': int(count)})
 
     @app.route('/reload')
     def reload():
