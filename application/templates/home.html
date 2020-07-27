@@ -15,7 +15,7 @@
             {{ file_form.file.label(class="form-control-label") }}
             {{ file_form.file(class="form-control form-control-lg") }}
             {% for error in file_form.file.errors %}
-                <span style="color: red;">[{{ error }}]</span>
+                <span style="color: red;">{{ error }}</span>
               {% endfor %}
           </div>
         </fieldset>
@@ -37,7 +37,7 @@
             {{ up_form.csv_file(class="form-control form-control-lg") }}
 
             {% for error in up_form.csv_file.errors %}
-              <span class="text-danger">{{ errors }}</span>
+              <span class="text-danger">{{ error }}</span>
             {% endfor %}
 
           </div>
