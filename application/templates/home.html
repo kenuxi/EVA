@@ -92,7 +92,7 @@
               </div>
 
               <div class="form-group col-3">
-                <p>{{ label_form.label_column.label(class="form-control-label") }}
+                <p>{{ label_form.label_column.label }}
                 {{ label_form.label_column }}</p>
                 {% for error in label_form.label_column.errors %}
                   <span style="color: red;">[{{ error }}]</span>
@@ -100,7 +100,7 @@
 
                 <p>
                   {{ label_form.ratio_bool }}
-                  {{ label_form.ratio.label(class="form-control-label") }}
+                  {{ label_form.ratio.label }}
                   {{ label_form.ratio }}
                 </p>
 

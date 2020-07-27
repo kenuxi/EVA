@@ -1,3 +1,11 @@
+#label_colum {
+    min-width: 11em;
+}
+
+#label_colum, #ratio, #preprocess {
+    display: block;
+}
+
 #inliers , #outliers {
     min-width:13em;
     min-height:11em;
