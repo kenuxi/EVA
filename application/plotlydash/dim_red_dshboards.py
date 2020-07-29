@@ -455,7 +455,7 @@ class DimRedDash():
                         daq.NumericInput(
                             id='red_dim_input_tsne',
                             min=1,
-                            max=self.stats.d_red,
+                            max=min([self.stats.d, 3]),
                             size=120,
                             label='subspace dimension',
                             labelPosition='bottom',
@@ -508,7 +508,7 @@ class DimRedDash():
                         daq.NumericInput(
                             id='red_dim_input_lle',
                             min=1,
-                            max=self.stats.d_red,
+                            max=min([self.stats.d, 3]),
                             size=120,
                             label='subspace dimension',
                             labelPosition='bottom',
