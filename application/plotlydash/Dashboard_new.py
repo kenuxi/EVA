@@ -179,6 +179,16 @@ class FileDashboard(RemoteCSVDashboard):
 
                      return [pca_vis]
 
+             if 'box' in data_dict['PCA']:
+                 @self.dash_app.callback(
+                     [Output(component_id='box_outliers_plot_pca', component_property='figure')],
+                     [Input(component_id='box_red_dim_pca', component_property='value')]
+                 )
+                 def update_pca_box(box_dim):
+                     box_plot = VisualizationPlotly(pd_data_frame=main_stats.reduced_pandas_dataframe_pca).box_plot_classifications(dim=box_dim-1)
+
+                     return [box_plot]
+
         if data_dict['LLE']:
 
              if 'scatter' in data_dict['LLE']:
@@ -201,6 +211,16 @@ class FileDashboard(RemoteCSVDashboard):
 
                      return [lle_vis]
 
+             if 'box' in data_dict['LLE']:
+                 @self.dash_app.callback(
+                     [Output(component_id='box_outliers_plot_lle', component_property='figure')],
+                     [Input(component_id='box_red_dim_lle', component_property='value')]
+                 )
+                 def update_pca_box(box_dim):
+                     box_plot = VisualizationPlotly(pd_data_frame=main_stats.reduced_pandas_dataframe_lle).box_plot_classifications(dim=box_dim-1)
+
+                     return [box_plot]
+
         if data_dict['TSNE']:
 
              if 'scatter' in data_dict['TSNE']:
@@ -222,6 +242,15 @@ class FileDashboard(RemoteCSVDashboard):
 
                      return [tsne_vis]
 
+             if 'box' in data_dict['TSNE']:
+                 @self.dash_app.callback(
+                     [Output(component_id='box_outliers_plot_tsne', component_property='figure')],
+                     [Input(component_id='box_red_dim_tsne', component_property='value')]
+                 )
+                 def update_pca_box(box_dim):
+                     box_plot = VisualizationPlotly(pd_data_frame=main_stats.reduced_pandas_dataframe_tsne).box_plot_classifications(dim=box_dim-1)
+
+                     return [box_plot]
 
         if data_dict['UMAP']:
 
@@ -243,6 +272,15 @@ class FileDashboard(RemoteCSVDashboard):
 
                      return [umap_vis]
 
+             if 'box' in data_dict['UMAP']:
+                 @self.dash_app.callback(
+                     [Output(component_id='box_outliers_plot_umap', component_property='figure')],
+                     [Input(component_id='box_red_dim_umap', component_property='value')]
+                 )
+                 def update_pca_box(box_dim):
+                     box_plot = VisualizationPlotly(pd_data_frame=main_stats.reduced_pandas_dataframe_umap).box_plot_classifications(dim=box_dim-1)
+
+                     return [box_plot]
 
         if data_dict['KMAP']:
 
@@ -266,6 +304,15 @@ class FileDashboard(RemoteCSVDashboard):
 
                      return [kmap_vis]
 
+             if 'box' in data_dict['KMAP']:
+                 @self.dash_app.callback(
+                     [Output(component_id='box_outliers_plot_kmap', component_property='figure')],
+                     [Input(component_id='box_red_dim_kmap', component_property='value')]
+                 )
+                 def update_pca_box(box_dim):
+                     box_plot = VisualizationPlotly(pd_data_frame=main_stats.reduced_pandas_dataframe_kmap).box_plot_classifications(dim=box_dim-1)
+
+                     return [box_plot]
 
         if data_dict['ISOMAP']:
 
@@ -289,6 +336,15 @@ class FileDashboard(RemoteCSVDashboard):
 
                      return [isomap_vis]
 
+             if 'box' in data_dict['ISOMAP']:
+                 @self.dash_app.callback(
+                     [Output(component_id='box_outliers_plot_isomap', component_property='figure')],
+                     [Input(component_id='box_red_dim_isomap', component_property='value')]
+                 )
+                 def update_pca_box(box_dim):
+                     box_plot = VisualizationPlotly(pd_data_frame=main_stats.reduced_pandas_dataframe_isomap).box_plot_classifications(dim=box_dim-1)
+
+                     return [box_plot]
 
         if data_dict['MDS']:
 
@@ -310,6 +366,16 @@ class FileDashboard(RemoteCSVDashboard):
                          mds_vis = VisualizationPlotly(pd_data_frame=main_stats.reduced_pandas_dataframe_mds).plot_data()
 
                      return [mds_vis]
+
+             if 'box' in data_dict['MDS']:
+                 @self.dash_app.callback(
+                     [Output(component_id='box_outliers_plot_mds', component_property='figure')],
+                     [Input(component_id='box_red_dim_mds', component_property='value')]
+                 )
+                 def update_pca_box(box_dim):
+                     box_plot = VisualizationPlotly(pd_data_frame=main_stats.reduced_pandas_dataframe_mds).box_plot_classifications(dim=box_dim-1)
+
+                     return [box_plot]
         return self.dash_app.server
 
 
