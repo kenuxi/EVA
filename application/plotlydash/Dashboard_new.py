@@ -161,17 +161,21 @@ class FileDashboard(RemoteCSVDashboard):
         )
 
         if data_dict['PCA']:
-
              if 'scatter' in data_dict['PCA']:
                  @self.dash_app.callback(
                      [Output(component_id='reduced_data_plot_pca', component_property='figure')],
-                     [Input(component_id='red_dim_input_pca', component_property='value')]
+                     [Input(component_id='red_dim_input_pca', component_property='value'),
+                      Input(component_id='outlier_only_options_pca', component_property='value')]
                  )
 
-                 def update_pca(m):
-                     print('pca update')
+                 def update_pca(m, show_only_outl_option):
+                     print(data_dict)
                      main_stats.apply_pca(m=m)
-                     pca_vis = VisualizationPlotly(pd_data_frame=main_stats.reduced_pandas_dataframe_pca).plot_data()
+                     if show_only_outl_option:
+                         pca_vis = VisualizationPlotly(pd_data_frame=main_stats.reduced_pandas_dataframe_pca[
+                             main_stats.reduced_pandas_dataframe_pca['Classification'] == 'Outliers']).plot_data()
+                     else:
+                         pca_vis = VisualizationPlotly(pd_data_frame=main_stats.reduced_pandas_dataframe_pca).plot_data()
 
                      return [pca_vis]
 
@@ -181,12 +185,19 @@ class FileDashboard(RemoteCSVDashboard):
                  @self.dash_app.callback(
                      [Output(component_id='reduced_data_plot_lle', component_property='figure')],
                      [Input(component_id='red_dim_input_lle', component_property='value'),
-                      Input(component_id='neighbours_lle', component_property='value')]
+                      Input(component_id='neighbours_lle', component_property='value'),
+                      Input(component_id='outlier_only_options_lle', component_property='value')
+                 ]
                  )
 
-                 def update_lle(m, k_neighbours):
+                 def update_lle(m, k_neighbours, show_only_outl_option):
                      main_stats.apply_lle(m=m, k=k_neighbours)
-                     lle_vis = VisualizationPlotly(pd_data_frame=main_stats.reduced_pandas_dataframe_lle).plot_data()
+
+                     if show_only_outl_option:
+                         lle_vis = VisualizationPlotly(pd_data_frame=main_stats.reduced_pandas_dataframe_lle[
+                             main_stats.reduced_pandas_dataframe_lle['Classification'] == 'Outliers']).plot_data()
+                     else:
+                         lle_vis = VisualizationPlotly(pd_data_frame=main_stats.reduced_pandas_dataframe_lle).plot_data()
 
                      return [lle_vis]
 
@@ -196,12 +207,18 @@ class FileDashboard(RemoteCSVDashboard):
                  @self.dash_app.callback(
                      [Output(component_id='reduced_data_plot_tsne', component_property='figure')],
                      [Input(component_id='red_dim_input_tsne', component_property='value'),
-                      Input(component_id='perplexity_tsne', component_property='value')]
+                      Input(component_id='perplexity_tsne', component_property='value'),
+                      Input(component_id='outlier_only_options_tsne', component_property='value')
+                      ]
                  )
 
-                 def update_tsne(m, perplexity):
+                 def update_tsne(m, perplexity, show_only_outl_option):
                      main_stats.apply_tsne(m=m, perplexity=perplexity)
-                     tsne_vis = VisualizationPlotly(pd_data_frame=main_stats.reduced_pandas_dataframe_tsne).plot_data()
+                     if show_only_outl_option:
+                         tsne_vis = VisualizationPlotly(pd_data_frame=main_stats.reduced_pandas_dataframe_tsne[
+                             main_stats.reduced_pandas_dataframe_tsne['Classification'] == 'Outliers']).plot_data()
+                     else:
+                         tsne_vis = VisualizationPlotly(pd_data_frame=main_stats.reduced_pandas_dataframe_tsne).plot_data()
 
                      return [tsne_vis]
 
@@ -212,12 +229,17 @@ class FileDashboard(RemoteCSVDashboard):
                  @self.dash_app.callback(
                      [Output(component_id='reduced_data_plot_umap', component_property='figure')],
                      [Input(component_id='red_dim_input_umap', component_property='value'),
-                      Input(component_id='kneighbours_umap', component_property='value')]
+                      Input(component_id='kneighbours_umap', component_property='value'),
+                      Input(component_id='outlier_only_options_umap', component_property='value')]
                  )
 
-                 def update_umap(m, k_neighbours):
+                 def update_umap(m, k_neighbours, show_only_outl_option):
                      main_stats.apply_umap(m=m, k=k_neighbours)
-                     umap_vis = VisualizationPlotly(pd_data_frame=main_stats.reduced_pandas_dataframe_umap).plot_data()
+                     if show_only_outl_option:
+                         umap_vis = VisualizationPlotly(pd_data_frame=main_stats.reduced_pandas_dataframe_umap[
+                             main_stats.reduced_pandas_dataframe_umap['Classification'] == 'Outliers']).plot_data()
+                     else:
+                         umap_vis = VisualizationPlotly(pd_data_frame=main_stats.reduced_pandas_dataframe_umap).plot_data()
 
                      return [umap_vis]
 
@@ -229,12 +251,18 @@ class FileDashboard(RemoteCSVDashboard):
                      [Output(component_id='reduced_data_plot_kmap', component_property='figure')],
                      [Input(component_id='red_dim_input_kmap', component_property='value'),
                       Input(component_id='kneighbours_kmap', component_property='value'),
-                      Input(component_id='algs_kmap', component_property='value')]
+                      Input(component_id='algs_kmap', component_property='value'),
+                      Input(component_id='outlier_only_options_kmap', component_property='value')]
                  )
 
-                 def update_kmap(m, k_neighbours, a):
+                 def update_kmap(m, k_neighbours, a, show_only_outl_option):
                      main_stats.apply_kmap(m=m, k=k_neighbours, a=a)
-                     kmap_vis = VisualizationPlotly(pd_data_frame=main_stats.reduced_pandas_dataframe_kmap).plot_data()
+
+                     if show_only_outl_option:
+                         kmap_vis = VisualizationPlotly(pd_data_frame=main_stats.reduced_pandas_dataframe_kmap[
+                             main_stats.reduced_pandas_dataframe_kmap['Classification'] == 'Outliers']).plot_data()
+                     else:
+                         kmap_vis = VisualizationPlotly(pd_data_frame=main_stats.reduced_pandas_dataframe_kmap).plot_data()
 
                      return [kmap_vis]
 
@@ -245,15 +273,43 @@ class FileDashboard(RemoteCSVDashboard):
                  @self.dash_app.callback(
                      [Output(component_id='reduced_data_plot_isomap', component_property='figure')],
                      [Input(component_id='red_dim_input_isomap', component_property='value'),
-                      Input(component_id='kneighbours_isomap', component_property='value')]
+                      Input(component_id='kneighbours_isomap', component_property='value'),
+                      Input(component_id='outlier_only_options_isomap', component_property='value')
+                      ]
                  )
 
-                 def update_isomap(m, k_neighbours):
+                 def update_isomap(m, k_neighbours, show_only_outl_option):
                      main_stats.apply_isomap(m=m, k=k_neighbours)
-                     isomap_vis = VisualizationPlotly(pd_data_frame=main_stats.reduced_pandas_dataframe_isomap).plot_data()
+
+                     if show_only_outl_option:
+                         isomap_vis = VisualizationPlotly(pd_data_frame=main_stats.reduced_pandas_dataframe_isomap[
+                             main_stats.reduced_pandas_dataframe_isomap['Classification'] == 'Outliers']).plot_data()
+                     else:
+                         isomap_vis = VisualizationPlotly(pd_data_frame=main_stats.reduced_pandas_dataframe_isomap).plot_data()
 
                      return [isomap_vis]
 
+
+        if data_dict['MDS']:
+
+             if 'scatter' in data_dict['MDS']:
+                 @self.dash_app.callback(
+                     [Output(component_id='reduced_data_plot_mds', component_property='figure')],
+                     [Input(component_id='red_dim_input_mds', component_property='value'),
+                      Input(component_id='outlier_only_options_mds', component_property='value')
+                      ]
+                 )
+
+                 def update_isomap(m, show_only_outl_option):
+                     main_stats.apply_mds(m=m)
+
+                     if show_only_outl_option:
+                         mds_vis = VisualizationPlotly(pd_data_frame=main_stats.reduced_pandas_dataframe_mds[
+                             main_stats.reduced_pandas_dataframe_mds['Classification'] == 'Outliers']).plot_data()
+                     else:
+                         mds_vis = VisualizationPlotly(pd_data_frame=main_stats.reduced_pandas_dataframe_mds).plot_data()
+
+                     return [mds_vis]
         return self.dash_app.server
 
 

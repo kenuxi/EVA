@@ -25,6 +25,7 @@ class DataStatistics():
         self.reduced_pandas_dataframe_isomap = None
         self.reduced_pandas_dataframe_umap = None
         self.reduced_pandas_dataframe_kmap = None
+        self.reduced_pandas_dataframe_mds = None
         self.features = None
         self.d_red = None
         self.d = None

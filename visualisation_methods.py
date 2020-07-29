@@ -273,7 +273,6 @@ class VisualizationPlotly():
 
         return fig
 
-
     def plot_dendrogram(self):
         fig = go.Figure(ff.create_dendrogram(self.pd_data_frame_nolabel))
         # fig.update_layout(width=800, height=600)
