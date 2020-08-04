@@ -10,9 +10,7 @@ image. There are many different techniques with different strengths and
 weaknesses.
 Your job would be to develop a modular, extensible anomaly visualization
 framework with graphical user interface that allows to evaluate different data
-visualizations techniques on user provided datasets. Time series datasets
-should be paid particular attention to.
-
+visualizations techniques on user provided datasets.
 
 # Installing
 Create new python3 virtual environment:
