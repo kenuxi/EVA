@@ -86,7 +86,6 @@ def get_app():
             label_form.inliers.choices = initial_labels
             label_form.outliers.choices = initial_labels
 
-            print(session['ds'].inliers, session['ds'].outliers)
             return render_template('home.html', title='Home',
                                    df=session['ds'].pandas_data_frame,
                                    file_form=file_form,
