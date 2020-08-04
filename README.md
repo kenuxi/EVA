@@ -139,3 +139,77 @@ In order to add new algorithm, follow these steps:
 2. Extend `_getgraph` and `_getdropdowns` methods in `DimRedDash` class in `application/plotldydash/dim_red_dshboards.py` to support new plots and callbacks for your new algorithm.
 3. Add new form options to `VisForm` class in `forms.py` file,
 4. Edit form code in `application/templates/home.html` to include your new, updated form.
+
+# Results
+
+## FMNIST
+
+* Shoe images as the Inliers  (6000 Images)
+
+* T-shirt images as the Outliers (6000 Images)
+
+* Define 1% outliers in the dataset -> 60 T-shirt images
+
+* Normalise: True
+
+* PCA preposcessed: True
+
+
+### PCA
+
+### LLE
+
+### TSNE
+
+### UMAP
+
+### ISOMAP
+
+### MDS
+
+
+## MNIST
+
+* Zeros Inliers: 6742 images
+* Ones Outliers : 67 images (1%)
+* Normalise: True
+* PCA preposcessed: True
+
+### PCA
+
+
+### LLE
+
+### TSNE
+
+### UMAP
+
+### ISOMAP
+
+### MDS
+
+
+## Fish Bowl
+
+Rows: 2010
+
+Inliers: 2000
+Outliers: 10
+
+* Normalise: False
+* PCA preposcessed: False
+
+### PCA
+
+### LLE
+k-neighbour: 5
+### TSNE
+perplexity: 30
+
+### UMAP
+k-neighbour: 20
+
+### ISOMAP
+k-neighbour: 20
+
+### MDS
