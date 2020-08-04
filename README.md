@@ -1,10 +1,4 @@
-
 # EVA
-
-## your overall plan
-- Project definition: 
-
-### Interactive data visualization for anomaly detection
 
 Anomaly detection is a subfield of AI that detects anomalies in datasets. A
 machine learning algorithm learns the "patterns" that the majority of cases
@@ -20,45 +14,6 @@ visualizations techniques on user provided datasets. Time series datasets
 should be paid particular attention to.
 
 
-### implementation
-- Flask + Plotly Dash
-
-### Requirements firts Prototype 
-- Upload a CSV
-- Configuration Screen
-- Data preview
-- Run PCA & T-SNE
-- Visualise Plotly Dash
-
-
-## your project management 
-### Tasks
-- Generating Anomalines to CSV files      ->Rocco
-- Handling PCA application to Datasets    ->Alberto
-- Build Flask Backend and Homepage        ->Kenneth
-- Start implementing Docker               ->Rocco
-- Git & Team Management                   ->Uttam
-- T-SNE implementation                    ->Alberto
-- Plot from uploaded CSV                  ->Uttam
-
-
-## Data
-- IRIS dataset changed to have anomaly
-- MNIST dataset changed to have anomaly
-
-## splitting up the requirements into tasks (at least the first ones)
-
-## assignment of exactly one person to each task
-
-Week 1: Research 
-
-Week 2: More specific research into Visualisation Frameworks -> Define Milestones
-
-Week 3: Create First demo prototype using sample data
-
-Week 4-5: Running first prototype, including Flask, applying at least T-SNE, PCA
-
-=======
 # Installing
 Create new python3 virtual environment:
 ```
@@ -186,6 +141,3 @@ In order to add new algorithm, follow these steps:
 2. Extend `_getgraph` and `_getdropdowns` methods in `DimRedDash` class in `application/plotldydash/dim_red_dshboards.py` to support new plots and callbacks for your new algorithm.
 3. Add new form options to `VisForm` class in `forms.py` file,
 4. Edit form code in `application/templates/home.html` to include your new, updated form.
-
-
-
