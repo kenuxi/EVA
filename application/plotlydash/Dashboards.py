@@ -17,6 +17,7 @@ from sklearn.manifold import MDS
 from sklearn.decomposition import PCA
 import plotly.express as px
 
+
 class EvaData():
     def __init__(self):
         self.dataset = ''
@@ -81,6 +82,7 @@ class EvaData():
             fig = px.scatter(self.pandas_data_frame, x=self.dataset_columns[0], y=self.dataset_columns[1],
                              color='Classification', title='Not reduced data')
             return fig
+
 
     def visualize_reduced_data(self):
         ''' If the data is 1DIM, 2Dim or 3Dim, it displays the data in a 1D/2D/3D Plot

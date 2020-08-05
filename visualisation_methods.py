@@ -3,6 +3,7 @@ import plotly.express as px
 import plotly.graph_objects as go
 import plotly.figure_factory as ff
 
+
 class VisualizationPlotly():
     ''' This class gives the user the possibility to make different plotly plots to visualize
         an input pandas data frame.
