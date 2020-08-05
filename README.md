@@ -210,18 +210,22 @@ For the visualisation purpose here, we have applied following filters:
 
 ### LLE
 * k-neighbour: 20
+
 ![lle](/images/Fmnist/lle.png)
 
 ### TSNE
 * perplexity: 30
+
 ![tsne](/images/Fmnist/tsne.png)
 
 ### UMAP
 * k-neighbour: 15
+
 ![umap](/images/Fmnist/umap.png)
 
 ### ISOMAP
 * k-neighbour: 20
+
 ![isomap](/images/Fmnist/isomap.png)
 
 
@@ -249,11 +253,13 @@ For the visualisation purpose here, we have applied following filters:
 
 ### LLE
 * k-neighbour: 5
+
 ![lle](/images/mnist/lle.png)
 
 
 ### UMAP
 * K-neighbour: 15
+
 ![umap](/images/mnist/umap.png)
 
 From the visualisation it is clear that `UMAP` performs the better job of isolating the outliers.
@@ -277,18 +283,22 @@ For the visualisation purpose here, we have applied following filters:
 
 ### LLE
 * k-neighbour: 5
+
 ![lle](/images/Fishbowl/lle.png)
 
 ### TSNE
 * perplexity: 30
+
 ![tsne](/images/Fishbowl/tsne.png)
 
 ### UMAP
 * k-neighbour: 20
+
 ![umap](/images/Fishbowl/umap.png)
 
 ### ISOMAP
 * k-neighbour: 20
+
 ![isomap](/images/Fishbowl/isomap.png)
 
 ### MDS
