@@ -45,6 +45,7 @@ class DataStatistics():
 
         Input:       fname   - string, file path name ending in .csv
         '''
+
         if from_file:
             self.file_name = file_name
             # Read CSV file as a pandas data frame
@@ -152,7 +153,6 @@ class DataStatistics():
         # Concadenate the unlabeled pca dataframe with the classifications
         self.reduced_pandas_dataframe_isomap = pd.concat([isomapDf, self.classifications], axis=1)
 
-
     def apply_umap(self, m=2, k=15):
         ''' Perform UMAP  on the dataframe and reduce to an m dimensional subspace with k neighbour
         Definition:  apply_umap(X, m)
@@ -240,7 +240,6 @@ class DataStatistics():
         elif algorithm == 'kmap':
             X = self.reduced_pandas_dataframe_kmap
 
-
         del X['Classification']
         X = X.to_numpy()
 
@@ -268,41 +267,46 @@ class DataStatistics():
 
         else:
             # Read info from dictionary
+
             column_name = self.label_column
             selected_inlier = self.inliers
             selected_outlier = self.outliers
             outlier_percentage = self.ratio / 100  # labeld['ratio'] is given in 2%, 80% and we need 0.2, 0.8
 
-            Inliers_pd = self.pandas_data_frame[self.pandas_data_frame[str(column_name)].isin(selected_inlier)]
-            Outliers_pd = self.pandas_data_frame[self.pandas_data_frame[str(column_name)].isin(selected_outlier)]
+            # 2 CASES: Labeled data or not labeled data
 
-            # Compute how many Inliers we have and how many Outliers we need to get the selected outliers-ratio(percentage)
-            N_inl = Inliers_pd.shape[0]
-            N_outl = int((N_inl * outlier_percentage) / (1 - outlier_percentage))
+            if column_name:
+                Inliers_pd = self.pandas_data_frame[self.pandas_data_frame[str(column_name)].isin(selected_inlier)]
+                Outliers_pd = self.pandas_data_frame[self.pandas_data_frame[str(column_name)].isin(selected_outlier)]
 
-            # Consider the case when our needed N_outl is greater then the given N_outl
-            if Outliers_pd.shape[0] < N_outl:
-                Outliers_pd_final = Outliers_pd
+                # Compute how many Inliers we have and how many Outliers we need to get the selected outliers-ratio(percentage)
+                N_inl = Inliers_pd.shape[0]
+                N_outl = int((N_inl * outlier_percentage) / (1 - outlier_percentage))
+
+                # Consider the case when our needed N_outl is greater then the given N_outl
+                if Outliers_pd.shape[0] < N_outl:
+                    Outliers_pd_final = Outliers_pd
+                else:
+                    Outliers_pd_final = Outliers_pd[0:N_outl]
+
+                # Set respective label names to outlier and inliers
+                Outliers_pd_final['Classification'] = 'Outliers'
+                Inliers_pd['Classification'] = 'Inlier'
+                # Just merge/concadenate both inlier and outlier pandas dataframe into the new pd + overwrite
+                self.pandas_data_frame = pd.concat([Inliers_pd, Outliers_pd_final], ignore_index=True)
+                self.pandas_data_frame = self.pandas_data_frame.drop([column_name], axis=1)
+
+                if 'Unnamed: 0' in self.pandas_data_frame.keys().tolist():
+                    self.pandas_data_frame = self.pandas_data_frame.drop(['Unnamed: 0'], axis=1)
+
+                self.pandas_data_frame_nolabels = self.pandas_data_frame.drop(['Classification'], axis=1)
+                self.classifications = self.pandas_data_frame['Classification']
+                # Read data information (number of features and samples)
+                self.n, self.d = self.pandas_data_frame_nolabels.shape
+
             else:
-                Outliers_pd_final = Outliers_pd[0:N_outl]
-
-            # Set respective label names to outlier and inliers
-            Outliers_pd_final['Classification'] = 'Outliers'
-            Inliers_pd['Classification'] = 'Inlier'
-            # Just merge/concadenate both inlier and outlier pandas dataframe into the new pd + overwrite
-            self.pandas_data_frame = pd.concat([Inliers_pd, Outliers_pd_final], ignore_index=True)
-            self.pandas_data_frame = self.pandas_data_frame.drop([column_name], axis=1)
-
-            if 'Unnamed: 0' in self.pandas_data_frame.keys().tolist():
-                self.pandas_data_frame = self.pandas_data_frame.drop(['Unnamed: 0'], axis=1)
-
-
-            self.pandas_data_frame_nolabels = self.pandas_data_frame.drop(['Classification'], axis=1)
-            self.classifications = self.pandas_data_frame['Classification']
-            # Read data information (number of features and samples)
-            self.n, self.d = self.pandas_data_frame_nolabels.shape
-
-            self.normalize_data()
+                # In this case we just set all points to Inliers by just adding the classification column
+                self.pandas_data_frame['Classification'] = 'Inlier'
 
     def normalize_data(self):
         ''' This method just normalizes the pandas dataframes to the range 0-1 by using the sklearn function

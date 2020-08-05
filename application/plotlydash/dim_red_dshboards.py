@@ -390,7 +390,8 @@ class DimRedDash():
 
     def _getdropdowns(self):
         ''' dashboard dropdowns
-        '''
+        '''Barcelona21!
+
         # PCA DROPDOWNS HERE
         if self.method == 'PCA':
             pca_dropdowns = []
