@@ -234,6 +234,7 @@ The Modified National Institute of Standards and Technology (MNIST) database of 
 http://yann.lecun.com/exdb/mnist/
 
 Sample image for MNIST dataset:
+
 ![MNIST](https://upload.wikimedia.org/wikipedia/commons/thumb/2/27/MnistExamples.png/220px-MnistExamples.png)
 
 For the visualisation purpose here, we have applied following filters:
