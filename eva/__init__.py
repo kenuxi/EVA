@@ -18,12 +18,14 @@ def get_app():
     @app.route('/', methods=['GET', 'POST'])
     @app.route('/home', methods=['GET', 'POST'])
     def home():
+        '''Serves homepage with initial forms. On submit the data is validated and processed.'''
         file_form = SelectFileForm()
         up_form = UploadForm()
         label_form = LabelForm()
         vis_form = VisForm()
 
         if up_form.csv_submit.data and up_form.validate_on_submit():
+            '''Upload submitted. If filename does not exist, file is saved to 'eva/data' directory.'''
             csv_data = up_form.csv_file.data
             filename = csv_data.filename
             if filename in os.listdir(os.path.join('eva/data')):
@@ -35,6 +37,8 @@ def get_app():
             return redirect(url_for('home'))
 
         elif file_form.file_submit.data and file_form.validate_on_submit():
+            '''File submitted. Selected CSV is loaded into DataStatistics Object, 
+            Pandas dataframe and available columsn created.'''
             # loading data from file into wrapper class
             session['ds'].load_data(file_form.file.data)
 
@@ -56,6 +60,7 @@ def get_app():
                                    label_form=label_form)
 
         elif label_form.label_submit.data:
+            '''Label submitted. All selected parameters are saved into the DataStatistics instance. '''
             session['ds'].label_column = label_form.label_column.data
             session['ds'].inliers = label_form.inliers.data
             session['ds'].outliers = [outlier for outlier in label_form.outliers.data if outlier not in session['ds'].inliers]
@@ -78,7 +83,8 @@ def get_app():
                                    vis_form=vis_form)
 
         elif vis_form.vis_submit.data:
-            print(vis_form.validate())
+            '''Visualisation Form Submitted. 
+            Choices of Algorithms and Visualisations are passed into Visualisation object.'''
             dashboard_config = {'ds': session['ds'],
                                 'PCA':  [],
                                 'LLE':  [],
@@ -96,13 +102,15 @@ def get_app():
                             dashboard_config[alg].append(field.description)
 
             session['dashboard_config'] = dashboard_config
-            print(dashboard_config)
             return redirect(url_for('reload'))      # f"{session['dashboard_config']}"
 
         return render_template('home.html', title='Home', file_form=file_form, up_form=up_form)
 
     @app.route('/getlabels/<column>', methods=['GET'])
     def getlabels(column):
+        '''Input: Column selected in Column Label form.
+        Checks for all available values in a column.
+        Returns: JSON object containing list of unique objects in selected column.'''
         labels = [str(label) for label in session['ds'].pandas_data_frame[str(column)].unique()]
         session['ds'].label_column = column
         return jsonify({'labels': labels})
@@ -110,6 +118,9 @@ def get_app():
     @app.route('/getnumrows/')
     @app.route('/getnumrows/<selected_labels>', methods=['GET'])
     def getnumrows(selected_labels=None):
+        '''Input: Labels selected.
+        Checks number of rows with a selected label.
+        Returns: JSON object containing number of rows as int.'''
         if not selected_labels:
             return jsonify({'num_rows': 0})
 
