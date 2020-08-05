@@ -151,19 +151,30 @@ In order to add new algorithm, follow these steps:
 * Define 1% outliers in the dataset -> 60 T-shirt images
 
 * Normalise: True
-
 * PCA preposcessed: True
 
 
 ### PCA
+![pca](/images/Fmnist/pca.png)
 
 ### LLE
 
+* k-neighbour: 20
+![lle](/images/Fmnist/lle.png)
+
 ### TSNE
+
+* perplexity: 30
+![tsne](/images/Fmnist/tsne.png)
 
 ### UMAP
 
+* k-neighbour: 15
+![umap](/images/Fmnist/umap.png)
+
 ### ISOMAP
+* k-neighbour: 20
+![isomap](/images/Fmnist/isomap.png)
 
 ### MDS
 
@@ -176,13 +187,18 @@ In order to add new algorithm, follow these steps:
 * PCA preposcessed: True
 
 ### PCA
-
+![pca](/images/mnist/pca.png)
 
 ### LLE
+* k-neighbour: 5
+![lle](/images/mnist/lle.png)
 
 ### TSNE
+* Perplexity: 30
 
 ### UMAP
+* K-neighbour: 15
+![umap](/images/mnist/umap.png)
 
 ### ISOMAP
 
@@ -191,25 +207,31 @@ In order to add new algorithm, follow these steps:
 
 ## Fish Bowl
 
-Rows: 2010
-
-Inliers: 2000
-Outliers: 10
+* Rows: 2010
+* Inliers: 2000
+* Outliers: 10
 
 * Normalise: False
 * PCA preposcessed: False
 
 ### PCA
+![pca](/images/Fishbowl/pca.png)
 
 ### LLE
-k-neighbour: 5
+* k-neighbour: 5
+![lle](/images/Fishbowl/lle.png)
+
 ### TSNE
-perplexity: 30
+* perplexity: 30
+![tsne](/images/Fishbowl/tsne.png)
 
 ### UMAP
-k-neighbour: 20
+* k-neighbour: 20
+![umap](/images/Fishbowl/umap.png)
 
 ### ISOMAP
-k-neighbour: 20
+* k-neighbour: 20
+![isomap](/images/Fishbowl/isomap.png)
 
 ### MDS
+![mds](/images/Fishbowl/mds.png)
