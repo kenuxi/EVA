@@ -30,7 +30,7 @@ pip install -r requirements.txt
 ```
 Run the app:
 ```
-python app.py
+python run.py
 ```
 Go to this address in your web browser:
 ```
