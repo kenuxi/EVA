@@ -34,7 +34,7 @@ class DataStatistics():
         self.inliers = None
         self.outliers = None
         self.ratio = None
-        self.distances_pd= None
+        self.distances_pd = None
 
     def load_data(self, file_name, from_file=True, data_frame = None):
         ''' Load dataset from an input filename (.csv) as a numpy array and as a pandas dataframe. The input csv data
