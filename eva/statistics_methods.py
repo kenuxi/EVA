@@ -8,7 +8,6 @@ from sklearn.manifold import Isomap, MDS
 import umap
 import kmapper as km
 from sklearn import preprocessing
-from scipy.spatial.distance import cdist
 
 
 class DataStatistics():
@@ -261,7 +260,6 @@ class DataStatistics():
 
 
     def create_labeled_df(self):
-
         if 'Classification' in list(self.pandas_data_frame.keys()):
             pass
 
@@ -322,37 +320,4 @@ class DataStatistics():
 
         self.pandas_data_frame = pd.DataFrame(scaled_pd)
         self.pandas_data_frame['Classification'] = self.classifications
-
-
-    def compute_distances(self, distance_type='euclidean'):
-        ''' This method computes the distances between inliers-inliers, inliers-outliers and outliers-outliers.
-            It saves the dist in  a pandas dataframe with each distance and the corresponding distance type a 'inlier_inlier',
-            'inlier_outlier' and 'outlier_outlier'
-
-            Input:        distance_type: str , it denotes the distance type the user wants to use. It can be set to
-                                        'euclidean', '' or ''
-        '''
-        # Extract nxd data as numpy array from the pandas data frame for inliers & outliers
-        data_inlier_np = self.pandas_data_frame_nolabels[self.classifications == 'Inlier'].values
-        data_outlier_np = self.pandas_data_frame_nolabels[self.classifications == 'Outliers'].values
-
-        # Compute distances and flatten them to 1d arrays
-        dist_inl_inl = cdist(data_inlier_np, data_inlier_np).flatten()
-        dist_inl_outl = cdist(data_inlier_np, data_outlier_np).flatten()
-        dist_outl_outl = cdist(data_outlier_np, data_outlier_np).flatten()
-
-        # create pandas dataframes for each one
-        pd_inl_inl = pd.DataFrame(dist_inl_inl)
-        pd_inl_inl['Distance type'] = 'Inlier_Inlier'
-
-
-        pd_inl_outl = pd.DataFrame(dist_inl_outl)
-        pd_inl_outl['Distance type'] = 'Inlier_Outlier'
-
-        pd_outl_outl = pd.DataFrame(dist_outl_outl)
-        pd_outl_outl['Distance type'] = 'Outlier_Outlier'
-
-        # Join all dataframes to one
-        self.distances_pd = pd.concat([pd_inl_inl, pd_inl_outl, pd_outl_outl])
-
 

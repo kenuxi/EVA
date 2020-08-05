@@ -3,12 +3,10 @@ import dash_html_components as html
 from abc import abstractmethod, ABC
 from .assets.layout import html_layout
 import dash
-from config import iris_config, external_stylesheets
-from application.plotlydash.dim_red_dshboards import DimRedDash
-from statistics_methods import DataStatistics
+from eva.config import iris_config, external_stylesheets
+from eva.plotlydash.dim_red_dshboards import DimRedDash
 from dash.dependencies import Input, Output
-from visualisation_methods import  VisualizationPlotly
-
+from eva.visualisation_methods import VisualizationPlotly
 from typing import List, Dict
 
 
@@ -27,6 +25,7 @@ class Dashboard(ABC):
     def init_callbacks(self, target_column):
         pass
 
+
 class RemoteCSVDashboard(Dashboard):
     def __init__(self, server, stylesheets, prefix, location):
         super().__init__(server, stylesheets, prefix)
@@ -37,6 +36,7 @@ class RemoteCSVDashboard(Dashboard):
 
     def init_callbacks(self, target_column):
         pass
+
 
 class FileDashboard(RemoteCSVDashboard):
     def __init__(self, server, stylesheets=external_stylesheets, prefix='/dashboard/', location=iris_config['location']):
@@ -377,14 +377,6 @@ class FileDashboard(RemoteCSVDashboard):
 
                      return [box_plot]
         return self.dash_app.server
-
-
-
-#dashboard_config = {'location': session['filename'],
-#                    'target': alg_form.target.data,
-#                    'PCA': [],
-#'LLE':['scatter,'box','kn']
- #                   }
 
 
 

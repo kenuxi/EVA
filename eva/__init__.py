@@ -1,19 +1,15 @@
 import os
-from werkzeug.serving import run_simple
-from flask import Flask, render_template, url_for, redirect, flash, jsonify, request
+from flask import Flask, render_template, url_for, redirect, flash, jsonify
 from flask_uploads import configure_uploads, UploadSet
-from forms import SelectFileForm, UploadForm, VisForm, LabelForm
-from config import app_secret_key, session
-from statistics_methods import DataStatistics
-from config import alg_types
-
+from eva.forms import SelectFileForm, UploadForm, VisForm, LabelForm
+from eva.config import app_secret_key, session, alg_types
+from eva.statistics_methods import DataStatistics
 
 to_reload = False
 
 
 def get_app():
-    app = Flask(__name__, instance_relative_config=False,
-                template_folder='application/templates')
+    app = Flask(__name__, instance_relative_config=False)
     app.config['SECRET_KEY'] = app_secret_key
     csv_files = UploadSet('data', ('csv',), default_dest=lambda x: 'data')
     configure_uploads(app, csv_files)
@@ -30,11 +26,11 @@ def get_app():
         if up_form.csv_submit.data and up_form.validate_on_submit():
             csv_data = up_form.csv_file.data
             filename = csv_data.filename
-            if filename in os.listdir(os.path.join('data')):
+            if filename in os.listdir(os.path.join('eva/data')):
                 flash('Filename exists!', 'danger')
                 return redirect(url_for('home'))
 
-            csv_data.save(os.path.join('data', filename))
+            csv_data.save(os.path.join('eva/data', filename))
             flash('Your file has been Added!', 'success')
             return redirect(url_for('home'))
 
@@ -143,7 +139,7 @@ def get_app():
 
     if to_reload:
         with app.app_context():
-            from application.plotlydash.Dashboard_new import FileDashboard
+            from eva.plotlydash.Dashboard_new import FileDashboard
             app = FileDashboard(app).create_dashboard(session['dashboard_config'])
 
     return app
@@ -167,7 +163,3 @@ class AppReloader:
 
 
 application = AppReloader(get_app)
-if __name__ == "__main__":
-    run_simple(hostname='localhost', port=5000, application=application,
-               use_reloader=True, use_debugger=True, use_evalex=True)
-

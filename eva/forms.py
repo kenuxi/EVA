@@ -6,7 +6,7 @@ from wtforms.validators import DataRequired
 
 
 class SelectFileForm(FlaskForm):
-    files = [('data/' + file, file) for file in os.listdir('data') if '.csv' in file]
+    files = [('eva/data/' + file, file) for file in os.listdir('eva/data') if '.csv' in file]
     file = SelectField(label='.csv in data/', choices=files)
     file_submit = SubmitField(label='Submit')
 
@@ -78,7 +78,6 @@ class VisForm(FlaskForm):
     MDS4 = BooleanField(label='dendo', description='dendogram')
     MDS5 = BooleanField(label='density', description='density')
     MDS6 = BooleanField(label='heat', description='heat')
-
 
     vis_submit = SubmitField(label='Submit')
 

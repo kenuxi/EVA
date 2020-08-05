@@ -1,7 +1,7 @@
 import dash_core_components as dcc
 import dash_html_components as html
 import dash_daq as daq
-from visualisation_methods import VisualizationPlotly
+from eva.visualisation_methods import VisualizationPlotly
 
 
 class DimRedDash():
