@@ -79,6 +79,5 @@ class VisForm(FlaskForm):
     MDS5 = BooleanField(label='density', description='density')
     MDS6 = BooleanField(label='heat', description='heat')
 
-
     vis_submit = SubmitField(label='Submit')
 
