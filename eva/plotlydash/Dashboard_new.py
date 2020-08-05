@@ -3,10 +3,10 @@ import dash_html_components as html
 from abc import abstractmethod, ABC
 from .assets.layout import html_layout
 import dash
-from config import iris_config, external_stylesheets
-from plotlydash.dim_red_dshboards import DimRedDash
+from eva.config import iris_config, external_stylesheets
+from eva.plotlydash.dim_red_dshboards import DimRedDash
 from dash.dependencies import Input, Output
-from visualisation_methods import VisualizationPlotly
+from eva.visualisation_methods import VisualizationPlotly
 from typing import List, Dict
 
 

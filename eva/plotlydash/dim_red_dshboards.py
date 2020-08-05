@@ -1,7 +1,7 @@
 import dash_core_components as dcc
 import dash_html_components as html
 import dash_daq as daq
-from visualisation_methods import VisualizationPlotly
+from eva.visualisation_methods import VisualizationPlotly
 
 
 class DimRedDash():
@@ -390,7 +390,7 @@ class DimRedDash():
 
     def _getdropdowns(self):
         ''' dashboard dropdowns
-        '''Barcelona21!
+        '''
 
         # PCA DROPDOWNS HERE
         if self.method == 'PCA':

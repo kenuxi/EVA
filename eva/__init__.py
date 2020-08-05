@@ -1,9 +1,9 @@
 import os
 from flask import Flask, render_template, url_for, redirect, flash, jsonify
 from flask_uploads import configure_uploads, UploadSet
-from .forms import SelectFileForm, UploadForm, VisForm, LabelForm
-from .config import app_secret_key, session, alg_types
-from .statistics_methods import DataStatistics
+from eva.forms import SelectFileForm, UploadForm, VisForm, LabelForm
+from eva.config import app_secret_key, session, alg_types
+from eva.statistics_methods import DataStatistics
 
 to_reload = False
 
@@ -26,11 +26,11 @@ def get_app():
         if up_form.csv_submit.data and up_form.validate_on_submit():
             csv_data = up_form.csv_file.data
             filename = csv_data.filename
-            if filename in os.listdir(os.path.join('data')):
+            if filename in os.listdir(os.path.join('eva/data')):
                 flash('Filename exists!', 'danger')
                 return redirect(url_for('home'))
 
-            csv_data.save(os.path.join('data', filename))
+            csv_data.save(os.path.join('eva/data', filename))
             flash('Your file has been Added!', 'success')
             return redirect(url_for('home'))
 
@@ -139,7 +139,7 @@ def get_app():
 
     if to_reload:
         with app.app_context():
-            from plotlydash.Dashboard_new import FileDashboard
+            from eva.plotlydash.Dashboard_new import FileDashboard
             app = FileDashboard(app).create_dashboard(session['dashboard_config'])
 
     return app

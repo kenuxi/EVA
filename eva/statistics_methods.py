@@ -8,7 +8,6 @@ from sklearn.manifold import Isomap, MDS
 import umap
 import kmapper as km
 from sklearn import preprocessing
-from scipy.spatial.distance import cdist
 
 
 class DataStatistics():
