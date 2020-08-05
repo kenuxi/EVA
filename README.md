@@ -1,5 +1,7 @@
 # EVA
 
+Vision is arguably one of our greatest strengths as humans. Even the most complex ideas tend to become much easier to understand as soon as we find a way to visualize them. Therefore, when we are working with datasets that have more than 3 dimensions, it can be challenging just to understand what’s going on inside of them.
+
 Anomaly detection is a subfield of AI that detects anomalies in datasets. A
 machine learning algorithm learns the "patterns" that the majority of cases
 adhere to and then singles out the few cases that deviate from those normal
@@ -8,7 +10,8 @@ dimensions often help by isolating anomalies in the image of those projections.
 The anomalies can then easily be spotted by a human just by looking at the
 image. There are many different techniques with different strengths and
 weaknesses.
-Your job would be to develop a modular, extensible anomaly visualization
+
+We have developed develop a modular, extensible anomaly visualization
 framework with graphical user interface that allows to evaluate different data
 visualizations techniques on user provided datasets.
 
@@ -44,6 +47,45 @@ Run the app
 docker run -p 5000:port name:tag (example: docker run -p 5000:5000 EVA:latest)
 ```
 # Documentation
+
+## Usage
+
+After you run the server on `http://127.0.0.1:5000`, you will be greeted with this home screen.
+
+![home](/images/home.png)
+
+Here, you can either choose an existing dataset that are in `/data` or you can upload your own dataset. After, you upload your own dataset it gets listed on the dropdown where you can choose and submit it. After you decide to submit the dataset, a table will be created for you to have a peek into it.
+
+![table](/images/table.png)
+
+Now, you can apply filter to your dataset and also selet inliers/outliers. You can normalise and preprocess data and also select the ratio for the outliers.
+
+![filter](/images/filter.png)
+
+Now for the main part, you will have the oppertunity to choose an algorithm to apply to the dataset as well as a visualisation technique you prefer.
+
+For algorithm, you can choose between:
+
+* PCA
+* LLE
+* TSNE
+* UMAP
+* ISOMAP
+* K-Mapper
+* MDS
+
+As visualisation methods, you can choose between:
+
+* Scatter plot
+* Box plot
+* k-nearest neighbour
+* Dendogram
+* Density plot
+* Heatmap
+
+![pick](/images/picker.png)
+
+After you choose algorithms and visualisations methods, you will be redirected to the page which shows the plots obtained from chosen algorithms
 
 ## Dimensionality reduction algorithms
 Dimensionality reduction algorithms help with understanding data through visualisation.
@@ -142,14 +184,23 @@ In order to add new algorithm, follow these steps:
 
 # Results
 
+To demonstrate the results we have selected 3 datasets, namely, FMNIST, MNIST and FishBowl. We have then plotted 2D scatter-plot for all the datasets and selected algorithms.
+
 ## FMNIST
 
+Fashion-MNIST (FMNIST) is a dataset of Zalando's article images—consisting of a training set of 60,000 examples and a test set of 10,000 examples. Each example is a 28x28 grayscale image, associated with a label from 10 classes. We intend Fashion-MNIST to serve as a direct drop-in replacement for the original MNIST dataset for benchmarking machine learning algorithms. It shares the same image size and structure of training and testing splits.
+
+https://github.com/zalandoresearch/fashion-mnist
+
+This is how the data looks (each class takes three-rows):
+
+![fmnist](https://github.com/zalandoresearch/fashion-mnist/raw/master/doc/img/fashion-mnist-sprite.png)
+
+For the visualisation purpose here, we have applied following filters:
+
 * Shoe images as the Inliers  (6000 Images)
-
 * T-shirt images as the Outliers (6000 Images)
-
 * Define 1% outliers in the dataset -> 60 T-shirt images
-
 * Normalise: True
 * PCA preposcessed: True
 
@@ -158,17 +209,14 @@ In order to add new algorithm, follow these steps:
 ![pca](/images/Fmnist/pca.png)
 
 ### LLE
-
 * k-neighbour: 20
 ![lle](/images/Fmnist/lle.png)
 
 ### TSNE
-
 * perplexity: 30
 ![tsne](/images/Fmnist/tsne.png)
 
 ### UMAP
-
 * k-neighbour: 15
 ![umap](/images/Fmnist/umap.png)
 
@@ -176,10 +224,19 @@ In order to add new algorithm, follow these steps:
 * k-neighbour: 20
 ![isomap](/images/Fmnist/isomap.png)
 
-### MDS
 
+From the visualisation it is clear that `UMAP` performs the better job of isolating the outliers.
 
 ## MNIST
+
+The Modified National Institute of Standards and Technology (MNIST) database of handwritten digits has a training set of 60,000 examples, and a test set of 10,000 examples. It is a subset of a larger set available from NIST. The digits have been size-normalized and centered in a fixed-size image. It is a good database for people who want to try learning techniques and pattern recognition methods on real-world data while spending minimal efforts on preprocessing and formatting.
+
+http://yann.lecun.com/exdb/mnist/
+
+Sample image for MNIST dataset:
+!(MNIST)[https://upload.wikimedia.org/wikipedia/commons/thumb/2/27/MnistExamples.png/220px-MnistExamples.png)
+
+For the visualisation purpose here, we have applied following filters:
 
 * Zeros Inliers: 6742 images
 * Ones Outliers : 67 images (1%)
@@ -193,19 +250,19 @@ In order to add new algorithm, follow these steps:
 * k-neighbour: 5
 ![lle](/images/mnist/lle.png)
 
-### TSNE
-* Perplexity: 30
 
 ### UMAP
 * K-neighbour: 15
 ![umap](/images/mnist/umap.png)
 
-### ISOMAP
-
-### MDS
+From the visualisation it is clear that `UMAP` performs the better job of isolating the outliers.
 
 
-## Fish Bowl
+## FishBowl
+
+Fish Bowl dataset comprises a sphere embedded in 3D whose top cap has been removed. In other words, it is a punctured sphere, which is sparsely sampled at the bottom and densely at the top.
+
+For the visualisation purpose here, we have applied following filters:
 
 * Rows: 2010
 * Inliers: 2000
@@ -235,3 +292,5 @@ In order to add new algorithm, follow these steps:
 
 ### MDS
 ![mds](/images/Fishbowl/mds.png)
+
+From the visualisation, we can say that `LLE` argueably performs the better job of isolating the outliers.
