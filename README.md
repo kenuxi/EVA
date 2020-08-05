@@ -207,10 +207,9 @@ In order to add new algorithm, follow these steps:
 
 ## Fish Bowl
 
-Rows: 2010
-
-Inliers: 2000
-Outliers: 10
+* Rows: 2010
+* Inliers: 2000
+* Outliers: 10
 
 * Normalise: False
 * PCA preposcessed: False
