@@ -352,3 +352,50 @@ both figures can be found in the original UMAP paper from 2018.
 ![scalability_data](/images/scalability/data_samples.png)
 
 *
+
+## Scalability
+When reducing large data sets with high dimensional data to 2 or 3 dimensions where we can visualize it, the computational
+complexity of the algorithms play a major role in how much time it takes an algorithm to reduce all the data. We mainly worked
+with the Mnist and Fashion Mnist data sets. Both contain 60.000 images with each image having 28x28 pixels corresponding to
+784 features per Image. The next points give an overview of what we learned from our experience using the app & different
+algorithms on these large datasets.
+
+* LLE does not scale well with the number of data samples. We believe that the computation of the knn graph LLE performs as
+the initial algorithm step requires a lot of computational resources. Therefore, one should avoid applying LLE on a regular 
+machine on high dimensional (e.g images) data sets with approximately more than 2000 samples. 
+
+* TSNE does not scale well with the number of data samples. As in the case of LLE, we do not recommend to run TSNE on high
+dimensional datasets with more than 2000 samples. 
+
+* PCA scales well with the number of data samples. In this case, one should not encounter problems when applying PCA to
+high dimensional datasets with a high data samples number. Even for all the 60.000 images, PCA is able to reduce the dimensions
+in an appropiate time. 
+
+* Other algorithms as Isomap and MDS suffer from the same computational problems as LLE and do not scale well with high 
+dimensional data sets with a high data sample number. 
+
+The good news is that there is one algorithm that is as fast as PCA and is able to unfold non linear data as well as 
+TSNE. This is the UMAP algorithm, which is the most modern one of all (2018). 
+
+* UMAP scales well with high dimensional data and with a high data sample number.
+
+* We recommend to try PCA which preserves the global structure of the data and UMAP which focusses more on preserving 
+local topolgical information about the data for high dimensional datasets with a high sampel number. By using these two 
+algorithms, one can get a quick overview if there are any outliers present & if the outliers are clearly separated from the
+inliers in the 2 or 3 dimensional space.
+
+* The application also gives one the option to apply  PCA to the dataset before using computationally expensive algorithms
+as TSNE. This is a common preprocessing step. Consider we have the MNIST data set consisting of 60.000 images with each 784
+features. Our data matrix has the dimensions 60.000 x 784. Then, we apply PCA and reduce the data to e.g 50 dimensions and keep
+90% of the variance. Our new data matrix has the dimensions 60.000 x 50. Then, we can apply TSNE on this lower dimensional data
+set. We observed that since we are keeping most of the variance in the preprocessing step, the TSNE results are still positive. Most
+important, since we  are working with a lower dimensional data set, the computation time drops. Nevertheless, the TSNE or LLE
+computation times seem to depend more on the number of data samples then on the data dimension. For this reason, we still
+recommend to try UMAP or PCA at first for obtaining quick results. 
+
+Last but not least, we conducted some research regardin the scalability of UMAP in comparison to other algorithms. The next
+both figures can be found in the original UMAP paper from 2018.
+![scalability](/images/scalability/embedding_dimension.png)
+![scalability_data](/images/scalability/data_samples.png)
+
+*
