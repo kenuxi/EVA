@@ -43,17 +43,11 @@ def get_app():
 
             # populating label choices with data from file
             label_columns = [(str(col), str(col)) for col in session['df']]
+            label_columns.append(('None(Unlabeled)', None))
             label_columns.reverse()     # reverse cause last col is usually label
             label_form.label_column.choices = label_columns
             # keeping track of selected label_column in backend
             session['ds'].label_column = label_columns[0][0]
-
-            # populating inlier and outlier choices with initial options
-            # this changes dynamically once in app
-            initial_labels = [(str(col), str(col)) for col in session['df'][label_columns[0][0]].unique()]
-            initial_labels.sort()
-            label_form.inliers.choices = initial_labels
-            label_form.outliers.choices = initial_labels
 
             return render_template('home.html', title='Home',
                                    df=session['ds'].pandas_data_frame,
@@ -72,15 +66,9 @@ def get_app():
 
             # populating label choices with data from file
             label_columns = [(str(col), str(col)) for col in session['df']]
+            label_columns.append(('None(Unlabeled)', None))
             label_columns.reverse()     # reverse cause last col is usually label
             label_form.label_column.choices = label_columns
-
-            # populating inlier and outlier choices with initial options
-            # this changes dynamically once in app
-            initial_labels = [(str(col), str(col)) for col in session['df'][label_columns[0][0]].unique()]
-            initial_labels.sort()
-            label_form.inliers.choices = initial_labels
-            label_form.outliers.choices = initial_labels
 
             return render_template('home.html', title='Home',
                                    df=session['ds'].pandas_data_frame,
