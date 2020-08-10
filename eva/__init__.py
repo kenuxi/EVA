@@ -33,6 +33,8 @@ def get_app():
                 return redirect(url_for('home'))
 
             csv_data.save(os.path.join('eva/data', filename))
+            file_form.file.choices.append(('eva/data/' + filename, filename))
+            print(file_form.file.choices)
             flash('Your file has been Added!', 'success')
             return redirect(url_for('home'))
 
@@ -47,7 +49,7 @@ def get_app():
 
             # populating label choices with data from file
             label_columns = [(str(col), str(col)) for col in session['df']]
-            label_columns.append(('None(Unlabeled)', None))
+            label_columns.append((None, 'None(Unlabeled)'))
             label_columns.reverse()     # reverse cause last col is usually label
             label_form.label_column.choices = label_columns
             # keeping track of selected label_column in backend
@@ -111,6 +113,8 @@ def get_app():
         '''Input: Column selected in Column Label form.
         Checks for all available values in a column.
         Returns: JSON object containing list of unique objects in selected column.'''
+        if column == 'None':
+            return jsonify({'labels': []})
         labels = [str(label) for label in session['ds'].pandas_data_frame[str(column)].unique()]
         session['ds'].label_column = column
         return jsonify({'labels': labels})
