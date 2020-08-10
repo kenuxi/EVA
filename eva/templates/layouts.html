@@ -53,6 +53,23 @@
          "bScrollCollapse": true
         });
       });
+
+
+    let submit_select = document.getElementById('csv_submit')
+    let filelist_select = document.getElementById('file')
+
+    $(document).ready( function () {
+      fetch('/getfiles/').then(function(response) {
+            response.json().then(function(data) {
+              let optionHtml = ''
+              for (let file of data.files) {
+                optionHtml += '<option value="' + file[0] + '">' + file[1] + '</option>';
+              }
+              console.table(optionHtml);
+              filelist_select.innerHTML = optionHtml;
+            });
+          });
+        });
     </script>
 </body>
 </html>

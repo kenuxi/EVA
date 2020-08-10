@@ -6,8 +6,7 @@ from wtforms.validators import DataRequired
 
 
 class SelectFileForm(FlaskForm):
-    files = [('eva/data/' + file, file) for file in os.listdir('eva/data') if '.csv' in file]
-    file = SelectField(label='.csv in data/', choices=files)
+    file = SelectField(label='.csv in data/', choices=[])
     file_submit = SubmitField(label='Submit')
 
 

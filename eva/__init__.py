@@ -49,7 +49,7 @@ def get_app():
 
             # populating label choices with data from file
             label_columns = [(str(col), str(col)) for col in session['df']]
-            label_columns.append((None, 'None(Unlabeled)'))
+            label_columns.append((None, 'None'))
             label_columns.reverse()     # reverse cause last col is usually label
             label_form.label_column.choices = label_columns
             # keeping track of selected label_column in backend
@@ -118,6 +118,11 @@ def get_app():
         labels = [str(label) for label in session['ds'].pandas_data_frame[str(column)].unique()]
         session['ds'].label_column = column
         return jsonify({'labels': labels})
+
+    @app.route('/getfiles/', methods=['GET'])
+    def getfiles():
+        files = [('eva/data/' + file, file) for file in os.listdir('eva/data') if '.csv' in file]
+        return jsonify({'files': sorted(files)})
 
     @app.route('/getnumrows/')
     @app.route('/getnumrows/<selected_labels>', methods=['GET'])
