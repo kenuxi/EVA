@@ -49,10 +49,10 @@ class DimRedDash():
                 ], className='five columns'
                 ))
 
-            if 'dendogram' in self.plot_options:
+            if 'dendrogram' in self.plot_options:
                 pca_dendo = visualisation.plot_dendrogram()
                 pca_plots.append(html.Div([
-                    dcc.Graph(id='dendogram_pca', figure=pca_dendo),
+                    dcc.Graph(id='dendrogram_pca', figure=pca_dendo),
                 ], className='five columns'
                 ))
 
@@ -100,10 +100,10 @@ class DimRedDash():
                 ], className='five columns'
                 ))
 
-            if 'dendogram' in self.plot_options:
+            if 'dendrogram' in self.plot_options:
                 lle_dendo = visualisation.plot_dendrogram()
                 lle_plots.append(html.Div([
-                    dcc.Graph(id='dendogram_lle', figure=lle_dendo),
+                    dcc.Graph(id='dendrogram_lle', figure=lle_dendo),
                 ], className='five columns'
                 ))
 
@@ -151,10 +151,10 @@ class DimRedDash():
                 ], className='five columns'
                 ))
 
-            if 'dendogram' in self.plot_options:
+            if 'dendrogram' in self.plot_options:
                 tsne_dendo = visualisation.plot_dendrogram()
                 tsne_plots.append(html.Div([
-                    dcc.Graph(id='dendogram_tsne', figure=tsne_dendo),
+                    dcc.Graph(id='dendrogram_tsne', figure=tsne_dendo),
                 ], className='five columns'
                 ))
 
@@ -202,10 +202,10 @@ class DimRedDash():
                 ], className='five columns'
                 ))
 
-            if 'dendogram' in self.plot_options:
+            if 'dendrogram' in self.plot_options:
                 umap_dendo = visualisation.plot_dendrogram()
                 umap_plots.append(html.Div([
-                    dcc.Graph(id='dendogram_umap', figure=umap_dendo),
+                    dcc.Graph(id='dendrogram_umap', figure=umap_dendo),
                 ], className='five columns'
                 ))
 
@@ -253,10 +253,10 @@ class DimRedDash():
                 ], className='five columns'
                 ))
 
-            if 'dendogram' in self.plot_options:
+            if 'dendrogram' in self.plot_options:
                 kmap_dendo = visualisation.plot_dendrogram()
                 kmap_plots.append(html.Div([
-                    dcc.Graph(id='dendogram_kmap', figure=kmap_dendo),
+                    dcc.Graph(id='dendrogram_kmap', figure=kmap_dendo),
                 ], className='five columns'
                 ))
 
@@ -304,10 +304,10 @@ class DimRedDash():
                 ], className='five columns'
                 ))
 
-            if 'dendogram' in self.plot_options:
+            if 'dendrogram' in self.plot_options:
                 isomap_dendo = visualisation.plot_dendrogram()
                 isomap_plots.append(html.Div([
-                    dcc.Graph(id='dendogram_isomap', figure=isomap_dendo),
+                    dcc.Graph(id='dendrogram_isomap', figure=isomap_dendo),
                 ], className='five columns'
                 ))
 
@@ -355,10 +355,10 @@ class DimRedDash():
                 ], className='five columns'
                 ))
 
-            if 'dendogram' in self.plot_options:
+            if 'dendrogram' in self.plot_options:
                 mds_dendo = visualisation.plot_dendrogram()
                 mds_plots.append(html.Div([
-                    dcc.Graph(id='dendogram_mds', figure=mds_dendo),
+                    dcc.Graph(id='dendrogram_mds', figure=mds_dendo),
                 ], className='five columns'
                 ))
 
