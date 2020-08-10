@@ -260,16 +260,16 @@ class DataStatistics():
 
 
     def create_labeled_df(self):
-        if 'Classification' in list(self.pandas_data_frame.keys()):
+        if 'Classificationnn' in list(self.pandas_data_frame.keys()):
             pass
-
         else:
             # Read info from dictionary
 
             column_name = self.label_column
             selected_inlier = self.inliers
             selected_outlier = self.outliers
-            outlier_percentage = self.ratio / 100  # labeld['ratio'] is given in 2%, 80% and we need 0.2, 0.8
+            if self.ratio:
+                outlier_percentage = self.ratio / 100  # labeld['ratio'] is given in 2%, 80% and we need 0.2, 0.8
 
             # 2 CASES: Labeled data or not labeled data
 
@@ -278,21 +278,30 @@ class DataStatistics():
                 Outliers_pd = self.pandas_data_frame[self.pandas_data_frame[str(column_name)].isin(selected_outlier)]
 
                 # Compute how many Inliers we have and how many Outliers we need to get the selected outliers-ratio(percentage)
-                N_inl = Inliers_pd.shape[0]
-                N_outl = int((N_inl * outlier_percentage) / (1 - outlier_percentage))
 
-                # Consider the case when our needed N_outl is greater then the given N_outl
-                if Outliers_pd.shape[0] < N_outl:
-                    Outliers_pd_final = Outliers_pd
+                if self.ratio:
+                    N_inl = Inliers_pd.shape[0]
+                    N_outl = int((N_inl * outlier_percentage) / (1 - outlier_percentage))
+
+                    # Consider the case when our needed N_outl is greater then the given N_outl
+                    if Outliers_pd.shape[0] < N_outl:
+                        Outliers_pd_final = Outliers_pd
+                    else:
+                        Outliers_pd_final = Outliers_pd[0:N_outl]
+
                 else:
-                    Outliers_pd_final = Outliers_pd[0:N_outl]
+                    Outliers_pd_final = Outliers_pd
 
                 # Set respective label names to outlier and inliers
                 Outliers_pd_final['Classification'] = 'Outliers'
                 Inliers_pd['Classification'] = 'Inlier'
                 # Just merge/concadenate both inlier and outlier pandas dataframe into the new pd + overwrite
                 self.pandas_data_frame = pd.concat([Inliers_pd, Outliers_pd_final], ignore_index=True)
-                self.pandas_data_frame = self.pandas_data_frame.drop([column_name], axis=1)
+
+                if column_name == 'Classification':
+                    pass
+                else:
+                    self.pandas_data_frame = self.pandas_data_frame.drop([column_name], axis=1)
 
                 if 'Unnamed: 0' in self.pandas_data_frame.keys().tolist():
                     self.pandas_data_frame = self.pandas_data_frame.drop(['Unnamed: 0'], axis=1)
