@@ -79,7 +79,7 @@ As visualisation methods, you can choose between:
 * Scatter plot
 * Box plot
 * k-nearest neighbour
-* Dendogram
+* dendrogram
 * Density plot
 * Heatmap
 
