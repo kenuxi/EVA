@@ -104,6 +104,9 @@
                   {{ label_form.ratio.label }}
                   {{ label_form.ratio }}
                 </p>
+                {% for error in label_form.ratio_bool.errors %}
+                  <span style="color: red;">[{{ error }}]</span>
+                {% endfor %}
 
                 {% for error in label_form.ratio.errors %}
                   <span style="color: red;">[{{ error }}]</span>
@@ -113,11 +116,20 @@
                   {{ label_form.normalize_bool }}
                   Normalize data?
                 </p>
+
                 <p>
                   {{ label_form.preprocess_bool }}
                   PCA preprocessing?
                   {{ label_form.preprocess }}
                 </p>
+                {% for error in label_form.preprocess_bool.errors %}
+                  <span style="color: red;">[{{ error }}]</span>
+                {% endfor %}
+
+                {% for error in label_form.preprocess.errors %}
+                  <span style="color: red;">[{{ error }}]</span>
+                {% endfor %}
+
               </div>
 
               <div class="form-group col-3">

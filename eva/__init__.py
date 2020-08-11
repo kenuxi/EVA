@@ -33,12 +33,10 @@ def get_app():
                 return redirect(url_for('home'))
 
             csv_data.save(os.path.join('eva/data', filename))
-            file_form.file.choices.append(('eva/data/' + filename, filename))
-            print(file_form.file.choices)
             flash('Your file has been Added!', 'success')
             return redirect(url_for('home'))
 
-        elif file_form.file_submit.data and file_form.validate_on_submit():
+        elif file_form.file_submit.data:
             '''File submitted. Selected CSV is loaded into DataStatistics Object, 
             Pandas dataframe and available columsn created.'''
             # loading data from file into wrapper class
@@ -66,9 +64,9 @@ def get_app():
             session['ds'].label_column = label_form.label_column.data
             session['ds'].inliers = label_form.inliers.data
             session['ds'].outliers = [outlier for outlier in label_form.outliers.data if outlier not in session['ds'].inliers]
-            session['ds'].ratio = label_form.ratio.data if label_form.ratio_bool.data else None
+            session['ds'].ratio = float(label_form.ratio.data)if label_form.ratio_bool.data else None
             session['ds'].normalize = label_form.normalize_bool.data
-            session['ds'].pre_process = label_form.preprocess.data if label_form.preprocess_bool.data else None
+            session['ds'].pre_process = float(label_form.preprocess.data) if label_form.preprocess_bool.data else None
             session['ds'].create_labeled_df()
 
             # populating label choices with data from file
