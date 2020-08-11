@@ -38,7 +38,7 @@ def get_app():
             flash('Your file has been Added!', 'success')
             return redirect(url_for('home'))
 
-        elif file_form.file_submit.data and file_form.validate_on_submit():
+        elif file_form.file_submit.data:
             '''File submitted. Selected CSV is loaded into DataStatistics Object, 
             Pandas dataframe and available columsn created.'''
             # loading data from file into wrapper class
