@@ -29,6 +29,9 @@ class VisualizationPlotly():
         # Read number of samples/examples of the data frame
         self.n = self.pd_data_frame.shape[0]
 
+        # Add indexes to data frame
+        self.pd_data_frame['indexes'] = range(1, len(self.pd_data_frame) + 1)
+
     def plot_data(self):
         ''' Visualize reduced data in a 1dim,  2dim or 3dim scatter plot. If the panda data frame contains "Classification"
         as one column, the plots are labeled, otherwise not.
@@ -60,9 +63,12 @@ class VisualizationPlotly():
 
                 else:
                     fig = px.scatter(self.pd_data_frame, x=self.features[0], y=self.features[1],
-                                 color='Classification', title='Data')
+                                 color='Classification', title='Data', text='indexes')
+                    fig.update_traces(textfont_size=1)
+
             else:
-                fig = px.scatter(self.pd_data_frame, x=self.features[0], y=self.features[1], c='blue', title='Data')
+                fig = px.scatter(self.pd_data_frame, x=self.features[0], y=self.features[1], c='blue', title='Data',
+                                 text='indexes')
 
         else:
             if self.classification:
