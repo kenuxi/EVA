@@ -21,7 +21,6 @@ def get_app():
         '''Serves homepage with initial forms. On submit the data is validated and processed.'''
         file_form = SelectFileForm()
         up_form = UploadForm()
-        label_form = LabelForm()
         vis_form = VisForm()
 
         if up_form.csv_submit.data and up_form.validate_on_submit():
@@ -35,29 +34,6 @@ def get_app():
             csv_data.save(os.path.join('eva/data', filename))
             flash('Your file has been Added!', 'success')
             return redirect(url_for('home'))
-
-        elif file_form.file_submit.data:
-            '''File submitted. Selected CSV is loaded into DataStatistics Object, 
-            Pandas dataframe and available columsn created.'''
-            # loading data from file into wrapper class
-            session['ds'].load_data(file_form.file.data)
-
-            # separate dataframe for easier access
-            session['df'] = session['ds'].pandas_data_frame
-
-            # populating label choices with data from file
-            label_columns = [(str(col), str(col)) for col in session['df']]
-            label_columns.append((None, 'None'))
-            label_columns.reverse()     # reverse cause last col is usually label
-            label_form.label_column.choices = label_columns
-            # keeping track of selected label_column in backend
-            session['ds'].label_column = label_columns[0][0]
-
-            return render_template('home.html', title='Home',
-                                   df=session['ds'].pandas_data_frame,
-                                   file_form=file_form,
-                                   up_form=up_form,
-                                   label_form=label_form)
 
         elif label_form.label_submit.data:
             '''Label submitted. All selected parameters are saved into the DataStatistics instance. '''
@@ -105,6 +81,27 @@ def get_app():
             return redirect(url_for('reload'))      # f"{session['dashboard_config']}"
 
         return render_template('home.html', title='Home', file_form=file_form, up_form=up_form)
+
+    @app.route('/get_label_form/', methods=['GET'])
+    def get_label_form(file):
+        label_form = LabelForm()
+
+        session['ds'].load_data(file)   # loading file into wrapper class
+
+        # separate dataframe for easier access
+        session['df'] = session['ds'].pandas_data_frame
+
+        # populating label choices with data from file
+        label_columns = [(str(col), str(col)) for col in session['df']]
+        label_columns.append((None, 'None'))
+        label_columns.reverse()     # reverse cause last col is usually label
+        label_form.label_column.choices = label_columns
+        # keeping track of selected label_column in backend
+        session['ds'].label_column = label_columns[0][0]
+
+        return render_template('label_form.html',
+                               df=session['ds'].pandas_data_frame,
+                               label_form=label_form)
 
     @app.route('/getlabels/<column>', methods=['GET'])
     def getlabels(column):
