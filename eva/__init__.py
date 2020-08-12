@@ -49,7 +49,7 @@ def get_app():
 
             # populating label choices with data from file
             label_columns = [(str(col), str(col)) for col in session['df']]
-            label_columns.append((None, 'None'))
+            label_columns.append(('None', 'None'))
             label_columns.reverse()     # reverse cause last col is usually label
             label_form.label_column.choices = label_columns
             # keeping track of selected label_column in backend
