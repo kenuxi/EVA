@@ -1,5 +1,5 @@
 import os
-from flask import Flask, render_template, url_for, redirect, flash, jsonify
+from flask import Flask, render_template, url_for, redirect, flash, jsonify, request
 from flask_uploads import configure_uploads, UploadSet
 from eva.forms import SelectFileForm, UploadForm, VisForm, LabelForm
 from eva.config import app_secret_key, session, alg_types
@@ -35,28 +35,7 @@ def get_app():
             flash('Your file has been Added!', 'success')
             return redirect(url_for('home'))
 
-        elif label_form.label_submit.data:
-            '''Label submitted. All selected parameters are saved into the DataStatistics instance. '''
-            session['ds'].label_column = label_form.label_column.data
-            session['ds'].inliers = label_form.inliers.data
-            session['ds'].outliers = [outlier for outlier in label_form.outliers.data if outlier not in session['ds'].inliers]
-            session['ds'].ratio = float(label_form.ratio.data)if label_form.ratio_bool.data else None
-            session['ds'].normalize = label_form.normalize_bool.data
-            session['ds'].pre_process = float(label_form.preprocess.data) if label_form.preprocess_bool.data else None
-            session['ds'].create_labeled_df()
 
-            # populating label choices with data from file
-            label_columns = [(str(col), str(col)) for col in session['df']]
-            label_columns.append(('None(Unlabeled)', None))
-            label_columns.reverse()     # reverse cause last col is usually label
-            label_form.label_column.choices = label_columns
-
-            return render_template('home.html', title='Home',
-                                   df=session['ds'].pandas_data_frame,
-                                   file_form=file_form,
-                                   up_form=up_form,
-                                   label_form=label_form,
-                                   vis_form=vis_form)
 
         elif vis_form.vis_submit.data:
             '''Visualisation Form Submitted. 
@@ -82,26 +61,58 @@ def get_app():
 
         return render_template('home.html', title='Home', file_form=file_form, up_form=up_form)
 
-    @app.route('/get_label_form/', methods=['GET'])
-    def get_label_form(file):
-        label_form = LabelForm()
+    @app.route('/get_label_form')
+    def get_label_form():
+        try:
+            file = request.args.get('file', 0, type=str)
 
-        session['ds'].load_data(file)   # loading file into wrapper class
+            label_form = LabelForm()
 
-        # separate dataframe for easier access
-        session['df'] = session['ds'].pandas_data_frame
+            session['ds'].load_data(file)   # loading file into wrapper class
+
+            # separate dataframe for easier access
+            session['df'] = session['ds'].pandas_data_frame
+
+            # populating label choices with data from file
+            label_columns = [(str(col), str(col)) for col in session['df']]
+            label_columns.append((None, 'None'))
+            label_columns.reverse()     # reverse cause last col is usually label
+            label_form.label_column.choices = label_columns
+            # keeping track of selected label_column in backend
+            session['ds'].label_column = label_columns[0][0]
+
+            return jsonify({'result': render_template('label_form.html',
+                                                      df=session['ds'].pandas_data_frame,
+                                                      label_form=label_form)})
+        except Exception as e:
+            return str(e)
+
+
+
+    @app.route('/get_vis_form/')
+    def get_vis_form(args):
+
+        session['ds'].label_column = label_form.label_column.data
+        session['ds'].inliers = label_form.inliers.data
+        session['ds'].outliers = [outlier for outlier in label_form.outliers.data if
+                                  outlier not in session['ds'].inliers]
+        session['ds'].ratio = float(label_form.ratio.data) if label_form.ratio_bool.data else None
+        session['ds'].normalize = label_form.normalize_bool.data
+        session['ds'].pre_process = float(label_form.preprocess.data) if label_form.preprocess_bool.data else None
+        session['ds'].create_labeled_df()
 
         # populating label choices with data from file
         label_columns = [(str(col), str(col)) for col in session['df']]
-        label_columns.append((None, 'None'))
-        label_columns.reverse()     # reverse cause last col is usually label
+        label_columns.append(('None(Unlabeled)', None))
+        label_columns.reverse()  # reverse cause last col is usually label
         label_form.label_column.choices = label_columns
-        # keeping track of selected label_column in backend
-        session['ds'].label_column = label_columns[0][0]
 
-        return render_template('label_form.html',
+        return render_template('home.html', title='Home',
                                df=session['ds'].pandas_data_frame,
-                               label_form=label_form)
+                               file_form=file_form,
+                               up_form=up_form,
+                               label_form=label_form,
+                               vis_form=vis_form)
 
     @app.route('/getlabels/<column>', methods=['GET'])
     def getlabels(column):

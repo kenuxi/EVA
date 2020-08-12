@@ -6,21 +6,16 @@
 <div class="content-section">
   <div class="row">
     <div class="col-5 pt-3 pb-3">
-      <form method="POST" action="">
-        {{ file_form.hidden_tag() }}
-
+      <form>
         <fieldset class="form-group">
           <legend class="border-bottom mb-4">Select a File</legend>
           <div class="form-group">
-            {{ file_form.file.label(class="form-control-label") }}
-            {{ file_form.file(class="form-control form-control-lg") }}
-            {% for error in file_form.file.errors %}
-                <span style="color: red;">{{ error }}</span>
-              {% endfor %}
+            <label class="form-control-label" for="file">.csv in data/</label>
+            <select class="form-control form-control-lg" id="file" name="file"></select>
           </div>
         </fieldset>
         <div class="form-group">
-          {{ file_form.file_submit(class="btn btn-outline-info") }}
+          <a href=# id="file_submit"><button class='btn btn-outline-info'>Submit</button></a>
         </div>
       </form>
     </div>
@@ -55,11 +50,15 @@
     let file_list_select = document.getElementById('file')
     let file_submit_select = document.getElementById('file_submit')
 
-    file_submit_select.onclick = function () {
-      fetch('/get_label_form/').then(function(response) {
+    $('a#file_submit').bind('click', function() {
+        $.getJSON('/get_label_form', {
+				  file: $('select#file').find(':selected').attr('value'),
+				}, function(data) {
+				  $("#label_form").text(data.result);
+				});
+				return false;
+			  });
 
-      }
-    }
 
     $(document).ready( function () {
       fetch('/getfiles/').then(function(response) {
@@ -68,7 +67,6 @@
               for (let file of data.files) {
                 optionHtml += '<option value="' + file[0] + '">' + file[1] + '</option>';
               }
-              console.table(optionHtml);
               file_list_select.innerHTML = optionHtml;
             });
           });
