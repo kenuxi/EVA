@@ -67,8 +67,8 @@ class DataStatistics():
         self.n, self.d = self.pandas_data_frame_nolabels.shape
 
     @lru_cache()
-    def _cached_pca_transform(self):
-        pca = PCA(n_components=self.d_red)
+    def _cached_pca_transform(self, m):
+        pca = PCA(n_components=m)
         pca.fit(self.pandas_data_frame_nolabels)
         pca_red_data = pca.transform(self.pandas_data_frame_nolabels)  # This is a numpy array
         return pd.DataFrame(data=pca_red_data), pca.explained_variance_ratio_
@@ -82,7 +82,7 @@ class DataStatistics():
         '''
         self.d_red = m
 
-        principalDf, variance_components = self._cached_pca_transform()
+        principalDf, variance_components = self._cached_pca_transform(m)
 
         # Concadenate the unlabeled pca dataframe with the classifications
         self.reduced_pandas_dataframe_pca = pd.concat([principalDf, self.classifications], axis = 1)
