@@ -102,7 +102,7 @@ class DataStatistics():
 
         '''
         self.d_red = m
-        lleDf = self._cached_lle_tranform(m, k)
+        lleDf = self._cached_lle_transform(m, k)
         # Concadenate the unlabeled pca dataframe with the classifications
         self.reduced_pandas_dataframe_lle = pd.concat([lleDf, self.classifications], axis=1)
 
