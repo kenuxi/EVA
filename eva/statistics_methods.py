@@ -8,6 +8,7 @@ from sklearn.manifold import Isomap, MDS
 import umap
 import kmapper as km
 from sklearn import preprocessing
+from functools import lru_cache
 
 
 class DataStatistics():
@@ -65,6 +66,13 @@ class DataStatistics():
         # Read data information (number of features and samples)
         self.n, self.d = self.pandas_data_frame_nolabels.shape
 
+    @lru_cache()
+    def _cached_pca_transform(self):
+        pca = PCA(n_components=self.d_red)
+        pca.fit(self.pandas_data_frame_nolabels)
+        pca_red_data = pca.transform(self.pandas_data_frame_nolabels)  # This is a numpy array
+        return pd.DataFrame(data=pca_red_data), pca.explained_variance_ratio_
+
     def apply_pca(self, m=2):
         ''' Apply PCA to the previously loaded pandas data frame in order to reduce the dimensionality of the data
         Definition:  apply_pca(self, m)
@@ -73,18 +81,18 @@ class DataStatistics():
 
         '''
         self.d_red = m
-        # Apply PCA on the unlabeled pandas data frame
-        pca = PCA(n_components=m)
-        pca.fit(self.pandas_data_frame_nolabels)
-        pca_red_data = pca.transform(self.pandas_data_frame_nolabels)  # This is a numpy array
-        principalDf = pd.DataFrame(data=pca_red_data)
+
+        principalDf, variance_components = self._cached_pca_transform()
 
         # Concadenate the unlabeled pca dataframe with the classifications
         self.reduced_pandas_dataframe_pca = pd.concat([principalDf, self.classifications], axis = 1)
-
         # Compute how much % of the variance remains (best case 100%)
-        variance_components = pca.explained_variance_ratio_
         self.remained_variance = np.round(np.sum(variance_components[:m]) * 100, decimals=3)
+
+    @lru_cache()
+    def _cached_lle_transform(self, m=2, k=5):
+        embedding = LocallyLinearEmbedding(n_components=m, n_neighbors=k, max_iter=100)
+        return pd.DataFrame(data=embedding.fit_transform(self.pandas_data_frame_nolabels))
 
     def apply_lle(self, m=2, k=5):
         ''' Perform LLE Locally Linear Embedding  on the dataframe and reduce to an m dimensional subspace
@@ -94,12 +102,14 @@ class DataStatistics():
 
         '''
         self.d_red = m
-        embedding = LocallyLinearEmbedding(n_components=m, n_neighbors=k, max_iter=100)
-        # Update X
-        lle_red_data = embedding.fit_transform(self.pandas_data_frame_nolabels)
-        lleDf = pd.DataFrame(data=lle_red_data)
+        lleDf = self._cached_lle_tranform(m, k)
         # Concadenate the unlabeled pca dataframe with the classifications
         self.reduced_pandas_dataframe_lle = pd.concat([lleDf, self.classifications], axis=1)
+
+    @lru_cache()
+    def _cached_tsne_transorm(self, m=2, perplexity=30):
+        embedding = TSNE(n_components=m, perplexity=perplexity)
+        return pd.DataFrame(data=embedding.fit_transform(self.pandas_data_frame_nolabels))
 
     def apply_tsne(self, m=2 , perplexity=30):
         ''' Perform TSNE t-distributed Stochastic Neighbor Embedding on the dataframe and reduce to an m dimensional s
@@ -113,13 +123,15 @@ class DataStatistics():
 
         '''
         self.d_red = m
-        embedding = TSNE(n_components=m, perplexity=perplexity)
-        # Update X
-        tsne_red_data = embedding.fit_transform(self.pandas_data_frame_nolabels)
-        tsneDf = pd.DataFrame(data=tsne_red_data)
+        tsneDf = self._cached_tsne_transorm(m, perplexity)
         # Concadenate the unlabeled pca dataframe with the classifications
         self.reduced_pandas_dataframe_tsne = pd.concat([tsneDf, self.classifications], axis=1)
 
+    @lru_cache()
+    def _cached_kernel_pca_tranform(self, m, kernel_type='linear'):
+        pcakern = KernelPCA(n_components=m, kernel=kernel_type)
+        pcakern.fit(self.pandas_data_frame_nolabels)
+        return pd.DataFrame(data=pcakern.transform(self.pandas_data_frame_nolabels))
 
     def apply_kernelPca(self, m, kernel_type='linear'):
         '''Apply Kernel PCA to the previously loaded pandas data frame in order to reduce the dimensionality of the data
@@ -128,12 +140,14 @@ class DataStatistics():
         Input:       m              - int, dimension number to which PCA reduces the data
                      kernel_type    - str, type of kernel : “linear” | “poly” | “rbf” | “sigmoid” | “cosine”
         '''
-        pcakern = KernelPCA(n_components=m, kernel=kernel_type)
-        pcakern.fit(self.pandas_data_frame_nolabels)
-        pcak_red_data = pcakern.transform(self.pandas_data_frame_nolabels)
-        pcak_Df = pd.DataFrame(data=pcak_red_data)
+        pcak_Df = self._cached_kernel_pca_tranform(m, kernel_type)
         # Concadenate the unlabeled kernel pca dataframe with the classifications
         self.reduced_pandas_dataframe_kernelpca = pd.concat([pcak_Df, self.classifications], axis=1)
+
+    @lru_cache()
+    def _cached_isomap_transform(self, m=2, k=6):
+        isomap = Isomap(n_neighbors=k, n_components=m)
+        return pd.DataFrame(isomap.fit_transform(self.pandas_data_frame_nolabels))
 
     def apply_isomap(self, m=2, k=6):
         ''' Perform Isomap  on the dataframe and reduce to an m dimensional subspace with k neighbour
@@ -143,14 +157,15 @@ class DataStatistics():
 
         '''
         self.d_red = m
-
-        isomap = Isomap(n_neighbors=k, n_components=m)
-
-        # Update X
-        isomap_red_data = isomap.fit_transform(self.pandas_data_frame_nolabels)
-        isomapDf = pd.DataFrame(data=isomap_red_data)
+        isomapDf = self._cached_isomap_transform(m, k)
         # Concadenate the unlabeled pca dataframe with the classifications
         self.reduced_pandas_dataframe_isomap = pd.concat([isomapDf, self.classifications], axis=1)
+
+    @lru_cache()
+    def _cached_umap_transform(self, m=2, k=15):
+        embedding = umap.UMAP(n_neighbors=k,
+                              n_components=m).fit_transform(self.pandas_data_frame_nolabels)
+        return pd.DataFrame(data=embedding)
 
     def apply_umap(self, m=2, k=15):
         ''' Perform UMAP  on the dataframe and reduce to an m dimensional subspace with k neighbour
@@ -160,13 +175,39 @@ class DataStatistics():
 
         '''
         self.d_red = m
-
-        embedding = umap.UMAP(n_neighbors=k,
-                              n_components=m).fit_transform(self.pandas_data_frame_nolabels)
-        umap_df = pd.DataFrame(embedding)
+        umap_df = self._cached_umap_transform(m, k)
         self.reduced_pandas_dataframe_umap = pd.concat([umap_df, self.classifications], axis=1)
 
-    def apply_kmap(self, m=2, k=5, a = 'PCA'):
+    @lru_cache()
+    def _cached_kmap_transform(self, m=2, k=5, a='PCA'):
+        # Initialize
+        mapper = km.KeplerMapper(verbose=1)
+
+        # Fit to and transform the data
+
+        if a == 'UMAP':
+            projected_data = mapper.fit_transform(self.pandas_data_frame_nolabels, projection=umap.UMAP(n_components=m,
+                                                                                                        n_neighbors=k))  # X-Y axis
+
+        if a == 'ISOMAP':
+            projected_data = mapper.fit_transform(self.pandas_data_frame_nolabels, projection=Isomap(n_components=m,
+                                                                                                     n_neighbors=k))  # X-Y axis
+
+        if a == 'PCA':
+            projected_data = mapper.fit_transform(self.pandas_data_frame_nolabels, projection=PCA(n_components=m))
+
+        if a == 'TSNE':
+            projected_data = mapper.fit_transform(self.pandas_data_frame_nolabels,
+                                                  projection=TSNE(n_components=m, perplexity=30))
+
+        if a == 'LLE':
+            projected_data = mapper.fit_transform(self.pandas_data_frame_nolabels,
+                                                  projection=LocallyLinearEmbedding(n_components=m, n_neighbors=k,
+                                                                                    max_iter=100))
+        return pd.DataFrame(projected_data)
+
+
+    def apply_kmap(self, m=2, k=5, a='PCA'):
         ''' Perform KMAP  on the dataframe and reduce to an m dimensional subspace with k neighbour
         Definition:  KMAP(X, m, a)
         Input:       m                  - int, dimension of the subspace to project
@@ -176,40 +217,17 @@ class DataStatistics():
 
         '''
         self.d_red = m
-
-
-        # Initialize
-        mapper = km.KeplerMapper(verbose=1)
-
-        # Fit to and transform the data
-
-        if a == 'UMAP':
-            projected_data = mapper.fit_transform(self.pandas_data_frame_nolabels, projection=umap.UMAP(n_components=m,
-                                                                          n_neighbors=k))  # X-Y axis
-
-        if a == 'ISOMAP':
-            projected_data = mapper.fit_transform(self.pandas_data_frame_nolabels, projection=Isomap(n_components=m,
-                                                                       n_neighbors=k))  # X-Y axis
-
-        if a == 'PCA':
-            projected_data = mapper.fit_transform(self.pandas_data_frame_nolabels, projection=PCA(n_components=m))
-
-        if a == 'TSNE':
-            projected_data = mapper.fit_transform(self.pandas_data_frame_nolabels, projection=TSNE(n_components=m, perplexity=30))
-
-        if a == 'LLE':
-            projected_data = mapper.fit_transform(self.pandas_data_frame_nolabels, projection=LocallyLinearEmbedding(n_components=m, n_neighbors=k, max_iter=100))
-
-        kmap_df = pd.DataFrame(projected_data)
+        kmap_df = self._cached_kmap_transform(m, k, a)
         self.reduced_pandas_dataframe_kmap = pd.concat([kmap_df, self.classifications], axis=1)
 
+    @lru_cache()
+    def _cached_mds_transform(self, m=2):
+        mds = MDS(n_components=m)
+        mds_red_data = mds.fit_transform(self.pandas_data_frame_nolabels)
+        return pd.DataFrame(data=mds_red_data)
     def apply_mds(self, m=2):
         self.d_red = m
-        mds = MDS(n_components=m)
-
-        # Update X
-        mds_red_data = mds.fit_transform(self.pandas_data_frame_nolabels)
-        mdsDf = pd.DataFrame(data=mds_red_data)
+        mdsDf = self._cached_mds_transform(m)
         # Concadenate the unlabeled pca dataframe with the classifications
         self.reduced_pandas_dataframe_mds = pd.concat([mdsDf, self.classifications], axis=1)
 
