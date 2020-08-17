@@ -14,6 +14,7 @@ def get_app():
     configure_uploads(app, csv_files)
     if 'ds' not in session.keys():
         session['ds'] = DataStatistics() # ERROR ?
+
     @app.route('/', methods=['GET', 'POST'])
     @app.route('/home', methods=['GET', 'POST'])
     def home():
