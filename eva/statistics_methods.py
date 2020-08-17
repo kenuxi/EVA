@@ -11,7 +11,7 @@ from sklearn import preprocessing
 from functools import lru_cache
 
 
-class DataStatistics():
+class DataStatistics:
     def __init__(self):
         self.file_name = None
         self.X = None
@@ -65,6 +65,9 @@ class DataStatistics():
 
         # Read data information (number of features and samples)
         self.n, self.d = self.pandas_data_frame_nolabels.shape
+        caches = [getattr(self, x) for x in dir(self) if x.startswith('_cached')]
+        for cache in caches:
+            cache.cache_clear()
 
     @lru_cache()
     def _cached_pca_transform(self, m):
