@@ -294,7 +294,7 @@ class DataStatistics:
 
             # 2 CASES: Labeled data or not labeled data
 
-            if column_name:
+            if column_name != 'None':
                 Inliers_pd = self.pandas_data_frame[self.pandas_data_frame[str(column_name)].isin(selected_inlier)]
                 Outliers_pd = self.pandas_data_frame[self.pandas_data_frame[str(column_name)].isin(selected_outlier)]
 

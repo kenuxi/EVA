@@ -17,11 +17,7 @@ html_layout = '''
         {%css%}
     </head>
     <body>
-        <ul class="nav nav-tabs">
-          <li class="nav-item">
-            <a class="nav-link" href="/home">Home</a>
-          </li>
-        </ul>
+
         {%app_entry%}
         <footer>
             {%config%}

@@ -7,6 +7,7 @@ from eva.statistics_methods import DataStatistics
 
 to_reload = False
 
+
 def get_app():
     app = Flask(__name__, instance_relative_config=False)
     app.config['SECRET_KEY'] = app_secret_key
@@ -42,6 +43,7 @@ def get_app():
             '''File submitted. Selected CSV is loaded into DataStatistics Object, 
             Pandas dataframe and available columsn created.'''
             # loading data from file into wrapper class
+            session['ds'] = DataStatistics()
             session['ds'].load_data(file_form.file.data)
 
             # separate dataframe for easier access
@@ -49,7 +51,7 @@ def get_app():
 
             # populating label choices with data from file
             label_columns = [(str(col), str(col)) for col in session['df']]
-            label_columns.append((None, 'None'))
+            label_columns.append(('None', 'None'))
             label_columns.reverse()     # reverse cause last col is usually label
             label_form.label_column.choices = label_columns
             # keeping track of selected label_column in backend
