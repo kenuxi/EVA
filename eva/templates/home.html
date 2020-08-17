@@ -54,10 +54,10 @@
         $.getJSON('/get_label_form', {
 				  file: $('select#file').find(':selected').attr('value'),
 				}, function(data) {
-				  $("#label_form").text(data.result);
+				  $("#label_form").html(data.result);
 				});
 				return false;
-			  });
+			});
 
 
     $(document).ready( function () {

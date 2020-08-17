@@ -98,49 +98,6 @@
          {{ label_form.label_submit(class="btn btn-outline-info") }}
         </div>
 
-        <script>
-          let column_select = document.getElementById('label_column')
-          let inliers_select = document.getElementById('inliers')
-          let outliers_select = document.getElementById('outliers')
-          let num_inliers_select = document.getElementById('num_inliers')
-          let num_outliers_select = document.getElementById('num_outliers')
-
-          column_select.onchange = function () {
-            column = column_select.value;
-
-            fetch('/getlabels/' + column).then(function(response) {
-              response.json().then(function(data) {
-                let optionHtml = ''
-                for (let label of data.labels) {
-                  optionHtml += '<option value="' + label + '">' + label + '</option>';
-                }
-
-                inliers_select.innerHTML = optionHtml;
-                outliers_select.innerHTML = optionHtml;
-              });
-            });
-          }
-
-          inliers_select.onchange = function () {
-            let selectedInliers = Array.from(inliers_select.selectedOptions).map(option => option.value);
-
-            fetch('/getnumrows/' + [selectedInliers]).then(function(response) {
-              response.json().then(function(data) {
-                num_inliers_select.innerHTML = data.num_rows;
-              });
-            });
-          };
-
-          outliers_select.onchange = function () {
-            let selectedOutliers = Array.from(outliers_select.selectedOptions).map(option => option.value);
-
-            fetch('/getnumrows/' + [selectedOutliers]).then(function(response) {
-              response.json().then(function(data) {
-                num_outliers_select.innerHTML = data.num_rows;
-              });
-            });
-          };
-        </script>
       </form>
     </div>
   </div>
