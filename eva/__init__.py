@@ -12,8 +12,7 @@ def get_app():
     app.config['SECRET_KEY'] = app_secret_key
     csv_files = UploadSet('data', ('csv',), default_dest=lambda x: 'data')
     configure_uploads(app, csv_files)
-    if 'ds' not in session.keys():
-        session['ds'] = DataStatistics() # ERROR ?
+
     @app.route('/', methods=['GET', 'POST'])
     @app.route('/home', methods=['GET', 'POST'])
     def home():
@@ -41,6 +40,7 @@ def get_app():
             '''File submitted. Selected CSV is loaded into DataStatistics Object, 
             Pandas dataframe and available columsn created.'''
             # loading data from file into wrapper class
+            session['ds'] = DataStatistics()
             session['ds'].load_data(file_form.file.data)
 
             # separate dataframe for easier access
