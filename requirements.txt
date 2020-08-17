@@ -4,7 +4,7 @@ dash_html_components == 1.0.3
 dash_table == 4.6.2
 easy_date == 0.1.4
 numpy >= 1.17
-pandas == 0.24.2
+pandas == 1.1.0
 plotly == 4.6.0
 scipy == 1.4.1
 flask-wtf==0.14.3
