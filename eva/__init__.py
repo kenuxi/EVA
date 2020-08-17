@@ -7,6 +7,7 @@ from eva.statistics_methods import DataStatistics
 
 to_reload = False
 
+
 def get_app():
     app = Flask(__name__, instance_relative_config=False)
     app.config['SECRET_KEY'] = app_secret_key
