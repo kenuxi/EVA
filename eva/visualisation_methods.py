@@ -43,7 +43,7 @@ class VisualizationPlotly():
                 fig = px.scatter(self.pd_data_frame, x=self.features[0], y=np.zeros(self.n),
                                  color='Classification', title='Data', text='indexes')
             else:
-                fig = px.scatter(self.pd_data_frame, x=self.features[0], y=np.zeros(self.n), c='blue', title='Data',
+                fig = px.scatter(self.pd_data_frame, x=self.features[0], y=np.zeros(self.n), title='Data',
                                  text='index')
 
         elif self.d == 2:
@@ -58,7 +58,8 @@ class VisualizationPlotly():
                             mode='markers',
                             name='all',
                             # marker_color=(df_highImp_mob.mean_imp > 1),
-                            opacity=0.5
+                            opacity=0.5,
+                            color='Classification'
                         )
                     )
 
@@ -68,7 +69,7 @@ class VisualizationPlotly():
                                  color='Classification', title='Data', text='index')
 
             else:
-                fig = px.scatter(self.pd_data_frame, x=self.features[0], y=self.features[1], c='blue', title='Data',
+                fig = px.scatter(self.pd_data_frame, x=self.features[0], y=self.features[1], title='Data',
                                  )
 
         else:
@@ -77,7 +78,7 @@ class VisualizationPlotly():
                                     color='Classification', title='Data')
             else:
                 fig = px.scatter_3d(self.pd_data_frame, x=self.features[0], y=self.features[1], z=self.features[2],
-                                    color='blue', title='Data')
+                                    title='Data')
 
         return fig
 
