@@ -1,6 +1,4 @@
 import os
-import gc
-import functools
 from flask import Flask, render_template, url_for, redirect, flash, jsonify
 from flask_uploads import configure_uploads, UploadSet
 from eva.forms import SelectFileForm, UploadForm, VisForm, LabelForm
@@ -16,15 +14,6 @@ def get_app():
     configure_uploads(app, csv_files)
     if 'ds' not in session.keys():
         session['ds'] = DataStatistics() # ERROR ?
-    else:
-        gc.collect()
-        wrappers = [
-            a for a in gc.get_objects()
-            if isinstance(a, functools._lru_cache_wrapper)]
-
-        for wrapper in wrappers:
-            wrapper.cache_clear()
-
     @app.route('/', methods=['GET', 'POST'])
     @app.route('/home', methods=['GET', 'POST'])
     def home():
