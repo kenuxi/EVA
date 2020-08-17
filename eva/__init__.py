@@ -7,14 +7,13 @@ from eva.statistics_methods import DataStatistics
 
 to_reload = False
 
-
 def get_app():
     app = Flask(__name__, instance_relative_config=False)
     app.config['SECRET_KEY'] = app_secret_key
     csv_files = UploadSet('data', ('csv',), default_dest=lambda x: 'data')
     configure_uploads(app, csv_files)
-    session['ds'] = DataStatistics()
-
+    if 'ds' not in session.keys():
+        session['ds'] = DataStatistics() # ERROR ?
     @app.route('/', methods=['GET', 'POST'])
     @app.route('/home', methods=['GET', 'POST'])
     def home():
@@ -87,6 +86,8 @@ def get_app():
         elif vis_form.vis_submit.data:
             '''Visualisation Form Submitted. 
             Choices of Algorithms and Visualisations are passed into Visualisation object.'''
+            # if session['df'] is not None:
+
             dashboard_config = {'ds': session['ds'],
                                 'PCA':  [],
                                 'LLE':  [],
