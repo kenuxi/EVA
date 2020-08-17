@@ -41,7 +41,7 @@ class VisualizationPlotly():
         if self.d == 1:
             if self.classification:
                 fig = px.scatter(self.pd_data_frame, x=self.features[0], y=np.zeros(self.n),
-                                 color='Classification', title='Data', text='indexes')
+                                 color='Classification', title='Data', text='index')
             else:
                 fig = px.scatter(self.pd_data_frame, x=self.features[0], y=np.zeros(self.n), c='blue', title='Data',
                                  text='index')
