@@ -15,7 +15,7 @@ class VisualizationPlotly():
         '''
         self.column_name = column_name
         self.pd_data_frame = pd_data_frame
-        #self.pd_data_frame_nolabel = pd_data_frame.drop(columns=column_name)
+        self.pd_data_frame_nolabel = pd_data_frame.drop(columns=column_name)
 
         # Extract information about the data frame
         self.features = self.pd_data_frame.keys().tolist()
