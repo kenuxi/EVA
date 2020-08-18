@@ -53,6 +53,7 @@ def get_app():
                             dashboard_config[alg].append(field.description)
 
             session['dashboard_config'] = dashboard_config
+            session['ds'].create_unlabeled_df()
             return redirect(url_for('reload'))  # f"{session['dashboard_config']}"
 
         return render_template('home.html', title='Home', file_form=file_form, up_form=up_form, vis_form=vis_form)
@@ -83,7 +84,6 @@ def get_app():
     @app.route('/post_label/<label>', methods=['GET'])
     def post_label(label):
         session['ds'].label_column = label
-        print(session['ds'].label_column)
         return jsonify({'label_column': label})
 
     @app.route('/getfiles/', methods=['GET'])
