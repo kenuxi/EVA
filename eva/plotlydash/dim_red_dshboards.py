@@ -415,15 +415,6 @@ class DimRedDash():
                             value=self.stats.remained_variance)
                     ],  className='two columns'))
 
-                pca_dropdowns.append(html.Div([
-                        dcc.Checklist(
-                            id='outlier_only_options_pca',
-                            options=[
-                                {'label': 'Only show Outliers', 'value': 'yes'}
-                            ],
-                            value=[]
-                        ),
-                    ], className='one column'))
 
                 pca_dropdowns.append(html.Div([
                         daq.NumericInput(
@@ -470,14 +461,6 @@ class DimRedDash():
                             value=2),
                     ], className='two columns'))
 
-                tsne_dropdowns.append(html.Div([
-                        dcc.Checklist(
-                            id='outlier_only_options_tsne',
-                            options=[
-                                {'label': 'Only show Outliers', 'value': 'yes'}
-                            ],
-                        ),
-                    ], className='one column'))
 
                 tsne_dropdowns.append(                    html.Div([
                         daq.NumericInput(
@@ -523,14 +506,6 @@ class DimRedDash():
                             value=2),
                     ],className='two columns'))
 
-                lle_dropdowns.append(html.Div([
-                        dcc.Checklist(
-                            id='outlier_only_options_lle',
-                            options=[
-                                {'label': 'Only show Outliers', 'value': 'yes'}
-                            ],
-                        ),
-                    ], className='one column'))
 
                 lle_dropdowns.append(html.Div([
                         daq.NumericInput(
@@ -577,14 +552,6 @@ class DimRedDash():
                             value=2),
                     ], className='two columns'))
 
-                umap_dropdowns.append(html.Div([
-                        dcc.Checklist(
-                            id='outlier_only_options_umap',
-                            options=[
-                                {'label': 'Only show Outliers', 'value': 'yes'}
-                            ],
-                        ),
-                    ], className='one column'))
 
                 umap_dropdowns.append(                    html.Div([
                         daq.NumericInput(
@@ -630,14 +597,7 @@ class DimRedDash():
                         value=2),
                 ], className='two columns'))
 
-                kmap_dropdowns.append(html.Div([
-                    dcc.Checklist(
-                        id='outlier_only_options_kmap',
-                        options=[
-                            {'label': 'Only show Outliers', 'value': 'yes'}
-                        ],
-                    ),
-                ], className='one column'))
+
 
                 kmap_dropdowns.append(html.Div([
                     daq.NumericInput(
@@ -697,14 +657,6 @@ class DimRedDash():
                             value=2),
                     ], className='two columns'))
 
-                isomap_dropdowns.append(html.Div([
-                        dcc.Checklist(
-                            id='outlier_only_options_isomap',
-                            options=[
-                                {'label': 'Only show Outliers', 'value': 'yes'}
-                            ],
-                        ),
-                    ], className='one column'))
 
                 isomap_dropdowns.append(                    html.Div([
                         daq.NumericInput(
@@ -738,15 +690,6 @@ class DimRedDash():
         if self.method == 'MDS':
             mds_dropdowns = []
             if 'scatter' in self.plot_options:
-
-                mds_dropdowns.append(html.Div([
-                        dcc.Checklist(
-                            id='outlier_only_options_mds',
-                            options=[
-                                {'label': 'Only show Outliers', 'value': 'yes'}
-                            ],
-                        ),
-                    ], className='one column'))
 
                 mds_dropdowns.append(html.Div([
                         daq.NumericInput(
