@@ -401,6 +401,7 @@ class DimRedDash():
 
         # PCA DROPDOWNS HERE
         if self.method == 'PCA':
+            print('I am here')
             pca_dropdowns = []
             if 'scatter' in self.plot_options:
                 pca_dropdowns.append(html.Div([

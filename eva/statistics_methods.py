@@ -351,7 +351,9 @@ class DataStatistics:
         self.pandas_data_frame['Classification'] = self.classifications
 
     def create_unlabeled_df(self):
-        print(self.pandas_data_frame)
+        if self.label_column == 'None':
+            self.label_column = 'Data'
+            self.pandas_data_frame['Data'] = 'data-point'
+
         self.pandas_data_frame_nolabels = self.pandas_data_frame.drop(labels=self.label_column, axis=1)
         self.selected_column = self.pandas_data_frame[self.label_column]
-        print(self.pandas_data_frame_nolabels)

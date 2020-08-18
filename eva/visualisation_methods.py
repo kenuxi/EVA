@@ -17,7 +17,6 @@ class VisualizationPlotly():
         self.pd_data_frame = pd_data_frame
         #self.pd_data_frame_nolabel = pd_data_frame.drop(columns=column_name)
 
-
         # Extract information about the data frame
         self.features = self.pd_data_frame.keys().tolist()
 
@@ -26,12 +25,13 @@ class VisualizationPlotly():
             self.d = self.pd_data_frame.shape[1] - 1
             self.features.remove('Classification')
             self.classification = True
+
         else:
             self.d = self.pd_data_frame.shape[1] - 1
             self.classification = False
         # Read number of samples/examples of the data frame
         self.n = self.pd_data_frame.shape[0]
-
+        print(self.d)
         # Add indexes to data frame
         self.pd_data_frame['index'] = range(1, len(self.pd_data_frame) + 1)
 
