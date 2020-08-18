@@ -6,21 +6,16 @@
 <div class="content-section">
   <div class="row">
     <div class="col-5 pt-3 pb-3">
-      <form method="POST" action="">
-        {{ file_form.hidden_tag() }}
-
+      <form>
         <fieldset class="form-group">
           <legend class="border-bottom mb-4">Select a File</legend>
           <div class="form-group">
-            {{ file_form.file.label(class="form-control-label") }}
-            {{ file_form.file(class="form-control form-control-lg") }}
-            {% for error in file_form.file.errors %}
-                <span style="color: red;">{{ error }}</span>
-              {% endfor %}
+            <label class="form-control-label" for="file">.csv in data/</label>
+            <select class="form-control form-control-lg" id="file" name="file"></select>
           </div>
         </fieldset>
         <div class="form-group">
-          {{ file_form.file_submit(class="btn btn-outline-info") }}
+          <a href=# id="file_submit"><button class='btn btn-outline-info'>Submit</button></a>
         </div>
       </form>
     </div>
@@ -50,225 +45,153 @@
       </form>
 
     </div>
+
+  </div>
+</div>
+
+<div id="label_form">
+</div>
+<div class="form-group">
+  <a href=#### id="label_submit" style="visibility:hidden;"><button class='btn btn-outline-info'>Submit</button></a>
+</div>
+<div id="visform" class="content-section" style="visibility:hidden;">
+  <div class="row">
+    <div class="col-12 mt-3 mb-3">
+      <form method="POST" action="">
+        {{ vis_form.hidden_tag() }}
+        <fieldset class="form-group">
+          <legend class="border-bottom mb-4">Dimensional Reduction</legend>
+
+          <table class="table table-striped table-bordered">
+          <thead>
+              <tr>
+                <th>Algorithm/Visualisation</th>
+                <th>Scatter</th>
+                <th>Box</th>
+                <th>K-Nearest</th>
+                <th>Dendrogram</th>
+                <th>Density</th>
+                <th>Heatmap</th>
+              </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>PCA</td>
+              <td>{{ vis_form.PCA1 }}</td>
+              <td>{{ vis_form.PCA2 }}</td>
+              <td>{{ vis_form.PCA3 }}</td>
+              <td>{{ vis_form.PCA4 }}</td>
+              <td>{{ vis_form.PCA5 }}</td>
+              <td>{{ vis_form.PCA6 }}</td>
+            </tr>
+
+            <tr>
+              <td>LLE</td>
+              <td>{{ vis_form.LLE1 }}</td>
+              <td>{{ vis_form.LLE2 }}</td>
+              <td>{{ vis_form.LLE3 }}</td>
+              <td>{{ vis_form.LLE4 }}</td>
+              <td>{{ vis_form.LLE5 }}</td>
+              <td>{{ vis_form.LLE6 }}</td>
+            </tr>
+
+            <tr>
+              <td>TSNE</td>
+              <td>{{ vis_form.TSNE1 }}</td>
+              <td>{{ vis_form.TSNE2 }}</td>
+              <td>{{ vis_form.TSNE3 }}</td>
+              <td>{{ vis_form.TSNE4 }}</td>
+              <td>{{ vis_form.TSNE5 }}</td>
+              <td>{{ vis_form.TSNE6 }}</td>
+            </tr>
+
+            <tr>
+              <td>UMAP</td>
+              <td>{{ vis_form.UMAP1 }}</td>
+              <td>{{ vis_form.UMAP2 }}</td>
+              <td>{{ vis_form.UMAP3 }}</td>
+              <td>{{ vis_form.UMAP4 }}</td>
+              <td>{{ vis_form.UMAP5 }}</td>
+              <td>{{ vis_form.UMAP6 }}</td>
+            </tr>
+
+            <tr>
+              <td>ISOMAP</td>
+              <td>{{ vis_form.ISOMAP1 }}</td>
+              <td>{{ vis_form.ISOMAP2 }}</td>
+              <td>{{ vis_form.ISOMAP3 }}</td>
+              <td>{{ vis_form.ISOMAP4 }}</td>
+              <td>{{ vis_form.ISOMAP5 }}</td>
+              <td>{{ vis_form.ISOMAP6 }}</td>
+            </tr>
+
+            <tr>
+              <td>K-MAPPER</td>
+              <td>{{ vis_form.KMAP1 }}</td>
+              <td>{{ vis_form.KMAP2 }}</td>
+              <td>{{ vis_form.KMAP3 }}</td>
+              <td>{{ vis_form.KMAP4 }}</td>
+              <td>{{ vis_form.KMAP5 }}</td>
+              <td>{{ vis_form.KMAP6 }}</td>
+            </tr>
+          <tr>
+            <td> MDS </td>
+              <td>{{ vis_form.MDS1 }}</td>
+              <td>{{ vis_form.MDS2 }}</td>
+              <td>{{ vis_form.MDS3 }}</td>
+              <td>{{ vis_form.MDS4 }}</td>
+              <td>{{ vis_form.MDS5 }}</td>
+              <td>{{ vis_form.MDS6 }}</td>
+          </tr>
+          </tbody>
+        </table>
+        </fieldset>
+
+        <div class="form-group">
+         {{ vis_form.vis_submit(class="btn btn-outline-info", formtarget="_blank") }}
+        </div>
+
+      </form>
+    </div>
   </div>
 </div>
 
 
-{% if label_form %}
-  {% if df.shape[0] * df.shape[1] > 5000 %}
-    <fieldset class="form-group mb-0">
-      <legend class="border-bottom mb-4">Data Preview</legend>
-      <table id="table_id" class="table table-striped table-bordered" style="width:100%">
-        <thead>
-            <tr>
-              <th>ID</th>
-              {% for column in df.columns %}
-                <th>{{ column }}</th>
-              {% endfor %}
-            </tr>
-        </thead>
-        <tbody>
-          {% for row in df.head(5).itertuples() %}
-            <tr>
-              {% for column in row %}
-                <td>{{ column }}</td>
-              {% endfor %}
-            </tr>
-          {% endfor %}
-        </tbody>
-      </table>
-    </fieldset>
-    <span style="color: red;">Only top 5 rows displayed. Dataset too large.</span>
+  <script>
+    let file_list_select = document.getElementById('file')
+    let file_submit_select = document.getElementById('file_submit')
 
-  {% else %}
-    <fieldset class="form-group">
-      <legend class="border-bottom mb-4">Data Preview</legend>
-      <table id="table_id" class="table table-striped table-bordered" style="width:100%">
-        <thead>
-            <tr>
-              <th>ID</th>
-              {% for column in df.columns %}
-                <th>{{ column }}</th>
-              {% endfor %}
-            </tr>
-        </thead>
-        <tbody>
-          {% for row in df.itertuples() %}
-            <tr>
-              {% for column in row %}
-                <td>{{ column }}</td>
-              {% endfor %}
-            </tr>
-          {% endfor %}
-        </tbody>
-      </table>
-    </fieldset>
+    $('a#file_submit').bind('click', function() {
+      $.getJSON('/get_label_form/', {
+        file: $('select#file').find(':selected').attr('value'),
+        }, function(data) {
+          $("div#label_form").html(data.result);
+          table_make();
+          document.getElementById("label_submit").style.visibility = "visible";
+        });
+        return false;
+      });
 
-  {% endif %}
+    $('a#label_submit').bind('click', function() {
+     document.getElementById("visform").style.visibility = "visible";
+     fetch('/post_label/' + $('select#label_column').find(':selected').attr('value')).then(function(response) {
+            response.json().then(function(data) {
+              console.table(data.label_column)
+            });
+          });
+     });
 
-  <div class="content-section">
-    <div class="row">
-      <div class="col-12 mt-3 mb-3">
-        <form method="POST" action="">
-          {{ label_form.hidden_tag() }}
-
-          <fieldset class="form-group">
-            <legend class="border-bottom mb-4">Labels and Outliers</legend>
-            <div class="row">
-
-              <div class="form-group col-3">
-                Rows: {{df.shape[0]}} <br/>
-                Columns: {{df.shape[1]}} <br/>
-
-              </div>
-
-              <div class="form-group col-3">
-
-                <p>{{ label_form.label_column.label }}
-                {{ label_form.label_column }}</p>
-                {% for error in label_form.label_column.errors %}
-                  <span style="color: red;">[{{ error }}]</span>
-                {% endfor %}
-
-              </div>
-
-
-            </div>
-          </fieldset>
-
-          <div class="form-group">
-           {{ label_form.label_submit(class="btn btn-outline-info") }}
-          </div>
-
-          <script>
-            let column_select = document.getElementById('label_column')
-
-            column_select.onchange = function () {
-              column = column_select.value;
-
-              fetch('/getlabels/' + column).then(function(response) {
-                response.json().then(function(data) {
-                  let optionHtml = ''
-                  for (let label of data.labels) {
-                    optionHtml += '<option value="' + label + '">' + label + '</option>';
-                  }
-
-
-                });
-              });
-            }
-
-          </script>
-        </form>
-      </div>
-    </div>
-  </div>
-
-{% endif %}
-
-
-{% if vis_form %}
-  <div class="content-section">
-    <div class="row">
-      <div class="col-12 mt-3 mb-3">
-        <form method="POST" action="">
-          {{ vis_form.hidden_tag() }}
-          <fieldset class="form-group">
-            <legend class="border-bottom mb-4">Dimensional Reduction</legend>
-
-            <table class="table table-striped table-bordered">
-            <thead>
-                <tr>
-                  <th>Algorithm/Visualisation</th>
-                  <th>Scatter</th>
-                  <th>Box</th>
-                  <th>K-Nearest</th>
-                  <th>Dendrogram</th>
-                  <th>Density</th>
-                  <th>Heatmap</th>
-                </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td>PCA</td>
-                <td>{{ vis_form.PCA1 }}</td>
-                <td>{{ vis_form.PCA2 }}</td>
-                <td>{{ vis_form.PCA3 }}</td>
-                <td>{{ vis_form.PCA4 }}</td>
-                <td>{{ vis_form.PCA5 }}</td>
-                <td>{{ vis_form.PCA6 }}</td>
-              </tr>
-
-              <tr>
-                <td>LLE</td>
-                <td>{{ vis_form.LLE1 }}</td>
-                <td>{{ vis_form.LLE2 }}</td>
-                <td>{{ vis_form.LLE3 }}</td>
-                <td>{{ vis_form.LLE4 }}</td>
-                <td>{{ vis_form.LLE5 }}</td>
-                <td>{{ vis_form.LLE6 }}</td>
-              </tr>
-
-              <tr>
-                <td>TSNE</td>
-                <td>{{ vis_form.TSNE1 }}</td>
-                <td>{{ vis_form.TSNE2 }}</td>
-                <td>{{ vis_form.TSNE3 }}</td>
-                <td>{{ vis_form.TSNE4 }}</td>
-                <td>{{ vis_form.TSNE5 }}</td>
-                <td>{{ vis_form.TSNE6 }}</td>
-              </tr>
-
-              <tr>
-                <td>UMAP</td>
-                <td>{{ vis_form.UMAP1 }}</td>
-                <td>{{ vis_form.UMAP2 }}</td>
-                <td>{{ vis_form.UMAP3 }}</td>
-                <td>{{ vis_form.UMAP4 }}</td>
-                <td>{{ vis_form.UMAP5 }}</td>
-                <td>{{ vis_form.UMAP6 }}</td>
-              </tr>
-
-              <tr>
-                <td>ISOMAP</td>
-                <td>{{ vis_form.ISOMAP1 }}</td>
-                <td>{{ vis_form.ISOMAP2 }}</td>
-                <td>{{ vis_form.ISOMAP3 }}</td>
-                <td>{{ vis_form.ISOMAP4 }}</td>
-                <td>{{ vis_form.ISOMAP5 }}</td>
-                <td>{{ vis_form.ISOMAP6 }}</td>
-              </tr>
-
-              <tr>
-                <td>K-MAPPER</td>
-                <td>{{ vis_form.KMAP1 }}</td>
-                <td>{{ vis_form.KMAP2 }}</td>
-                <td>{{ vis_form.KMAP3 }}</td>
-                <td>{{ vis_form.KMAP4 }}</td>
-                <td>{{ vis_form.KMAP5 }}</td>
-                <td>{{ vis_form.KMAP6 }}</td>
-              </tr>
-            <tr>
-              <td> MDS </td>
-                <td>{{ vis_form.MDS1 }}</td>
-                <td>{{ vis_form.MDS2 }}</td>
-                <td>{{ vis_form.MDS3 }}</td>
-                <td>{{ vis_form.MDS4 }}</td>
-                <td>{{ vis_form.MDS5 }}</td>
-                <td>{{ vis_form.MDS6 }}</td>
-            </tr>
-            </tbody>
-          </table>
-          </fieldset>
-
-          <div class="form-group">
-           {{ vis_form.vis_submit(class="btn btn-outline-info", formtarget="_blank") }}
-          </div>
-
-        </form>
-      </div>
-    </div>
-  </div>
-{% endif%}
+    $(document).ready( function () {
+      fetch('/getfiles/').then(function(response) {
+            response.json().then(function(data) {
+              let optionHtml = ''
+              for (let file of data.files) {
+                optionHtml += '<option value="' + file[0] + '">' + file[1] + '</option>';
+              }
+              file_list_select.innerHTML = optionHtml;
+            });
+          });
+        });
+    </script>
 
 {% endblock content %}
