@@ -1,7 +1,7 @@
 import os
 from flask import Flask, render_template, url_for, redirect, flash, jsonify, request
 from flask_uploads import configure_uploads, UploadSet
-from eva.forms import SelectFileForm, UploadForm, VisForm, LabelForm
+from eva.forms import SelectFileForm, UploadForm, LabelForm, VisForm
 from eva.config import app_secret_key, session, alg_types
 from eva.statistics_methods import DataStatistics
 
@@ -13,7 +13,6 @@ def get_app():
     app.config['SECRET_KEY'] = app_secret_key
     csv_files = UploadSet('data', ('csv',), default_dest=lambda x: 'data')
     configure_uploads(app, csv_files)
-    session['ds'] = DataStatistics()
 
     @app.route('/', methods=['GET', 'POST'])
     @app.route('/home', methods=['GET', 'POST'])
@@ -35,19 +34,16 @@ def get_app():
             flash('Your file has been Added!', 'success')
             return redirect(url_for('home'))
 
-
-
-        elif vis_form.vis_submit.data:
-            '''Visualisation Form Submitted. 
-            Choices of Algorithms and Visualisations are passed into Visualisation object.'''
+        if vis_form.data and vis_form.validate_on_submit():
+            print('hello')
             dashboard_config = {'ds': session['ds'],
-                                'PCA':  [],
-                                'LLE':  [],
+                                'PCA': [],
+                                'LLE': [],
                                 'TSNE': [],
                                 'UMAP': [],
                                 'ISOMAP': [],
                                 'KMAP': [],
-                                'MDS':  [],
+                                'MDS': [],
                                 }
 
             for alg in alg_types:
@@ -57,93 +53,43 @@ def get_app():
                             dashboard_config[alg].append(field.description)
 
             session['dashboard_config'] = dashboard_config
-            return redirect(url_for('reload'))      # f"{session['dashboard_config']}"
+            return redirect(url_for('reload'))  # f"{session['dashboard_config']}"
 
-        return render_template('home.html', title='Home', file_form=file_form, up_form=up_form)
+        return render_template('home.html', title='Home', file_form=file_form, up_form=up_form, vis_form=vis_form)
 
-    @app.route('/get_label_form')
+    @app.route('/get_label_form/', methods=['GET'])
     def get_label_form():
-        try:
-            file = request.args.get('file', 0, type=str)
+        file = request.args.get('file', 0, type=str)
 
-            label_form = LabelForm()
+        session['ds'] = DataStatistics()    # initiated wrapper class
+        session['ds'].load_data(file)   # loading file into wrapper class
 
-            session['ds'].load_data(file)   # loading file into wrapper class
+        # separate dataframe for easier access
+        session['df'] = session['ds'].pandas_data_frame
 
-            # separate dataframe for easier access
-            session['df'] = session['ds'].pandas_data_frame
-
-            # populating label choices with data from file
-            label_columns = [(str(col), str(col)) for col in session['df']]
-            label_columns.append((None, 'None'))
-            label_columns.reverse()     # reverse cause last col is usually label
-            label_form.label_column.choices = label_columns
-            # keeping track of selected label_column in backend
-            session['ds'].label_column = label_columns[0][0]
-
-            return jsonify({'result': render_template('label_form.html',
-                                                      df=session['ds'].pandas_data_frame,
-                                                      label_form=label_form)})
-        except Exception as e:
-            return str(e)
-
-
-
-    @app.route('/get_vis_form/')
-    def get_vis_form(args):
-
-        session['ds'].label_column = label_form.label_column.data
-        session['ds'].inliers = label_form.inliers.data
-        session['ds'].outliers = [outlier for outlier in label_form.outliers.data if
-                                  outlier not in session['ds'].inliers]
-        session['ds'].ratio = float(label_form.ratio.data) if label_form.ratio_bool.data else None
-        session['ds'].normalize = label_form.normalize_bool.data
-        session['ds'].pre_process = float(label_form.preprocess.data) if label_form.preprocess_bool.data else None
-        session['ds'].create_labeled_df()
-
+        label_form = LabelForm()
         # populating label choices with data from file
         label_columns = [(str(col), str(col)) for col in session['df']]
-        label_columns.append(('None(Unlabeled)', None))
-        label_columns.reverse()  # reverse cause last col is usually label
+        label_columns.append((None, 'None'))
+        label_columns.reverse()     # reverse cause last col is usually label
         label_form.label_column.choices = label_columns
+        # keeping track of selected label_column in backend
+        session['ds'].label_column = label_columns[0][0]
 
-        return render_template('home.html', title='Home',
-                               df=session['ds'].pandas_data_frame,
-                               file_form=file_form,
-                               up_form=up_form,
-                               label_form=label_form,
-                               vis_form=vis_form)
+        return jsonify({'result': render_template('label_form.html',
+                                                  df=session['ds'].pandas_data_frame,
+                                                  label_form=label_form)})
 
-    @app.route('/getlabels/<column>', methods=['GET'])
-    def getlabels(column):
-        '''Input: Column selected in Column Label form.
-        Checks for all available values in a column.
-        Returns: JSON object containing list of unique objects in selected column.'''
-        if column == 'None':
-            return jsonify({'labels': []})
-        labels = [str(label) for label in session['ds'].pandas_data_frame[str(column)].unique()]
-        session['ds'].label_column = column
-        return jsonify({'labels': labels})
+    @app.route('/post_label/<label>', methods=['GET'])
+    def post_label(label):
+        session['ds'].label_column = label
+        print(session['ds'].label_column)
+        return jsonify({'label_column': label})
 
     @app.route('/getfiles/', methods=['GET'])
     def getfiles():
         files = [('eva/data/' + file, file) for file in os.listdir('eva/data') if '.csv' in file]
         return jsonify({'files': sorted(files)})
-
-    @app.route('/getnumrows/')
-    @app.route('/getnumrows/<selected_labels>', methods=['GET'])
-    def getnumrows(selected_labels=None):
-        '''Input: Labels selected.
-        Checks number of rows with a selected label.
-        Returns: JSON object containing number of rows as int.'''
-        if not selected_labels:
-            return jsonify({'num_rows': 0})
-
-        labels_list = selected_labels.split(',')
-        count = 0
-        for label in labels_list:
-            count += (session['df'][session['ds'].label_column] == label).sum()
-        return jsonify({'num_rows': int(count)})
 
     @app.route('/reload')
     def reload():
@@ -177,3 +123,6 @@ class AppReloader:
 
 
 application = AppReloader(get_app)
+'''
+
+'''
