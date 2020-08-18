@@ -64,11 +64,6 @@ def get_app():
         elif label_form.label_submit.data:
             '''Label submitted. All selected parameters are saved into the DataStatistics instance. '''
             session['ds'].label_column = label_form.label_column.data
-            session['ds'].inliers = label_form.inliers.data
-            session['ds'].outliers = [outlier for outlier in label_form.outliers.data if outlier not in session['ds'].inliers]
-            session['ds'].ratio = label_form.ratio.data if label_form.ratio_bool.data else None
-            session['ds'].normalize = label_form.normalize_bool.data
-            session['ds'].pre_process = label_form.preprocess.data if label_form.preprocess_bool.data else None
             session['ds'].create_labeled_df()
 
             # populating label choices with data from file
