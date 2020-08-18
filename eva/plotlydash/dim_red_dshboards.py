@@ -82,7 +82,8 @@ class DimRedDash():
             dashboard = html.Div(children=pca_plots, className="row")
 
         if self.method == 'LLE':
-            visualisation = VisualizationPlotly(pd_data_frame=self.stats.reduced_pandas_dataframe_lle)
+            visualisation = VisualizationPlotly(pd_data_frame=self.stats.reduced_pandas_dataframe_lle,
+                                                column_name=self.stats.label_column)
 
             # Depending on the plot_options the user selected, produce corresponding plots and append them to the
             # list
@@ -133,7 +134,8 @@ class DimRedDash():
             dashboard = html.Div(children=lle_plots, className="row")
 
         if self.method == 'TSNE':
-            visualisation = VisualizationPlotly(pd_data_frame=self.stats.reduced_pandas_dataframe_tsne)
+            visualisation = VisualizationPlotly(pd_data_frame=self.stats.reduced_pandas_dataframe_tsne,
+                                                column_name=self.stats.label_column)
 
             # Depending on the plot_options the user selected, produce corresponding plots and append them to the
             # list
@@ -184,7 +186,8 @@ class DimRedDash():
             dashboard = html.Div(children=tsne_plots, className="row")
 
         if self.method == 'UMAP':
-            visualisation = VisualizationPlotly(pd_data_frame=self.stats.reduced_pandas_dataframe_umap)
+            visualisation = VisualizationPlotly(pd_data_frame=self.stats.reduced_pandas_dataframe_umap,
+                                                column_name=self.stats.label_column)
 
             # Depending on the plot_options the user selected, produce corresponding plots and append them to the
             # list
@@ -235,7 +238,8 @@ class DimRedDash():
             dashboard = html.Div(children=umap_plots, className="row")
 
         if self.method == 'KMAP':
-            visualisation = VisualizationPlotly(pd_data_frame=self.stats.reduced_pandas_dataframe_kmap)
+            visualisation = VisualizationPlotly(pd_data_frame=self.stats.reduced_pandas_dataframe_kmap,
+                                                column_name=self.stats.label_column)
 
             # Depending on the plot_options the user selected, produce corresponding plots and append them to the
             # list
@@ -286,7 +290,8 @@ class DimRedDash():
             dashboard = html.Div(children=kmap_plots, className="row")
 
         if self.method == 'ISOMAP':
-            visualisation = VisualizationPlotly(pd_data_frame=self.stats.reduced_pandas_dataframe_isomap)
+            visualisation = VisualizationPlotly(pd_data_frame=self.stats.reduced_pandas_dataframe_isomap,
+                                                column_name=self.stats.label_column)
 
             # Depending on the plot_options the user selected, produce corresponding plots and append them to the
             # list
@@ -337,7 +342,8 @@ class DimRedDash():
             dashboard = html.Div(children=isomap_plots, className="row")
 
         if self.method == 'MDS':
-            visualisation = VisualizationPlotly(pd_data_frame=self.stats.reduced_pandas_dataframe_mds)
+            visualisation = VisualizationPlotly(pd_data_frame=self.stats.reduced_pandas_dataframe_mds,
+                                                column_name=self.stats.label_column)
 
             # Depending on the plot_options the user selected, produce corresponding plots and append them to the
             # list

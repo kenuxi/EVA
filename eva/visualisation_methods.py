@@ -15,7 +15,7 @@ class VisualizationPlotly():
         '''
         self.column_name = column_name
         self.pd_data_frame = pd_data_frame
-        self.pd_data_frame_nolabel = pd_data_frame.drop(columns=column_name)
+        #self.pd_data_frame_nolabel = pd_data_frame.drop(columns=column_name)
 
 
         # Extract information about the data frame
@@ -27,7 +27,7 @@ class VisualizationPlotly():
             self.features.remove('Classification')
             self.classification = True
         else:
-            self.d = self.pd_data_frame.shape[1]
+            self.d = self.pd_data_frame.shape[1] - 1
             self.classification = False
         # Read number of samples/examples of the data frame
         self.n = self.pd_data_frame.shape[0]
@@ -42,24 +42,18 @@ class VisualizationPlotly():
 
         # If reduced data is just 1 dimensional
         if self.d == 1:
-            if self.classification:
-                fig = px.scatter(self.pd_data_frame, x=self.features[0], y=np.zeros(self.n),
-                                 color='Classification', title='Data', text='index', hover_name='index')
-            else:
-                fig = px.scatter(self.pd_data_frame, x=self.features[0], y=np.zeros(self.n), c='blue', title='Data',
-                                 hover_name='index')
+            fig = px.scatter(self.pd_data_frame, x=self.features[0], y=np.zeros(self.n), color=self.column_name,
+                             title='Data', hover_name='index')
 
         elif self.d == 2:
+            print('hey')
+            print(self.pd_data_frame)
             fig = px.scatter(self.pd_data_frame, x=self.features[0], y=self.features[1],
                              color=self.column_name, title='Data', hover_name='index')
 
         else:
-            if self.classification:
-                fig = px.scatter_3d(self.pd_data_frame, x=self.features[0], y=self.features[1], z=self.features[2],
-                                    color='Classification', title='Data', hover_name='index')
-            else:
-                fig = px.scatter_3d(self.pd_data_frame, x=self.features[0], y=self.features[1], z=self.features[2],
-                                    color='blue', title='Data', hover_name='index')
+            fig = px.scatter_3d(self.pd_data_frame, x=self.features[0], y=self.features[1], z=self.features[2],
+                                color=self.column_name, title='Data', hover_name='index')
 
         return fig
 

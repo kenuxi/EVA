@@ -64,6 +64,7 @@ def get_app():
         elif label_form.label_submit.data:
             '''Label submitted. All selected parameters are saved into the DataStatistics instance. '''
             session['ds'].label_column = label_form.label_column.data
+            session['ds'].create_unlabeled_df()
             #session['ds'].create_labeled_df()
 
             # populating label choices with data from file

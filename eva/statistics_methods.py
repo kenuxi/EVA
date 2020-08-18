@@ -89,7 +89,7 @@ class DataStatistics:
         principalDf, variance_components = self._cached_pca_transform(m)
 
         # Concadenate the unlabeled pca dataframe with the classifications
-        self.reduced_pandas_dataframe_pca = pd.concat([principalDf, self.classifications], axis = 1)
+        self.reduced_pandas_dataframe_pca = pd.concat([principalDf, self.selected_column], axis = 1)
         # Compute how much % of the variance remains (best case 100%)
         self.remained_variance = np.round(np.sum(variance_components[:m]) * 100, decimals=3)
 
@@ -108,7 +108,7 @@ class DataStatistics:
         self.d_red = m
         lleDf = self._cached_lle_transform(m, k)
         # Concadenate the unlabeled pca dataframe with the classifications
-        self.reduced_pandas_dataframe_lle = pd.concat([lleDf, self.classifications], axis=1)
+        self.reduced_pandas_dataframe_lle = pd.concat([lleDf, self.selected_column], axis=1)
 
     @lru_cache()
     def _cached_tsne_transorm(self, m=2, perplexity=30):
@@ -129,7 +129,7 @@ class DataStatistics:
         self.d_red = m
         tsneDf = self._cached_tsne_transorm(m, perplexity)
         # Concadenate the unlabeled pca dataframe with the classifications
-        self.reduced_pandas_dataframe_tsne = pd.concat([tsneDf, self.classifications], axis=1)
+        self.reduced_pandas_dataframe_tsne = pd.concat([tsneDf, self.selected_column], axis=1)
 
     @lru_cache()
     def _cached_kernel_pca_tranform(self, m, kernel_type='linear'):
@@ -146,7 +146,7 @@ class DataStatistics:
         '''
         pcak_Df = self._cached_kernel_pca_tranform(m, kernel_type)
         # Concadenate the unlabeled kernel pca dataframe with the classifications
-        self.reduced_pandas_dataframe_kernelpca = pd.concat([pcak_Df, self.classifications], axis=1)
+        self.reduced_pandas_dataframe_kernelpca = pd.concat([pcak_Df, self.selected_column], axis=1)
 
     @lru_cache()
     def _cached_isomap_transform(self, m=2, k=6):
@@ -163,7 +163,7 @@ class DataStatistics:
         self.d_red = m
         isomapDf = self._cached_isomap_transform(m, k)
         # Concadenate the unlabeled pca dataframe with the classifications
-        self.reduced_pandas_dataframe_isomap = pd.concat([isomapDf, self.classifications], axis=1)
+        self.reduced_pandas_dataframe_isomap = pd.concat([isomapDf, self.selected_column], axis=1)
 
     @lru_cache()
     def _cached_umap_transform(self, m=2, k=15):
@@ -180,7 +180,7 @@ class DataStatistics:
         '''
         self.d_red = m
         umap_df = self._cached_umap_transform(m, k)
-        self.reduced_pandas_dataframe_umap = pd.concat([umap_df, self.classifications], axis=1)
+        self.reduced_pandas_dataframe_umap = pd.concat([umap_df, self.selected_column], axis=1)
 
     @lru_cache()
     def _cached_kmap_transform(self, m=2, k=5, a='PCA'):
@@ -233,7 +233,7 @@ class DataStatistics:
         self.d_red = m
         mdsDf = self._cached_mds_transform(m)
         # Concadenate the unlabeled pca dataframe with the classifications
-        self.reduced_pandas_dataframe_mds = pd.concat([mdsDf, self.classifications], axis=1)
+        self.reduced_pandas_dataframe_mds = pd.concat([mdsDf, self.selected_column], axis=1)
 
 
     def graph_neighbours(self, n_neighbours, algorithm):
@@ -350,3 +350,8 @@ class DataStatistics:
         self.pandas_data_frame = pd.DataFrame(scaled_pd)
         self.pandas_data_frame['Classification'] = self.classifications
 
+    def create_unlabeled_df(self):
+        print(self.pandas_data_frame)
+        self.pandas_data_frame_nolabels = self.pandas_data_frame.drop(labels=self.label_column, axis=1)
+        self.selected_column = self.pandas_data_frame[self.label_column]
+        print(self.pandas_data_frame_nolabels)
