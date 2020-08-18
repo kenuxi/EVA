@@ -30,7 +30,8 @@ class DimRedDash():
 
         # PCA CASE HERE, right now just 2 plots (scatter and boxplot)
         if self.method == 'PCA':
-            visualisation = VisualizationPlotly(pd_data_frame=self.stats.reduced_pandas_dataframe_pca)
+            visualisation = VisualizationPlotly(pd_data_frame=self.stats.reduced_pandas_dataframe_pca,
+                                                column_name=self.stats.label_column)
 
             # Depending on the plot_options the user selected, produce corresponding plots and append them to the
             # list

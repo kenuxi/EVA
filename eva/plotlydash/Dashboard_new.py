@@ -45,7 +45,6 @@ class FileDashboard(RemoteCSVDashboard):
         self.dash_app = dash.Dash(__name__, server=self.server,
                                   routes_pathname_prefix=self.prefix,
                                   external_stylesheets=self.stylesheets)
-
     def create_dashboard(self, data_dict: Dict):
         main_stats = data_dict['ds']
         # Init List containing all html div(...) dashboards
@@ -173,9 +172,11 @@ class FileDashboard(RemoteCSVDashboard):
                      main_stats.apply_pca(m=m)
                      if show_only_outl_option:
                          pca_vis = VisualizationPlotly(pd_data_frame=main_stats.reduced_pandas_dataframe_pca[
-                             main_stats.reduced_pandas_dataframe_pca['Classification'] == 'Outliers']).plot_data()
+                             main_stats.reduced_pandas_dataframe_pca['Classification'] == 'Outliers'],
+                                                       column_name=main_stats.label_column).plot_data()
                      else:
-                         pca_vis = VisualizationPlotly(pd_data_frame=main_stats.reduced_pandas_dataframe_pca).plot_data()
+                         pca_vis = VisualizationPlotly(pd_data_frame=main_stats.reduced_pandas_dataframe_pca,
+                                                       column_name=main_stats.label_column).plot_data()
 
                      return [pca_vis]
 

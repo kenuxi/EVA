@@ -9,12 +9,15 @@ class VisualizationPlotly():
         an input pandas data frame.
     '''
 
-    def __init__(self, pd_data_frame):
+    def __init__(self, pd_data_frame, column_name):
         '''
         Input: pd_data_frame  - pandas data frame representing data
         '''
+        self.column_name = column_name
         self.pd_data_frame = pd_data_frame
-        self.pd_data_frame_nolabel = pd_data_frame.drop(columns='Classification')
+        self.pd_data_frame_nolabel = pd_data_frame.drop(columns=column_name)
+
+
         # Extract information about the data frame
         self.features = self.pd_data_frame.keys().tolist()
 
@@ -41,43 +44,22 @@ class VisualizationPlotly():
         if self.d == 1:
             if self.classification:
                 fig = px.scatter(self.pd_data_frame, x=self.features[0], y=np.zeros(self.n),
-                                 color='Classification', title='Data', text='index')
+                                 color='Classification', title='Data', text='index', hover_name='index')
             else:
                 fig = px.scatter(self.pd_data_frame, x=self.features[0], y=np.zeros(self.n), c='blue', title='Data',
-                                 text='index')
+                                 hover_name='index')
 
         elif self.d == 2:
-            if self.classification:
-
-                if self.n > 1000000:
-                    fig = go.Figure()
-                    fig.add_trace(
-                        go.Scattergl(
-                            x=self.pd_data_frame[self.features[0]],
-                            y=self.pd_data_frame[self.features[1]],
-                            mode='markers',
-                            name='all',
-                            # marker_color=(df_highImp_mob.mean_imp > 1),
-                            opacity=0.5
-                        )
-                    )
-
-                else:
-
-                    fig = px.scatter(self.pd_data_frame, x=self.features[0], y=self.features[1],
-                                 color='Classification', title='Data', text='index')
-
-            else:
-                fig = px.scatter(self.pd_data_frame, x=self.features[0], y=self.features[1], c='blue', title='Data',
-                                 )
+            fig = px.scatter(self.pd_data_frame, x=self.features[0], y=self.features[1],
+                             color=self.column_name, title='Data', hover_name='index')
 
         else:
             if self.classification:
                 fig = px.scatter_3d(self.pd_data_frame, x=self.features[0], y=self.features[1], z=self.features[2],
-                                    color='Classification', title='Data')
+                                    color='Classification', title='Data', hover_name='index')
             else:
                 fig = px.scatter_3d(self.pd_data_frame, x=self.features[0], y=self.features[1], z=self.features[2],
-                                    color='blue', title='Data')
+                                    color='blue', title='Data', hover_name='index')
 
         return fig
 
