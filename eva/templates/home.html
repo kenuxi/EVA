@@ -55,25 +55,56 @@
 
 
 {% if label_form %}
-  <table id="table_id" class="table table-striped table-bordered" style="width:100%">
-    <thead>
-        <tr>
-          <th>ID</th>
-          {% for column in df.columns %}
-            <th>{{ column }}</th>
+  {% if df.shape[0] * df.shape[1] > 5000 %}
+    <fieldset class="form-group mb-0">
+      <legend class="border-bottom mb-4">Data Preview</legend>
+      <table id="table_id" class="table table-striped table-bordered" style="width:100%">
+        <thead>
+            <tr>
+              <th>ID</th>
+              {% for column in df.columns %}
+                <th>{{ column }}</th>
+              {% endfor %}
+            </tr>
+        </thead>
+        <tbody>
+          {% for row in df.head(5).itertuples() %}
+            <tr>
+              {% for column in row %}
+                <td>{{ column }}</td>
+              {% endfor %}
+            </tr>
           {% endfor %}
-        </tr>
-    </thead>
-    <tbody>
-      {% for row in df.head(5).itertuples() %}
-        <tr>
-          {% for column in row %}
-            <td>{{ column }}</td>
+        </tbody>
+      </table>
+    </fieldset>
+    <span style="color: red;">Only top 5 rows displayed. Dataset too large.</span>
+
+  {% else %}
+    <fieldset class="form-group">
+      <legend class="border-bottom mb-4">Data Preview</legend>
+      <table id="table_id" class="table table-striped table-bordered" style="width:100%">
+        <thead>
+            <tr>
+              <th>ID</th>
+              {% for column in df.columns %}
+                <th>{{ column }}</th>
+              {% endfor %}
+            </tr>
+        </thead>
+        <tbody>
+          {% for row in df.itertuples() %}
+            <tr>
+              {% for column in row %}
+                <td>{{ column }}</td>
+              {% endfor %}
+            </tr>
           {% endfor %}
-        </tr>
-      {% endfor %}
-    </tbody>
-  </table>
+        </tbody>
+      </table>
+    </fieldset>
+
+  {% endif %}
 
   <div class="content-section">
     <div class="row">

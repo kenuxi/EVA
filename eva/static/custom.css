@@ -1,12 +1,13 @@
-#label_colum {
+#label_column {
     min-width: 11em;
+    display: block
 }
 
 #label_colum, #ratio, #preprocess {
     display: block;
 }
 
-#inliers , #outliers {
-    min-width:13em;
-    min-height:11em;
-    }
+
+#table_id_filter, #table_id_length {
+    display:hidden;
+}
