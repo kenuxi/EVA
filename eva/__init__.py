@@ -53,6 +53,8 @@ def get_app():
                             dashboard_config[alg].append(field.description)
 
             session['dashboard_config'] = dashboard_config
+            if not session['ds'].label_column:
+                session['ds'].label_column = 'None'
             session['ds'].create_unlabeled_df()
 
             return redirect(url_for('reload'))  # f"{session['dashboard_config']}"
