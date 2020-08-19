@@ -45,7 +45,10 @@ class FileDashboard(RemoteCSVDashboard):
         self.dash_app = dash.Dash(__name__, server=self.server,
                                   routes_pathname_prefix=self.prefix,
                                   external_stylesheets=self.stylesheets)
+
+
     def create_dashboard(self, data_dict: Dict):
+        umap_check = False
         main_stats = data_dict['ds']
         # Init List containing all html div(...) dashboards
         dashboards_merged = []
@@ -196,8 +199,6 @@ class FileDashboard(RemoteCSVDashboard):
 
                  def update_lle(m, k_neighbours):
                      main_stats.apply_lle(m=m, k=k_neighbours)
-
-
                      lle_vis = VisualizationPlotly(pd_data_frame=main_stats.reduced_pandas_dataframe_lle,
                                                    column_name=main_stats.label_column).plot_data()
 
@@ -251,6 +252,7 @@ class FileDashboard(RemoteCSVDashboard):
                  )
 
                  def update_umap(m, k_neighbours):
+
                      main_stats.apply_umap(m=m, k=k_neighbours)
                      umap_vis = VisualizationPlotly(pd_data_frame=main_stats.reduced_pandas_dataframe_umap,
                                                     column_name=main_stats.label_column).plot_data()

@@ -167,7 +167,7 @@ class DataStatistics:
     @lru_cache()
     def _cached_umap_transform(self, m=2, k=15):
         embedding = umap.UMAP(n_neighbors=k,
-                              n_components=m).fit_transform(self.pandas_data_frame_nolabels)
+                              n_components=m, random_state=111).fit_transform(self.pandas_data_frame_nolabels)
         return pd.DataFrame(data=embedding)
 
     def apply_umap(self, m=2, k=15):
@@ -221,7 +221,7 @@ class DataStatistics:
         '''
         self.d_red = m
         kmap_df = self._cached_kmap_transform(m, k, a)
-        self.reduced_pandas_dataframe_kmap = pd.concat([kmap_df, self.classifications], axis=1)
+        self.reduced_pandas_dataframe_kmap = pd.concat([kmap_df, self.selected_column], axis=1)
 
     @lru_cache()
     def _cached_mds_transform(self, m=2):
@@ -263,7 +263,7 @@ class DataStatistics:
         del X[self.label_column]
         del X['index']
 
-        print(X)
+
         X = X.to_numpy()
 
         indices = kneighbors_graph(X, n_neighbors=n_neighbours, mode='connectivity', include_self=False).toarray()
@@ -359,8 +359,11 @@ class DataStatistics:
         all data points are selected.
         '''
         if self.label_column == 'None':
-            self.pandas_data_frame['Data'] = 'Data point'
-            self.label_column = 'Data'
+            if 'Data' in self.pandas_data_frame.columns:
+                pass
+            else:
+                self.pandas_data_frame['Data'] = 'Data point'
+                self.label_column = 'Data'
         else:
             pass
 
