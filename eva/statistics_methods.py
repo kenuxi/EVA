@@ -241,7 +241,7 @@ class DataStatistics:
 
         Input:       n_neighbours    - int, number of neighbours to consider for the knearest algorithm
                      algorithm       - str, refers to the pandas red data frame used to compute the graph nodes+edges
-                                       'pca', 'lle', 'tsne', 'kernel_pca', 'isomap', 'umap', 'kmap'
+                                       'pca', 'lle', 'tsne', 'kernel_pca', 'isomap', 'umap', 'kmap', 'mds'
         '''
 
         # Construct X
@@ -259,6 +259,8 @@ class DataStatistics:
             X = self.reduced_pandas_dataframe_umap
         elif algorithm == 'kmap':
             X = self.reduced_pandas_dataframe_kmap
+        elif algorithm == 'mds':
+            X = self.reduced_pandas_dataframe_mds
 
         del X[self.label_column]
         del X['index']
