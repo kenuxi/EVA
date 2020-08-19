@@ -60,11 +60,10 @@ class VisualizationPlotly():
 
         Input: dim    - int, dimension for which the statistical info is shown
         '''
-        if self.classification:
-            fig = px.box(self.pd_data_frame, x="Classification", y=self.features[dim], points="all",
-                         title='Statistical Information')
-        else:
-            print('Error: Data is not Labeled')
+
+        fig = px.box(self.pd_data_frame, x=self.column_name, y=self.features[dim], points="all",
+                     title='Statistical Information')
+
         return fig
 
     def histogram_data(self, dim):
