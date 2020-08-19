@@ -85,9 +85,6 @@ def get_app():
     @app.route('/post_label/<label>', methods=['GET'])
     def post_label(label):
         session['ds'].label_column = label
-        if label == 'None':
-            app.run_server(debug=True)
-
         return jsonify({'label_column': label})
 
     @app.route('/getfiles/', methods=['GET'])
