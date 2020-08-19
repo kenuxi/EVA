@@ -5,6 +5,7 @@ from eva.forms import SelectFileForm, UploadForm, LabelForm, VisForm
 from eva.config import app_secret_key, session, alg_types
 from eva.statistics_methods import DataStatistics
 
+
 to_reload = False
 
 
@@ -35,7 +36,6 @@ def get_app():
             return redirect(url_for('home'))
 
         if vis_form.data and vis_form.validate_on_submit():
-            print('hello')
             dashboard_config = {'ds': session['ds'],
                                 'PCA': [],
                                 'LLE': [],
@@ -54,6 +54,7 @@ def get_app():
 
             session['dashboard_config'] = dashboard_config
             session['ds'].create_unlabeled_df()
+
             return redirect(url_for('reload'))  # f"{session['dashboard_config']}"
 
         return render_template('home.html', title='Home', file_form=file_form, up_form=up_form, vis_form=vis_form)
@@ -84,6 +85,9 @@ def get_app():
     @app.route('/post_label/<label>', methods=['GET'])
     def post_label(label):
         session['ds'].label_column = label
+        if label == 'None':
+            app.run_server(debug=True)
+
         return jsonify({'label_column': label})
 
     @app.route('/getfiles/', methods=['GET'])
@@ -121,8 +125,7 @@ class AppReloader:
         app = self.get_application()
         return app(environ, start_response)
 
-
 application = AppReloader(get_app)
-'''
 
-'''
+
+

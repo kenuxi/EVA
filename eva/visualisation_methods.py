@@ -31,7 +31,6 @@ class VisualizationPlotly():
             self.classification = False
         # Read number of samples/examples of the data frame
         self.n = self.pd_data_frame.shape[0]
-        print(self.d)
         # Add indexes to data frame
         self.pd_data_frame['index'] = range(1, len(self.pd_data_frame) + 1)
 
@@ -46,8 +45,6 @@ class VisualizationPlotly():
                              title='Data', hover_name='index')
 
         elif self.d == 2:
-            print('hey')
-            print(self.pd_data_frame)
             fig = px.scatter(self.pd_data_frame, x=self.features[0], y=self.features[1],
                              color=self.column_name, title='Data', hover_name='index')
 

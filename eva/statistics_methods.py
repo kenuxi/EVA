@@ -72,7 +72,6 @@ class DataStatistics:
     @lru_cache()
     def _cached_pca_transform(self, m):
         pca = PCA(n_components=m)
-        print(self.pandas_data_frame)
         pca.fit(self.pandas_data_frame_nolabels)
         pca_red_data = pca.transform(self.pandas_data_frame_nolabels)  # This is a numpy array
         return pd.DataFrame(data=pca_red_data), pca.explained_variance_ratio_
@@ -261,7 +260,10 @@ class DataStatistics:
         elif algorithm == 'kmap':
             X = self.reduced_pandas_dataframe_kmap
 
-        del X['Classification']
+        del X[self.label_column]
+        del X['index']
+
+        print(X)
         X = X.to_numpy()
 
         indices = kneighbors_graph(X, n_neighbors=n_neighbours, mode='connectivity', include_self=False).toarray()
@@ -352,8 +354,10 @@ class DataStatistics:
 
     def create_unlabeled_df(self):
         if self.label_column == 'None':
+            self.pandas_data_frame['Data'] = 'Data point'
             self.label_column = 'Data'
-            self.pandas_data_frame['Data'] = 'data-point'
+        else:
+            pass
 
-        self.pandas_data_frame_nolabels = self.pandas_data_frame.drop(labels=self.label_column, axis=1)
         self.selected_column = self.pandas_data_frame[self.label_column]
+        self.pandas_data_frame_nolabels = self.pandas_data_frame.select_dtypes(include=['float64'])
