@@ -353,6 +353,11 @@ class DataStatistics:
         self.pandas_data_frame['Classification'] = self.classifications
 
     def create_unlabeled_df(self):
+        '''
+        This method creates a pandas data frame only containing pure data and no labels. This is done according to the
+        column the user selects as the label column. In the case the user does not select any column ('None' case),
+        all data points are selected.
+        '''
         if self.label_column == 'None':
             self.pandas_data_frame['Data'] = 'Data point'
             self.label_column = 'Data'
