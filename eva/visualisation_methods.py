@@ -218,14 +218,15 @@ class VisualizationPlotly():
                 fig = px.density_contour(self.pd_data_frame, x=self.features[0], y=np.zeros(self.n),
                                  color='Classification', title='Density Contour')
             else:
-                fig = px.density_contour(self.pd_data_frame, x=self.features[0], y=np.zeros(self.n), c='blue', title='Density Contour')
+                fig = px.density_contour(self.pd_data_frame, x=self.features[0], y=np.zeros(self.n), title='Density Contour')
 
         else :
             if self.classification:
                 fig = px.density_contour(self.pd_data_frame, x=self.features[0], y=self.features[1],
-                                 color='Classification', title='Density Contour')
+                                 color=self.column_name, title='Density Contour')
             else:
-                fig = px.density_contour(self.pd_data_frame, x=self.features[0], y=self.features[1], c='blue', title='Density Contour')
+                fig = px.density_contour(self.pd_data_frame, x=self.features[0], y=self.features[1], color=self.column_name,
+                                         title='Density Contour')
 
         return fig
 
@@ -239,18 +240,19 @@ class VisualizationPlotly():
         if self.d == 1:
             if self.classification:
                 fig = px.density_contour(self.pd_data_frame, x=self.features[0], y=np.zeros(self.n),
-                                 title='Heat Map')
+                                         color=self.column_name,title='Heat Map')
                 fig.update_traces(contours_coloring="fill")
             else:
-                fig = px.density_contour(self.pd_data_frame, x=self.features[0], y=np.zeros(self.n), c='blue', title='Heat Map')
+                fig = px.density_contour(self.pd_data_frame, x=self.features[0], y=np.zeros(self.n), title='Heat Map')
 
         else :
             if self.classification:
-                fig = px.density_contour(self.pd_data_frame, x=self.features[0], y=self.features[1],
+                fig = px.density_contour(self.pd_data_frame, x=self.features[0], y=self.features[1], color=self.column_name,
                                   title='Heat Map')
                 fig.update_traces(contours_coloring="fill")
             else:
-                fig = px.density_contour(self.pd_data_frame, x=self.features[0], y=self.features[1], c='blue', title='Heat Map')
+                fig = px.density_contour(self.pd_data_frame, x=self.features[0], y=self.features[1],
+                                         color=self.column_name, title='Heat Map')
 
         return fig
 
