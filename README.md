@@ -54,11 +54,15 @@ After you run the server on `http://127.0.0.1:5000`, you will be greeted with th
 
 ![home](/images/home.png)
 
-Here, you can either choose an existing dataset that are in `/data` or you can upload your own dataset. After, you upload your own dataset it gets listed on the dropdown where you can choose and submit it. After you decide to submit the dataset, a table will be created for you to have a peek into it.
+Here, you can either choose an existing dataset that are in `/data` or you can upload your own dataset. After, you upload your own dataset it gets listed on the dropdown where you can choose and submit it. After you decide to submit the dataset, a table will be created for you to have a peek into it. If the dataset is too large(>5000 datapoints), only dataset head is displayed.
 
 ![table](/images/table.png)
 
-Now, you can apply filter to your dataset and also selet inliers/outliers. You can normalise and preprocess data and also select the ratio for the outliers.
+However for the smaller dataset you can navigate through the displayed table. 
+
+![table1](/images/table1.png)
+
+Now, you can apply filter to your dataset and choose the label column. You can also choose 'None'
 
 ![filter](/images/filter.png)
 
